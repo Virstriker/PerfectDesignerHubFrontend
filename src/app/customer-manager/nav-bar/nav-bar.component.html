@@ -1,0 +1,35 @@
+<nav class="navbar">
+    <div class="container">
+      <div class="logo">Perfect</div>
+  
+      <!-- Desktop Menu -->
+      <div class="menu desktop-menu">
+        <a href="#">Home</a>
+        <a routerLink="/customer-manager/customer">Customers</a>
+        <a href="#">Order</a>
+        <a href="#">Measurement</a>
+        <button aria-label="Notifications" class="notification-btn">
+          <img src="../../../assets/notification.png" alt="Notifications" class="icon" />
+        </button>
+      </div>
+  
+      <!-- Mobile Menu -->
+      <div class="mobile-controls">
+        <button aria-label="Notifications" class="notification-btn">
+          <img src="../../../assets/notification.png" alt="Notifications" class="icon" />
+        </button>
+        <button (click)="toggleMenu()" class="menu-btn" aria-label="Toggle menu">
+          <img [src]="isOpen ? '../../../assets/close.png' : '../../../assets/Hamburger_icon.svg.png'" alt="Menu" class="icon" />
+        </button>
+      </div>
+    </div>
+  
+    <!-- Mobile Menu Items -->
+    <div *ngIf="isOpen" class="mobile-menu">
+      <a href="#" (click)="toggleMenu()">Home</a>
+      <a routerLink="/customer-manager/customer" (click)="toggleMenu()">Customers</a>
+      <a href="#" (click)="toggleMenu()">Order</a>
+      <a href="#" (click)="toggleMenu()">Measurement</a>
+    </div>
+  </nav>
+  

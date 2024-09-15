@@ -1,0 +1,96 @@
+/* Navbar Container */
+.navbar {
+  background-color: #2d3748;
+  color: white;
+  padding: 16px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Desktop Menu */
+.menu.desktop-menu {
+  display: flex;
+  gap: 20px;
+}
+
+.menu.desktop-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.menu.desktop-menu a:hover {
+  color: #cbd5e0;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.notification-btn .icon {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+.notification-btn:active .icon {
+  filter: invert(0);
+}
+
+/* Mobile Controls */
+.mobile-controls {
+  display: none;
+  align-items: center;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-btn .icon {
+  width: 24px;
+  height: 24px;
+  margin: 0px 10px;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #2d3748;
+  padding: 10px;
+}
+
+.mobile-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.mobile-menu a:hover {
+  background-color: #4a5568;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .menu.desktop-menu {
+    display: none;
+  }
+
+  .mobile-controls {
+    display: flex;
+  }
+}
