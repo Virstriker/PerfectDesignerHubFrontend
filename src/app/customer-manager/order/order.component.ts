@@ -35,4 +35,7 @@ export class OrderComponent implements OnInit{
   goToOrder(id:number){
     this.route.navigateByUrl("/customer-manager/order-info/"+id);
   }
+  addOrder(){
+    this.route.navigateByUrl("/customer-manager/add-order");
+  }
 }

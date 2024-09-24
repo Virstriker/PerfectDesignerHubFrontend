@@ -1,117 +1,217 @@
 import { NgClass, NgFor, CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {ReactiveFormsModule, NgModelGroup, FormsModule } from '@angular/forms';
+import { OrderServiceService } from '../../services/order-service.service';
+import { ResponseDto } from '../../interfaces/customer';
+interface Ordertable {
+  customerId?: number;
+  branchName?: string;
+  orderDate?: string;
+  deliveryDate?: string;
+  totalPrice?: number;
+}
+
+interface addOrderDto{
+  ordertable :Ordertable;
+  blouses:Array<Blouse>;
+  dresses:Array<Dress>;
+  pants:Array<Pant>;
+  chaniyo:Array<Chaniyo>;
+}
+
+interface Blouse {
+  style?: string;
+  neckDesign?: string;
+  astar?: boolean;
+  openingSide?: string;
+  neck?: string;
+  dori?: boolean;
+  sleeve?: string;
+  detail?: string;
+  clothimage?: string;
+  desingimage?: string;
+  price?: number;
+}
+
+interface Dress {
+  style?: string;
+  neckDesign?: string;
+  astar?: boolean;
+  openingSide?: string;
+  backOfNeck?: string;
+  chain?: boolean;
+  sleeve?: string;
+  detail?: string;
+  clothimage?: string;
+  desingimage?: string;
+  price?: number;
+}
+
+interface Chaniyo {
+  style?: string;
+  detail?: string;
+  clothimage?: string;
+  desingimage?: string;
+  price?: number;
+}
+
+interface Pant {
+  rubberT?: string;
+  neckDesign?: string;
+  pocket?: boolean;
+  detail?: string;
+  price?: number;
+}
 @Component({
   selector: 'app-add-order',
   standalone: true,
-  imports: [NgClass, NgFor, CommonModule, HttpClientModule,ReactiveFormsModule],
+  imports: [NgClass, NgFor, CommonModule, HttpClientModule,ReactiveFormsModule,FormsModule],
+  providers:[OrderServiceService],
   templateUrl: './add-order.component.html',
   styleUrl: './add-order.component.css'
 })
-export class AddOrderComponent implements OnInit {
-  orderForm!: FormGroup;
+export class AddOrderComponent {
+  order: Ordertable = {};
+  constructor(private  orderService: OrderServiceService) {}
 
-  constructor(private fb: FormBuilder) {}
+  // Arrays to hold added items
+  blouses: Blouse[] = [];
+  dresses: Dress[] = [];
+  chaniyos: Chaniyo[] = [];
+  pants: Pant[] = [];
 
-  ngOnInit(): void {
-    this.orderForm = this.fb.group({
-      ordertable: this.fb.group({
-        customerid: ['', Validators.required],
-        branchname: ['', Validators.required],
-        orderdate: ['', Validators.required],
-        deliverydate: ['', Validators.required],
-        totalPrice: [0, Validators.required]
-      }),
-      blouses: this.fb.array([]),
-      dresses: this.fb.array([]),
-      chaniyo: this.fb.array([]),
-      pants: this.fb.array([])
-    });
+  // Pop-up visibility flags
+  showBlousePopup = false;
+  showDressPopup = false;
+  showChaniyoPopup = false;
+  showPantPopup = false;
+
+  // New item variables for pop-ups
+  newBlouse: Blouse = {};
+  newDress: Dress = {};
+  newChaniyo: Chaniyo = {};
+  newPant: Pant = {};
+
+  // Methods to open pop-ups
+  openBlousePopup() {
+      this.showBlousePopup = true; 
+      this.newBlouse = {}; // Reset for new entry
   }
 
-  // Getters for FormArrays
-  get blouses(): FormArray {
-    return this.orderForm.get('blouses') as FormArray;
+  openDressPopup() {
+      this.showDressPopup = true; 
+      this.newDress = {}; // Reset for new entry
   }
 
-  get dresses(): FormArray {
-    return this.orderForm.get('dresses') as FormArray;
+  openChaniyoPopup() {
+      this.showChaniyoPopup = true; 
+      this.newChaniyo = {}; // Reset for new entry
   }
 
-  get chaniyo(): FormArray {
-    return this.orderForm.get('chaniyo') as FormArray;
+  openPantPopup() {
+      this.showPantPopup = true; 
+      this.newPant = {}; // Reset for new entry
   }
 
-  get pants(): FormArray {
-    return this.orderForm.get('pants') as FormArray;
-  }
-
-  // Add Blouse
+  // Methods to add items
   addBlouse() {
-    const blouseGroup = this.fb.group({
-      style: ['', Validators.required],
-      neckdesign: [''],
-      astar: [false],
-      openingside: [''],
-      neck: [''],
-      dori: [false],
-      sleeve: [''],
-      detail: [''],
-      clothimage: [''],
-      desingimage: [''],
-      price: [0, Validators.required]
-    });
-    this.blouses.push(blouseGroup);
+      if (this.newBlouse.style && this.newBlouse.price) {
+          this.blouses.push(this.newBlouse);
+          this.showBlousePopup = false; // Close popup after adding
+      }
   }
 
-  // Add Dress
   addDress() {
-    const dressGroup = this.fb.group({
-      style: ['', Validators.required],
-      neckdesign: [''],
-      astar: [false],
-      openingside: [''],
-      backofneck: [''],
-      chain: [false],
-      sleeve: [''],
-      detail: [''],
-      clothimage: [''],
-      desingimage: [''],
-      price: [0, Validators.required]
-    });
-    this.dresses.push(dressGroup);
+      if (this.newDress.style && this.newDress.price) {
+          this.dresses.push(this.newDress);
+          this.showDressPopup = false; // Close popup after adding
+      }
   }
 
-  // Add Chaniyo
   addChaniyo() {
-    const chaniyoGroup = this.fb.group({
-      style: ['', Validators.required],
-      detail: [''],
-      clothimage: [''],
-      desingimage: [''],
-      price: [0, Validators.required]
-    });
-    this.chaniyo.push(chaniyoGroup);
+      if (this.newChaniyo.style && this.newChaniyo.price) {
+          this.chaniyos.push(this.newChaniyo);
+          this.showChaniyoPopup = false; // Close popup after adding
+      }
   }
 
-  // Add Pant
   addPant() {
-    const pantGroup = this.fb.group({
-      rubbert: [''],
-      neckdesign: [''],
-      pocket: [false],
-      detail: [''],
-      price: [0, Validators.required]
-    });
-    this.pants.push(pantGroup);
+      if (this.newPant.rubberT && this.newPant.price) {
+          this.pants.push(this.newPant);
+          this.showPantPopup = false; // Close popup after adding
+      }
+  }
+  onBlouseDesignImageUpload(event: any) {
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newBlouse.desingimage = Data.data.display_url;
+    }
+    })
+  }
+  onBlouseClothImageUpload(event:any){
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newBlouse.clothimage = Data.data.display_url;
+    }
+    })
   }
 
-  // Submit Form
-  submitOrder() {
-    if (this.orderForm.valid) {
-      console.log(this.orderForm.value);
-      // Submit to the backend API here
+  onDressDesignImageUpload(event: any) {
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newDress.desingimage = Data.data.display_url;
     }
+    })
+  }
+  onDressClothImageUpload(event:any){
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newDress.clothimage = Data.data.display_url;
+    }
+    })
+  }
+
+  onChaniyoDesignImageUpload(event: any) {
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newChaniyo.desingimage = Data.data.display_url;
+    }
+    })
+    console.log(this.newChaniyo);
+  }
+  onChaniyoClothImageUpload(event:any){
+    const file = event.target.files[0];
+    this.orderService.getImageUrl(file).subscribe({
+      next: (Data) => {
+        this.newChaniyo.clothimage = Data.data.display_url;
+    }
+    })
+    console.log(this.newChaniyo);
+  }
+ addOrder:addOrderDto={
+  ordertable:{},
+  blouses:[],
+  chaniyo:[],
+  dresses:[],
+  pants:[],
+ };
+  onSubmit(){
+    this.addOrder.ordertable = this.order;
+    this.addOrder.blouses = this.blouses;
+    this.addOrder.chaniyo = this.chaniyos;
+    this.addOrder.dresses = this.dresses;
+    this.addOrder.pants = this.pants;
+    console.log(this.addOrder);
+    this.orderService.addOrder(this.addOrder).subscribe({
+      next:(response:ResponseDto)=>{
+        console.log(response);
+      }
+    });
   }
 }

@@ -1,143 +1,165 @@
-<form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
-    <!-- Order Details -->
-    <div formGroupName="ordertable">
-      <h2>Order Details</h2>
-      <label for="customerid">Customer ID</label>
-      <input id="customerid" formControlName="customerid" placeholder="Enter Customer ID">
-  
-      <label for="branchname">Branch Name</label>
-      <input id="branchname" formControlName="branchname" placeholder="Enter Branch Name">
-  
-      <label for="orderdate">Order Date</label>
-      <input id="orderdate" type="date" formControlName="orderdate">
-  
-      <label for="deliverydate">Delivery Date</label>
-      <input id="deliverydate" type="date" formControlName="deliverydate">
-  
-      <label for="totalPrice">Total Price</label>
-      <input id="totalPrice" type="number" formControlName="totalPrice">
+<div class="order-form">
+    <h2>Add Order</h2>
+    
+    <form>
+        <label>Customer ID:</label>
+        <input type="number" [(ngModel)]="order.customerId" name="customerId" required />
+
+        <label>Branch Name:</label>
+        <input type="text" [(ngModel)]="order.branchName" name="branchName" required />
+
+        <label>Order Date:</label>
+        <input type="date" [(ngModel)]="order.orderDate" name="orderDate" required />
+
+        <label>Delivery Date:</label>
+        <input type="date" [(ngModel)]="order.deliveryDate" name="deliveryDate" required />
+
+        <button type="button" (click)="openBlousePopup()">Add Blouse</button>
+        <button type="button" (click)="openDressPopup()">Add Dress</button>
+        <button type="button" (click)="openChaniyoPopup()">Add Chaniyo</button>
+        <button type="button" (click)="openPantPopup()">Add Pant</button>
+    </form>
+
+    <!-- Display added items -->
+    <h3>Added Items</h3>
+    
+    <div *ngFor="let blouse of blouses">
+        Blouse - Style: {{blouse.style}}, Neck Design: {{blouse.neckDesign}}, ImageUrl: {{blouse.desingimage}} ,Price: {{blouse.price | currency}}
     </div>
-  
-    <!-- Blouses Section -->
-    <h3>Blouses</h3>
-    <button type="button" (click)="addBlouse()">Add Blouse</button>
-    <div formArrayName="blouses" *ngFor="let blouse of blouses.controls; let i=index" [formGroupName]="i">
-      <h4>Blouse {{ i + 1 }}</h4>
-      <label>Style</label>
-      <input formControlName="style">
-      
-      <label>Neck Design</label>
-      <input formControlName="neckdesign">
-      
-      <label>Astar</label>
-      <input type="checkbox" formControlName="astar">
-  
-      <label>Opening Side</label>
-      <input formControlName="openingside">
-  
-      <label>Neck</label>
-      <input formControlName="neck">
-  
-      <label>Dori</label>
-      <input type="checkbox" formControlName="dori">
-  
-      <label>Sleeve</label>
-      <input formControlName="sleeve">
-  
-      <label>Detail</label>
-      <input formControlName="detail">
-  
-      <label>Cloth Image</label>
-      <input formControlName="clothimage">
-  
-      <label>Design Image</label>
-      <input formControlName="desingimage">
-  
-      <label>Price</label>
-      <input type="number" formControlName="price">
+    
+    <div *ngFor="let dress of dresses">
+        Dress - Style: {{dress.style}}, Neck Design: {{dress.neckDesign}}, Price: {{dress.price | currency}}
     </div>
-  
-    <!-- Dresses Section -->
-    <h3>Dresses</h3>
-    <button type="button" (click)="addDress()">Add Dress</button>
-    <div formArrayName="dresses" *ngFor="let dress of dresses.controls; let i=index" [formGroupName]="i">
-      <h4>Dress {{ i + 1 }}</h4>
-      <label>Style</label>
-      <input formControlName="style">
-  
-      <label>Neck Design</label>
-      <input formControlName="neckdesign">
-  
-      <label>Astar</label>
-      <input type="checkbox" formControlName="astar">
-  
-      <label>Opening Side</label>
-      <input formControlName="openingside">
-  
-      <label>Back of Neck</label>
-      <input formControlName="backofneck">
-  
-      <label>Chain</label>
-      <input type="checkbox" formControlName="chain">
-  
-      <label>Sleeve</label>
-      <input formControlName="sleeve">
-  
-      <label>Detail</label>
-      <input formControlName="detail">
-  
-      <label>Cloth Image</label>
-      <input formControlName="clothimage">
-  
-      <label>Design Image</label>
-      <input formControlName="desingimage">
-  
-      <label>Price</label>
-      <input type="number" formControlName="price">
+    
+    <div *ngFor="let chaniyo of chaniyos">
+        Chaniyo - Style: {{chaniyo.style}}, Price: {{chaniyo.price | currency}}
     </div>
-  
-    <!-- Chaniyo Section -->
-    <h3>Chaniyo</h3>
-    <button type="button" (click)="addChaniyo()">Add Chaniyo</button>
-    <div formArrayName="chaniyo" *ngFor="let chaniyo of chaniyo.controls; let i=index" [formGroupName]="i">
-      <h4>Chaniyo {{ i + 1 }}</h4>
-      <label>Style</label>
-      <input formControlName="style">
-  
-      <label>Detail</label>
-      <input formControlName="detail">
-  
-      <label>Cloth Image</label>
-      <input formControlName="clothimage">
-  
-      <label>Design Image</label>
-      <input formControlName="desingimage">
-  
-      <label>Price</label>
-      <input type="number" formControlName="price">
+    
+    <div *ngFor="let pant of pants">
+        Pant - Rubber T: {{pant.rubberT}}, Price: {{pant.price | currency}}
     </div>
-  
-    <!-- Pants Section -->
-    <h3>Pants</h3>
-    <button type="button" (click)="addPant()">Add Pant</button>
-    <div formArrayName="pants" *ngFor="let pant of pants.controls; let i=index" [formGroupName]="i">
-      <h4>Pant {{ i + 1 }}</h4>
-      <label>Rubbert</label>
-      <input formControlName="rubbert">
-  
-      <label>Neck Design</label>
-      <input formControlName="neckdesign">
-  
-      <label>Pocket</label>
-      <input type="checkbox" formControlName="pocket">
-  
-      <label>Detail</label>
-      <input formControlName="detail">
-  
-      <label>Price</label>
-      <input type="number" formControlName="price">
-    </div>
-  
-    <button type="submit" [disabled]="!orderForm.valid">Submit Order</button>
-  </form>
-  
+
+<!-- Blouse Popup -->
+<div *ngIf="showBlousePopup" class="overlay">
+   <div class="popup">
+       <h4>Add Blouse</h4>
+       <label>Style:</label>
+       <input type="text" [(ngModel)]="newBlouse.style" required />
+       <label>Neck Design:</label>
+       <input type="text" [(ngModel)]="newBlouse.neckDesign" />
+       <label>astar:</label>
+       <input  type="checkbox" [defaultValue]="false" [(ngModel)]="newBlouse.astar" />
+       <label>Opening Side:</label>
+       <input type="text" [(ngModel)]="newBlouse.openingSide" />
+       <label>Neck:</label>
+       <input type="text" [(ngModel)]="newBlouse.neck" />
+       <label>Dori:</label>
+       <input type="checkbox" [defaultValue]="false" [(ngModel)]="newBlouse.dori" />
+       <label>Sleeve:</label>
+       <input type="text" [(ngModel)]="newBlouse.sleeve" />
+       <label>Detail:</label>
+       <input type="text" [(ngModel)]="newBlouse.detail" />
+       <label>Cloth Image:</label>
+<input type="file" id="blouseClothImage" (change)="onBlouseClothImageUpload($event)" />
+<label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
+
+<label>Design Image:</label>
+<input type="file" id="blouseDesignImage" (change)="onBlouseDesignImageUpload($event)" />
+<label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
+
+       <label>Price:</label>
+       <input type="number" [(ngModel)]="newBlouse.price" required />
+       
+       <!-- Add and close buttons -->
+       <button (click)="addBlouse()">Add</button>
+       <button (click)="showBlousePopup = false">Close</button>
+   </div>
+</div>
+
+<!-- Dress Popup -->
+<div *ngIf="showDressPopup" class="overlay">
+   <div class="popup">
+       <h4>Add Dress</h4>
+       <label>Style:</label>
+       <input type="text" [(ngModel)]="newDress.style" required />
+       <label>Neck Design:</label>
+       <input type="text" [(ngModel)]="newDress.neckDesign" />
+       <label>Astar:</label>
+       <input type="checkbox" [defaultValue]="false" [(ngModel)]="newDress.astar"/>
+       <label>Opening Side:</label>
+       <input type="text" [(ngModel)]="newDress.openingSide"/>
+       <label>Back of Neck:</label>
+       <input type="text" [(ngModel)]="newDress.backOfNeck"/>
+       <label>Chain:</label>
+       <input type="checkbox" [defaultValue]="false" [(ngModel)]="newDress.chain"/>
+       <label>Sleeve:</label>
+       <input type="text" [(ngModel)]="newDress.sleeve"/>
+       <label>Detail:</label>
+       <input type="text" [(ngModel)]="newDress.detail"/>
+       <label>Cloth Image:</label>
+       <input type="file" id="blouseClothImage" (change)="onDressClothImageUpload($event)" />
+       <label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
+       
+       <label>Design Image:</label>
+       <input type="file" id="blouseDesignImage" (change)="onDressDesignImageUpload($event)" />
+       <label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
+       
+       <label>Price:</label>
+       <input type="number" [(ngModel)]="newDress.price" required />
+
+      <!-- Add and close buttons -->
+      <button (click)="addDress()">Add</button>
+      <button (click)="showDressPopup = false">Close</button>
+
+   </div>
+</div>
+
+<!-- Chaniyo Popup -->
+<div *ngIf="showChaniyoPopup" class="overlay">
+   <div class="popup">
+      <h4>Add Chaniyo</h4>
+      <label>Style:</label>
+      <input type="text" [(ngModel)]="newChaniyo.style"/>
+      <label>Detail:</label>
+      <input type="text" [(ngModel)]="newChaniyo.detail"/>
+      <label>Cloth Image:</label>
+<input type="file" id="blouseClothImage" (change)="onChaniyoClothImageUpload($event)" />
+<label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
+
+<label>Design Image:</label>
+<input type="file" id="blouseDesignImage" (change)="onChaniyoDesignImageUpload($event)" />
+<label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
+
+      <label>Price:</label>
+      <input type="number" [(ngModel)]="newChaniyo.price" required />
+
+      <!-- Add and close buttons -->
+      <button (click)="addChaniyo()">Add</button>
+      <button (click)="showChaniyoPopup = false">Close</button>
+   </div>
+</div>
+
+<!-- Pant Popup -->
+<div *ngIf="showPantPopup" class="overlay">
+   <div class="popup">
+      <h4>Add Pant</h4>
+      <label>Rubber T:</label>
+      <input type="text" [(ngModel)]="newPant.rubberT"/>
+      <label>Neck Design:</label>
+      <input type="text" [(ngModel)]="newPant.neckDesign"/>
+      <label>Pocket:</label>
+      <input type="checkbox" [defaultValue]="false" [(ngModel)]="newPant.pocket"/>
+      <label>Detail:</label>
+      <input type="text" [(ngModel)]="newPant.detail"/>
+      <label>Price:</label>
+      <input type="number" [(ngModel)]="newPant.price" required />
+
+      <!-- Add and close buttons -->
+      <button (click)="addPant()">Add</button>
+      <button (click)="showPantPopup = false">Close</button>
+   </div>
+</div>
+<button (click)="onSubmit()">
+  Submit
+</button>
+</div>

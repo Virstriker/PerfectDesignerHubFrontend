@@ -1,34 +1,236 @@
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 600px;
-    margin: 0 auto;
+/* General styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+h2, h3, h4 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.order-form {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 28px;
+  text-align: center;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+h3 {
+  margin-top: 40px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+form label {
+  font-weight: 500;
+  display: block;
+  margin-top: 20px;
+}
+
+input[type="number"],
+input[type="text"],
+input[type="date"],
+input[type="checkbox"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease-in-out;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="date"]:focus {
+  border-color: #3498db;
+}
+
+button {
+  margin: 20px 5px 0 0;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+  color: white;
+}
+
+/* Buttons styling */
+button[type="button"] {
+  background-color: #3498db;
+  color: white;
+}
+
+button[type="submit"] {
+  background-color: #27ae60;
+  color: white;
+}
+
+/* Added Items */
+.added-items div {
+  background-color: #ecf0f1;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Popup styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: auto;
+}
+
+.popup {
+  margin-top: 50%;
+  width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.popup h4 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #e74c3c;
+}
+
+.popup label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.popup input[type="text"],
+.popup input[type="number"],
+.popup input[type="checkbox"] 
+.popup input{
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.popup button {
+  margin-top: 20px;
+  width: 48%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+}
+
+.popup button:first-child {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.popup button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-form {
+    margin: 20px;
+    padding: 10px;
   }
-  
-  label {
-    font-weight: bold;
+
+  input[type="number"],
+  input[type="text"],
+  input[type="date"],
+  input[type="checkbox"] {
+    font-size: 14px;
   }
-  
-  input, button {
-    margin-bottom: 10px;
-    padding: 8px;
-    width: 100%;
+
+  .popup {
+    width: 90%;
   }
-  
-  button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button:disabled {
-    background-color: grey;
-  }
-  
-  h2, h3 {
-    margin-top: 20px;
-    color: #333;
-  }
-  
+}
+.added-items {
+  margin-top: 20px;
+  max-width: 800px; /* Limit the width for better readability */
+}
+
+.item-card {
+  background-color: #f9f9f9; /* Light background for contrast */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 15px; /* Padding inside the card */
+  margin: 10px 0; /* Margin between cards */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: transform 0.2s; /* Smooth transition for hover effect */
+}
+
+.item-card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.item-card strong {
+  color: #3498db; /* Distinct color for item type */
+  font-size: 1.2em; /* Larger font size for item type */
+}
+
+.item-card p {
+  margin: 5px 0; /* Margin for paragraphs */
+  color: #333; /* Darker text color for better readability */
+}
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.file-upload-label {
+  display: inline-block; /* Inline-block for better layout */
+  padding: 10px 20px; /* Padding for a button-like appearance */
+  margin-top: 5px; /* Space above the button */
+  border: 2px solid #3498db; /* Border color */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #e7f3fe; /* Light background */
+  color: #3498db; /* Text color */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* Transition effects */
+}
+
+.file-upload-label:hover {
+  background-color: #3498db; /* Change background on hover */
+  color: white; /* Change text color on hover */
+  border-color: #2980b9; /* Darker border on hover */
+}
+
+.file-upload-label:active {
+  background-color: #2980b9; /* Darker background on click */
+}
