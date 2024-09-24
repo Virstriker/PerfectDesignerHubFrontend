@@ -1,0 +1,166 @@
+.order-management-container{
+    padding: 20px;
+}
+
+.search-add-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-bar {
+    position: relative;
+    flex-grow: 1;
+    margin-right: 15px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 16px;
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .add-order-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    cursor: pointer;
+
+  }
+  
+  .add-order-btn:hover {
+    background-color: #ffffff;
+    color: black;
+  }
+  .order-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid layout */
+  gap: 16px; /* Space between cards */
+  padding: 16px; /* Padding around the grid */
+}
+
+.order-card {
+  background-color: #f9f9f9; /* Light background for cards */
+  border: 1px solid #e1e1e1; /* Light border for separation */
+  border-radius: 12px; /* More rounded corners */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+  padding: 20px; /* Increased padding inside the card */
+  display: flex;
+  flex-direction: column; /* Align content vertically */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth scaling and shadow effect */
+}
+
+.order-card:hover {
+  transform: scale(1.03); /* Slightly enlarge the card on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* Space below header */
+}
+
+.order-card-header h4 {
+  font-size: 18px; /* Font size for the order number */
+  color: #333; /* Dark text color */
+}
+
+.order-status {
+  padding: 6px 12px;
+  border-radius: 20px; /* Rounded badge style */
+  font-size: 14px;
+  font-weight: bold; /* Make status text bold */
+}
+
+.order-status.active {
+  background-color: #28a745; /* Green background for active status */
+  color: #fff;
+}
+
+.order-status.complete {
+  background-color: #6c757d; /* Gray background for complete status */
+  color: #fff;
+}
+
+.order-details {
+  margin-top: 8px; /* Space above details section */
+}
+
+.order-details p {
+  margin: 8px 0; /* Space between details */
+  font-size: 15px; /* Font size for details */
+  color: #555; /* Gray color for text */
+}
+
+.order-details strong {
+  color: #333; /* Darker color for labels */
+}
+
+@media (max-width: 768px) {
+  .order-card {
+    padding: 16px; /* Adjust padding for tablets */
+  }
+
+  .order-card-header h4 {
+    font-size: 16px; /* Smaller font size for tablets */
+  }
+
+  .order-status {
+    font-size: 12px; /* Smaller font size for tablets */
+  }
+  .search-add-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .add-order-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-card {
+    padding: 12px; /* Adjust padding for mobile screens */
+  }
+
+  .order-card-header h4 {
+    font-size: 14px; /* Smaller font size for mobile screens */
+  }
+
+  .order-status {
+    font-size: 10px; /* Smaller font size for mobile screens */
+  }
+
+  .order-details p {
+    font-size: 14px; /* Smaller font size for mobile screens */
+  }
+}
+

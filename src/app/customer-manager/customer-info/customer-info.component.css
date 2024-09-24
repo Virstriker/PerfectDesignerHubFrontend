@@ -10,94 +10,163 @@
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
   }
-  .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+/* Header Container Styling */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.header-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
 }
 
 .back-link {
-    color: #007bff;
-    text-decoration: none;
-    font-size: 16px;
-    cursor: pointer;
+  font-size: 16px;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .back-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-  .customer-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
-  }
+
+/* Responsive Customer Info Layout */
+.customer-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Individual Info Items */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+label {
+  font-weight: bold;
+  color: #555;
+  font-size: 16px;
+}
+
+span {
+  color: #333;
+  font-size: 16px;
+  font-weight: normal;
+  text-align: right;
+  width: 50%;
+}
+
   
-  .info-item {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
+.see-measurement-btn {
+  background-color: #007bff; /* Blue background color */
+  color: #fff; /* White text color */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Vertical and horizontal padding */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  margin: 20px 0px;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+}
+
+.see-measurement-btn:hover {
+  background-color: #0056b3; /* Darker blue background color on hover */
+  transform: scale(1.05); /* Slightly enlarge the button on hover */
+}
+
+.see-measurement-btn:focus {
+  outline: none; /* Remove default focus outline */
+}
+
+.see-measurement-btn:active {
+  background-color: #004494; /* Even darker blue background color when the button is pressed */
+}
+  .order-detail{
+    margin: 20px 0px;
   }
-  
-  label {
-    font-weight: bold;
-    color: #555;
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .see-measurement-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .see-measurement-btn:hover {
-    background-color: #45a049;
-  }
-  
   .order-cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
+    padding: 20px;
+    justify-content: space-around;
   }
   
+  /* Individual order card styling */
   .order-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: #ffffff;
     border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    padding: 20px;
+    width: 300px;
+    transition: transform 0.3s ease;
   }
   
-  .order-card h4 {
-    margin-top: 0;
-    color: #333;
+  .order-card:hover {
+    transform: translateY(-5px); /* Subtle hover effect */
   }
   
+  /* Order header with spacing between title and status */
+  .order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  /* Styling for active and complete order status */
   .order-status {
-    display: inline-block;
     padding: 5px 10px;
-    border-radius: 15px;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: bold;
-    text-transform: capitalize;
-    margin-bottom: 10px;
+    text-transform: uppercase;
   }
   
-  .order-status.pending {
-    background-color: #FFF59D;
-    color: #F57F17;
+  .active {
+    background-color: #d4edda;
+    color: #155724;
   }
   
-  .order-status.processing {
-    background-color: #81D4FA;
-    color: #01579B;
+  .complete {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  /* Styling the dates section */
+  .order-dates {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  
+  .order-dates p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .order-dates strong {
+    color: #333;
   }
   
   .order-status.completed {
@@ -109,6 +178,15 @@
     margin: 5px 0;
     color: #666;
   }
+  .active {
+    color: green;     /* Color for Active status */
+    font-weight: bold;
+  }
+  
+  .complete {
+    color: red;       /* Color for Complete status */
+    font-weight: bold;
+  }
   
   @media (max-width: 600px) {
     .customer-info {
@@ -117,5 +195,31 @@
   
     .order-cards-container {
       grid-template-columns: 1fr;
+
+    }
+    .customer-info {
+      grid-template-columns: 1fr; /* Stack items on smaller screens */
+      padding: 15px;
+    }
+  
+    .info-item {
+      flex-direction: column;
+      text-align: left;
+    }
+  
+    .info-item label {
+      margin-bottom: 5px;
+    }
+  
+    .info-item span {
+      text-align: left;
+      width: 100%;
+    }
+    .see-measurement-btn {
+      font-size: 14px; /* Smaller font for smaller screens */
+      padding: 10px 15px; /* Adjust padding for mobile */
+      width: 100%; /* Full-width button on mobile */
+      text-align: center; /* Center text in mobile view */
+      margin-top: 20px; /* Add margin to ensure separation from other elements */
     }
   }

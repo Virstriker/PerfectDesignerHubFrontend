@@ -1,57 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomerDetail, OrderCard } from '../../interfaces/customer';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Customer, CustomerDetail, OrderCard, ResponseDto } from '../../interfaces/customer';
 import { FormsModule } from '@angular/forms';
-import { NgClass, NgFor } from '@angular/common';
+import { CommonModule, NgClass, NgFor } from '@angular/common';
+import { CustomerServiceService } from '../../services/customer-service.service';
+import { HttpClientModule } from '@angular/common/http';
+import { OrderServiceService } from '../../services/order-service.service';
 
 @Component({
   selector: 'app-customer-info',
   standalone: true,
-  imports: [FormsModule,NgClass,NgFor],
+  imports: [FormsModule, NgClass, NgFor, CommonModule, HttpClientModule],
+  providers: [CustomerServiceService, OrderServiceService],
   templateUrl: './customer-info.component.html',
   styleUrl: './customer-info.component.css'
 })
 export class CustomerInfoComponent implements OnInit {
-  customer: CustomerDetail = {
-    name: 'John',
-    surname: 'Doe',
-    phoneNumber: '+1 123-456-7890',
-    address: '123 Main St, Anytown, USA'
+  customerId!: number;
+  customer: Customer = {
+    id: 1,
+    name: '',
+    surname: '',
+    phonenumber: '',
+    address: ''
   };
 
-  customerOrders: OrderCard[] = [
-    {
-      orderNumber: 1001,
-      status: 'Pending',
-      startDate: new Date('2023-06-01'),
-      endDate: new Date('2023-06-10')
-    },
-    {
-      orderNumber: 1002,
-      status: 'Processing',
-      startDate: new Date('2023-06-05'),
-      endDate: new Date('2023-06-15')
-    },
-    {
-      orderNumber: 1003,
-      status: 'Completed',
-      startDate: new Date('2023-05-20'),
-      endDate: new Date('2023-05-30')
-    }
-  ];
+  customerOrders: OrderCard[] = [];
 
-  constructor() { }
+  constructor(private route: ActivatedRoute,
+    private router:Router,
+    private customerService: CustomerServiceService,
+    private orderService: OrderServiceService) { }
 
   ngOnInit(): void {
-    // Initialize component data if needed
-  }
-
-  seeMeasurement(): void {
-    // Implement logic to show measurement details
-    console.log('Showing measurement details');
+    this.route.params.subscribe(params => {
+      this.customerId = +params['id']; // Convert string to number using '+'
+      // Use this.customerId to fetch customer details
+    });
+    this.customerService.getCustomerById(this.customerId).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess) {
+          this.customer = response.responseObject;
+        } else {
+          alert(response.message);
+        }
+      }
+    });
+    this.orderService.getAllOrderByCustomerId(this.customerId).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess) {
+          this.customerOrders = response.responseObject;
+          console.log(this.customerOrders)
+        } else {
+          alert(response.message);
+        }
+      }
+    });
   }
 
   goBack() {
     // Implement the logic to go back, e.g., navigating to the previous page
     window.history.back();
+  }
+  goToOrder(id:number){
+    this.router.navigateByUrl("/customer-manager/order-info/"+id);
   }
 }

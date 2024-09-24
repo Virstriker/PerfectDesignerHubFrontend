@@ -1,0 +1,143 @@
+<form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+    <!-- Order Details -->
+    <div formGroupName="ordertable">
+      <h2>Order Details</h2>
+      <label for="customerid">Customer ID</label>
+      <input id="customerid" formControlName="customerid" placeholder="Enter Customer ID">
+  
+      <label for="branchname">Branch Name</label>
+      <input id="branchname" formControlName="branchname" placeholder="Enter Branch Name">
+  
+      <label for="orderdate">Order Date</label>
+      <input id="orderdate" type="date" formControlName="orderdate">
+  
+      <label for="deliverydate">Delivery Date</label>
+      <input id="deliverydate" type="date" formControlName="deliverydate">
+  
+      <label for="totalPrice">Total Price</label>
+      <input id="totalPrice" type="number" formControlName="totalPrice">
+    </div>
+  
+    <!-- Blouses Section -->
+    <h3>Blouses</h3>
+    <button type="button" (click)="addBlouse()">Add Blouse</button>
+    <div formArrayName="blouses" *ngFor="let blouse of blouses.controls; let i=index" [formGroupName]="i">
+      <h4>Blouse {{ i + 1 }}</h4>
+      <label>Style</label>
+      <input formControlName="style">
+      
+      <label>Neck Design</label>
+      <input formControlName="neckdesign">
+      
+      <label>Astar</label>
+      <input type="checkbox" formControlName="astar">
+  
+      <label>Opening Side</label>
+      <input formControlName="openingside">
+  
+      <label>Neck</label>
+      <input formControlName="neck">
+  
+      <label>Dori</label>
+      <input type="checkbox" formControlName="dori">
+  
+      <label>Sleeve</label>
+      <input formControlName="sleeve">
+  
+      <label>Detail</label>
+      <input formControlName="detail">
+  
+      <label>Cloth Image</label>
+      <input formControlName="clothimage">
+  
+      <label>Design Image</label>
+      <input formControlName="desingimage">
+  
+      <label>Price</label>
+      <input type="number" formControlName="price">
+    </div>
+  
+    <!-- Dresses Section -->
+    <h3>Dresses</h3>
+    <button type="button" (click)="addDress()">Add Dress</button>
+    <div formArrayName="dresses" *ngFor="let dress of dresses.controls; let i=index" [formGroupName]="i">
+      <h4>Dress {{ i + 1 }}</h4>
+      <label>Style</label>
+      <input formControlName="style">
+  
+      <label>Neck Design</label>
+      <input formControlName="neckdesign">
+  
+      <label>Astar</label>
+      <input type="checkbox" formControlName="astar">
+  
+      <label>Opening Side</label>
+      <input formControlName="openingside">
+  
+      <label>Back of Neck</label>
+      <input formControlName="backofneck">
+  
+      <label>Chain</label>
+      <input type="checkbox" formControlName="chain">
+  
+      <label>Sleeve</label>
+      <input formControlName="sleeve">
+  
+      <label>Detail</label>
+      <input formControlName="detail">
+  
+      <label>Cloth Image</label>
+      <input formControlName="clothimage">
+  
+      <label>Design Image</label>
+      <input formControlName="desingimage">
+  
+      <label>Price</label>
+      <input type="number" formControlName="price">
+    </div>
+  
+    <!-- Chaniyo Section -->
+    <h3>Chaniyo</h3>
+    <button type="button" (click)="addChaniyo()">Add Chaniyo</button>
+    <div formArrayName="chaniyo" *ngFor="let chaniyo of chaniyo.controls; let i=index" [formGroupName]="i">
+      <h4>Chaniyo {{ i + 1 }}</h4>
+      <label>Style</label>
+      <input formControlName="style">
+  
+      <label>Detail</label>
+      <input formControlName="detail">
+  
+      <label>Cloth Image</label>
+      <input formControlName="clothimage">
+  
+      <label>Design Image</label>
+      <input formControlName="desingimage">
+  
+      <label>Price</label>
+      <input type="number" formControlName="price">
+    </div>
+  
+    <!-- Pants Section -->
+    <h3>Pants</h3>
+    <button type="button" (click)="addPant()">Add Pant</button>
+    <div formArrayName="pants" *ngFor="let pant of pants.controls; let i=index" [formGroupName]="i">
+      <h4>Pant {{ i + 1 }}</h4>
+      <label>Rubbert</label>
+      <input formControlName="rubbert">
+  
+      <label>Neck Design</label>
+      <input formControlName="neckdesign">
+  
+      <label>Pocket</label>
+      <input type="checkbox" formControlName="pocket">
+  
+      <label>Detail</label>
+      <input formControlName="detail">
+  
+      <label>Price</label>
+      <input type="number" formControlName="price">
+    </div>
+  
+    <button type="submit" [disabled]="!orderForm.valid">Submit Order</button>
+  </form>
+  

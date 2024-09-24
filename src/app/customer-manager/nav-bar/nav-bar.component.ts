@@ -1,6 +1,7 @@
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-nav-bar',
@@ -11,8 +12,12 @@ import { RouterLink } from '@angular/router';
 })
 export class NavBarComponent {
   isOpen = false;
-
+  constructor(private route:Router){}
   toggleMenu() {
     this.isOpen = !this.isOpen;
+  }
+  logout(){
+    localStorage.removeItem("token");
+    this.route.navigateByUrl("/login");
   }
 }

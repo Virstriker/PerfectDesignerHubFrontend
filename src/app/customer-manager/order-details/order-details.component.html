@@ -1,0 +1,79 @@
+<div class="order-details-container">
+    <h2>Order Details</h2>
+    <div class="order-info">
+      <p><strong>Order ID:</strong> {{ order.orderDto.id }}</p>
+      <p><strong>Branch:</strong> {{ order.orderDto.branchname }}</p>
+      <p><strong>Customer:</strong> {{ order.orderDto.customer }}</p>
+      <p><strong>Order Date:</strong> {{ order.orderDto.orderdate }}</p>
+      <p><strong>Delivery Date:</strong> {{ order.orderDto.deliverydate }}</p>
+      <p><strong>Order Status:</strong> {{ order.orderDto.orderstatus ? 'Completed' : 'Pending' }}</p>
+      <p><strong>Order Tables:</strong> {{ order.orderDto.ordertables }}</p>
+      <p><strong>Total Price:</strong> {{ order.orderDto.totalPrice | currency }}</p>
+    </div>
+  
+    <div class="clothing-items">
+      <h3>Blouses</h3>
+      <div *ngFor="let blouse of order.blouses" class="item-card">
+        <img [src]="blouse.clothimage" alt="Blouse Cloth" class="item-image">
+        <img [src]="blouse.desingimage" alt="Blouse Design" class="item-image">
+        <div class="item-details">
+          <p><strong>ID:</strong> {{ blouse.id }}</p>
+          <p><strong>Order Table ID:</strong> {{ blouse.ordertableid }}</p>
+          <p><strong>Style:</strong> {{ blouse.style }}</p>
+          <p><strong>Neck Design:</strong> {{ blouse.neckdesign }}</p>
+          <p><strong>Astar:</strong> {{ blouse.astar ? 'Yes' : 'No' }}</p>
+          <p><strong>Opening Side:</strong> {{ blouse.openingside }}</p>
+          <p><strong>Neck:</strong> {{ blouse.neck }}</p>
+          <p><strong>Dori:</strong> {{ blouse.dori ? 'Yes' : 'No' }}</p>
+          <p><strong>Sleeve:</strong> {{ blouse.sleeve }}</p>
+          <p><strong>Detail:</strong> {{ blouse.detail }}</p>
+          <p><strong>Price:</strong> {{ blouse.price | currency }}</p>
+        </div>
+      </div>
+  
+      <h3>Dresses</h3>
+      <div *ngFor="let dress of order.dresses" class="item-card">
+        <img [src]="dress.clothimage" alt="Dress Cloth" class="item-image">
+        <img [src]="dress.desingimage" alt="Dress Design" class="item-image">
+        <div class="item-details">
+          <p><strong>ID:</strong> {{ dress.id }}</p>
+          <p><strong>Order Table ID:</strong> {{ dress.ordertableid }}</p>
+          <p><strong>Style:</strong> {{ dress.style }}</p>
+          <p><strong>Neck Design:</strong> {{ dress.neckdesign }}</p>
+          <p><strong>Astar:</strong> {{ dress.astar ? 'Yes' : 'No' }}</p>
+          <p><strong>Opening Side:</strong> {{ dress.openingside }}</p>
+          <p><strong>Back of Neck:</strong> {{ dress.backofneck }}</p>
+          <p><strong>Chain:</strong> {{ dress.chain ? 'Yes' : 'No' }}</p>
+          <p><strong>Sleeve:</strong> {{ dress.sleeve }}</p>
+          <p><strong>Detail:</strong> {{ dress.detail }}</p>
+          <p><strong>Price:</strong> {{ dress.price | currency }}</p>
+        </div>
+      </div>
+  
+      <h3>Chaniyo</h3>
+      <div *ngFor="let chaniyo of order.chaniyo" class="item-card">
+        <img [src]="chaniyo.clothimage" alt="Chaniyo Cloth" class="item-image">
+        <img [src]="chaniyo.desingimage" alt="Chaniyo Design" class="item-image">
+        <div class="item-details">
+          <p><strong>ID:</strong> {{ chaniyo.id }}</p>
+          <p><strong>Order Table ID:</strong> {{ chaniyo.ordertableid }}</p>
+          <p><strong>Style:</strong> {{ chaniyo.style }}</p>
+          <p><strong>Detail:</strong> {{ chaniyo.detail }}</p>
+          <p><strong>Price:</strong> {{ chaniyo.price | currency }}</p>
+        </div>
+      </div>
+  
+      <h3>Pants</h3>
+      <div *ngFor="let pant of order.pants" class="item-card">
+        <div class="item-details">
+          <p><strong>ID:</strong> {{ pant.id }}</p>
+          <p><strong>Order Table ID:</strong> {{ pant.ordertableid }}</p>
+          <p><strong>Rubber Type:</strong> {{ pant.rubbert }}</p>
+          <p><strong>Neck Design:</strong> {{ pant.neckdesign }}</p>
+          <p><strong>Pocket:</strong> {{ pant.pocket ? 'Yes' : 'No' }}</p>
+          <p><strong>Detail:</strong> {{ pant.detail }}</p>
+          <p><strong>Price:</strong> {{ pant.price | currency }}</p>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,55 +1,118 @@
 import { CommonModule, NgFor } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Customer} from "../../interfaces/customer";
+import { Customer, CustomerAdd, ResponseDto} from "../../interfaces/customer";
 import { Router, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { CustomerServiceService } from '../../services/customer-service.service';
 
 
 @Component({
   selector: 'app-customer',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule],
+  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
+  providers: [CustomerServiceService],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.css'
 })
 export class CustomerComponent implements OnInit {
-  constructor(private router: Router) {}
-  customers: Customer[] = [
-    { id: 1, name: 'John Doe', number: 'CUS001' },
-    { id: 2, name: 'Jane Smith', number: 'CUS002' },
-    { id: 3, name: 'Bob Johnson', number: 'CUS003' },
-    { id: 4, name: 'Alice Brown', number: 'CUS004' },
-    { id: 5, name: 'Charlie Davis', number: 'CUS005' }
-  ];
-
+  customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
-  searchTerm: string = '';
-
-  ngOnInit() {
-    this.filteredCustomers = this.customers;
+  addCustomerVariable:CustomerAdd={
+    Id:null,
+    Name:'',
+    Surname:'',
+    Phonenumber:'',
+    Address:''
   }
   
-  openAddCustomerModal() {
-    // Implement the logic to open a modal or navigate to add customer form
-    console.log('Open add customer modal');
+
+  errors: any = {};
+  showModal = false;
+  searchTerm: string = '';
+
+  constructor(private router: Router,private customerService:CustomerServiceService) {}
+
+  ngOnInit() {
+    this.getAllCustomers();
   }
 
-  ngDoCheck() {
-    this.filterCustomers();
+  getAllCustomers() {
+    this.customerService.getAllCustomer().subscribe({
+      next: (response: ResponseDto) => {
+        this.customers = response.responseObject;
+        this.filteredCustomers = this.customers;
+        console.log('Customers loaded:', this.customers);
+      },
+      error: (error) => {
+        console.error('Error fetching customers:', error);
+      }
+    });
+  }
+
+  addCustomer():any{
+    this.customerService.addCustomer(this.addCustomerVariable).subscribe({
+      next: (response: ResponseDto) => {
+        if(response.isSuccess){
+          this.getAllCustomers();
+          alert("customer added");
+        }else{
+          alert(response.message);
+        }
+      }
+    });
+  }
+
+  onSearchEmpty(){
+    if(this.searchTerm === ''){
+      this.getAllCustomers();
+    }
+  }
+
+  searchCustomer(){
+    if(this.searchTerm === ''){
+      alert("Enter name");
+    }else{
+      this.customerService.searchCustomer(this.searchTerm).subscribe({
+        next: (response:ResponseDto) =>{
+          if(response.isSuccess){
+            this.filteredCustomers = response.responseObject;
+          }else{
+            alert("No customer found");
+          }
+        }
+      });
+    }
   }
 
   goToCustomerInfo(customerId:number){
     this.router.navigateByUrl('customer-manager/customer-info/'+customerId);
   }
 
-  filterCustomers() {
-    if (!this.searchTerm) {
-      this.filteredCustomers = this.customers;
-    } else {
-      this.filteredCustomers = this.customers.filter(customer =>
-        customer.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        customer.number.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+  toggleModal() {
+    this.showModal = !this.showModal;
+  }
+
+  validateForm() {
+    const newErrors: any = {};
+
+    if (!this.addCustomerVariable.Name.trim()) newErrors.firstName = 'First name is required';
+    if (!this.addCustomerVariable.Surname.trim()) newErrors.lastName = 'Last name is required';
+    if (!this.addCustomerVariable.Phonenumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (!/^\d+$/.test(this.addCustomerVariable.Phonenumber)) {
+      newErrors.phoneNumber = 'Please enter a valid phone number';
+    }
+    if (!this.addCustomerVariable.Address.trim()) newErrors.address = 'Address is required';
+
+    this.errors = newErrors;
+    return Object.keys(newErrors).length === 0;
+  }
+
+  onSubmit() {
+    if (this.validateForm()) {
+      this.addCustomer();
+      this.toggleModal();
     }
   }
 }

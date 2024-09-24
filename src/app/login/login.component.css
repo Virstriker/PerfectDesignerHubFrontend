@@ -1,0 +1,167 @@
+/* Global Container for centering the login box */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0d1b2a; /* Dark blue background */
+    padding: 20px;
+  }
+  
+  /* Login box styling */
+  .login-box {
+    background-color: #1b263b; /* Lighter dark blue for contrast */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  
+  /* Header */
+  .login-box h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  /* Input Group */
+  .input-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  /* Label */
+  .input-group label {
+    color: #a9b2c3;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  /* Input Fields */
+  .input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    background-color: #23395d;
+    color: #fff;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  /* Input Hover and Focus Effects */
+  .input-group input:focus {
+    background-color: #3c5a9a;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Login Button */
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #3c91e6; /* Lighter blue for the button */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Button Hover Effect */
+  .login-btn:hover {
+    background-color: #306dbf;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Toast Message */
+  .toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #ff0000;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+  }
+  
+  .toast.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+  
+  @-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+  }
+  
+  /* Responsive Styles */
+  
+  /* Adjusting for larger screens */
+  @media (min-width: 768px) {
+    .login-box {
+      max-width: 400px;
+      padding: 40px;
+    }
+  
+    .login-box h2 {
+      font-size: 28px;
+    }
+  
+    .input-group input {
+      padding: 14px;
+      font-size: 16px;
+    }
+  
+    .login-btn {
+      font-size: 18px;
+      padding: 14px;
+    }
+  }
+  
+  /* Desktop styles */
+  @media (min-width: 1024px) {
+    .login-box {
+      max-width: 450px;
+      padding: 50px;
+    }
+  
+    .login-box h2 {
+      font-size: 32px;
+    }
+  
+    .input-group input {
+      padding: 16px;
+      font-size: 18px;
+    }
+  
+    .login-btn {
+      font-size: 20px;
+      padding: 16px;
+    }
+  }

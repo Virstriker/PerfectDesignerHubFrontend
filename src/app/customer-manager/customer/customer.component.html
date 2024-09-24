@@ -1,18 +1,101 @@
 <div class="customer-management-container">
     <div class="search-add-container">
       <div class="search-bar">
-        <input type="text" placeholder="Search customers..." [(ngModel)]="searchTerm">
-        <img src="../../../assets/search.png" alt="Search" class="search-icon">
+        <input type="text" placeholder="Search customers..." [(ngModel)]="searchTerm" (keyup)="onSearchEmpty()">
+        <img src="../../../assets/search.png" alt="Search" class="search-icon" (click)="searchCustomer()">
       </div>
-      <button class="add-customer-btn" (click)="openAddCustomerModal()">
+      <button class="add-customer-btn" (click)="toggleModal()">
         Add Customer
       </button>
     </div>
   
     <div class="customer-list">
       <div *ngFor="let customer of filteredCustomers" class="customer-card" (click)="goToCustomerInfo(customer.id)">
-        <h3>{{ customer.name }}</h3>
-        <p>{{ customer.number }}</p>
+        <h3>{{ customer.name +" "+customer.surname}}</h3>
+        <p>{{ customer.phonenumber }}</p>
       </div>
     </div>
   </div>
+
+  <!-- Modal Popup for Customer Details Form -->
+<div class="modal" *ngIf="showModal">
+  <div class="modal-content">
+    <span class="close-btn" (click)="toggleModal()">&times;</span>
+    <h2 class="text-center">Customer Details</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <!-- First Name Field -->
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <div class="input-container">
+          <img src="../../../assets/user.png" class="icon" />
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            [(ngModel)]="addCustomerVariable.Name"
+            [ngClass]="{'is-invalid': errors.firstName}"
+            placeholder="John"
+          />
+        </div>
+        <div *ngIf="errors.firstName" class="error">{{ errors.firstName }}</div>
+      </div>
+
+      <!-- Last Name Field -->
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <div class="input-container">
+          <img src="../../../assets/user.png" class="icon" />
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            [(ngModel)]="addCustomerVariable.Surname"
+            [ngClass]="{'is-invalid': errors.lastName}"
+            placeholder="Doe"
+          />
+        </div>
+        <div *ngIf="errors.lastName" class="error">{{ errors.lastName }}</div>
+      </div>
+
+      <!-- Phone Number Field -->
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number</label>
+        <div class="input-container">
+          <img src="../../../assets/phone-call.png" class="icon" />
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            [(ngModel)]="addCustomerVariable.Phonenumber"
+            [ngClass]="{'is-invalid': errors.phoneNumber}"
+            placeholder="1234567890"
+          />
+        </div>
+        <div *ngIf="errors.phoneNumber" class="error">{{ errors.phoneNumber }}</div>
+      </div>
+
+      <!-- Address Field -->
+      <div class="form-group">
+        <label for="address">Address</label>
+        <div class="input-container">
+          <img src="../../../assets/location.png" class="icon" />
+          <textarea
+            id="address"
+            name="address"
+            rows="3"
+            [(ngModel)]="addCustomerVariable.Address"
+            [ngClass]="{'is-invalid': errors.address}"
+            placeholder="Enter your full address"
+          ></textarea>
+        </div>
+        <div *ngIf="errors.address" class="error">{{ errors.address }}</div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit" class="submit-btn">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>

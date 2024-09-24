@@ -1,39 +1,44 @@
 <div class="customer-details-container">
-    <div class="header-container">
-        <h2>Customer Details</h2>
-        <a class="back-link" (click)="goBack()">Back</a>
+  <div class="header-container">
+    <h2>Customer Details</h2>
+    <a class="back-link" (click)="goBack()">Back</a>
+  </div>
+  <div class="customer-info">
+    <div class="info-item">
+      <label>Name:</label>
+      <span>{{customer.name}}</span>
     </div>
-    <div class="customer-info">
-      <div class="info-item">
-        <label>Name:</label>
-        <span>{{customer.name}}</span>
-      </div>
-      <div class="info-item">
-        <label>Surname:</label>
-        <span>{{customer.surname}}</span>
-      </div>
-      <div class="info-item">
-        <label>Phone Number:</label>
-        <span>{{customer.phoneNumber}}</span>
-      </div>
-      <div class="info-item">
-        <label>Address:</label>
-        <span>{{customer.address}}</span>
-      </div>
+    <div class="info-item">
+      <label>Surname:</label>
+      <span>{{customer.surname}}</span>
     </div>
-    <button class="see-measurement-btn" (click)="seeMeasurement()">See Measurement</button>
+    <div class="info-item">
+      <label>Phone Number:</label>
+      <span>{{customer.phonenumber}}</span>
+    </div>
+    <div class="info-item">
+      <label>Address:</label>
+      <span>{{customer.address}}</span>
+    </div>
+  </div>
   
-    <h3>Order Details</h3>
+    <button class="see-measurement-btn">See Measurement</button>
+  
+    <h3 class="order-detail">Order Details</h3>
     <div class="order-cards-container">
-      <div class="order-card" *ngFor="let order of customerOrders">
-        <h4>Order #{{order.orderNumber}}</h4>
-        <div class="order-status" [ngClass]="order.status.toLowerCase()">
-          {{order.status}}
+      <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of customerOrders">
+        <div class="order-card-header">
+          <h4>Order #{{order.id}}</h4>
+          <div class="order-status" [ngClass]="order.orderstatus ? 'active' : 'complete'">
+            {{ order.orderstatus ? 'Active' : 'Complete' }}
+          </div>
         </div>
+        
         <div class="order-dates">
-          <p><strong>Start Date:</strong> {{order.startDate}}</p>
-          <p><strong>End Date:</strong> {{order.endDate}}</p>
+          <p><strong>Start Date:</strong> {{order.orderdate}}</p>
+          <p><strong>End Date:</strong> {{order.deliverydate}}</p>
         </div>
       </div>
     </div>
+    
   </div>

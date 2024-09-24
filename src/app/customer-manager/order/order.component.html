@@ -1,0 +1,27 @@
+<div class="order-management-container">
+    <div class="search-add-container">
+      <div class="search-bar">
+        <input type="text" placeholder="Search orders..." [(ngModel)]="searchTerm" >
+        <img src="../../../assets/search.png" alt="Search" class="search-icon" >
+      </div>
+      <button class="add-order-btn">
+        Add Order
+      </button>
+    </div>
+    <div class="order-cards-container">
+        <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of orders">
+          <div class="order-card-header">
+            <h4>Order #{{order.id}}</h4>
+            <div class="order-status" [ngClass]="order.orderstatus ? 'active' : 'complete'">
+              {{ order.orderstatus ? 'Active' : 'Complete' }}
+            </div>
+          </div>
+          <div class="order-details">
+            <p><strong>Branch Name:</strong> {{order.branchname}}</p>
+            <p><strong>Customer:</strong> {{order.customer}}</p>
+            <p><strong>Order Date:</strong> {{order.orderdate}}</p>
+            <p><strong>Delivery Date:</strong> {{order.deliverydate}}</p>
+          </div>
+        </div>
+      </div>
+</div>
