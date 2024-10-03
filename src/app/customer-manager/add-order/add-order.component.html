@@ -3,7 +3,9 @@
     
     <form>
         <label>Customer ID:</label>
-        <input type="number" [(ngModel)]="order.customerId" name="customerId" required />
+<select [(ngModel)]="order.customerId" name="customerId" id="selectCustomer" required>
+  <option *ngFor="let customer of customerIds" [value]="customer.id">{{ customer.name }}</option>
+</select>
 
         <label>Branch Name:</label>
         <input type="text" [(ngModel)]="order.branchName" name="branchName" required />
@@ -23,20 +25,20 @@
     <!-- Display added items -->
     <h3>Added Items</h3>
     
-    <div *ngFor="let blouse of blouses">
-        Blouse - Style: {{blouse.style}}, Neck Design: {{blouse.neckDesign}}, ImageUrl: {{blouse.desingimage}} ,Price: {{blouse.price | currency}}
+    <div *ngFor="let blouse of blouses" class="order-card">
+        <h3>Blouse</h3> - Style: {{blouse.style}} ,Price: {{blouse.price | currency}}
     </div>
     
-    <div *ngFor="let dress of dresses">
-        Dress - Style: {{dress.style}}, Neck Design: {{dress.neckDesign}}, Price: {{dress.price | currency}}
+    <div *ngFor="let dress of dresses" class="order-card">
+        <h3>Dress</h3> - Style: {{dress.style}}, Price: {{dress.price | currency}}
     </div>
     
-    <div *ngFor="let chaniyo of chaniyos">
-        Chaniyo - Style: {{chaniyo.style}}, Price: {{chaniyo.price | currency}}
+    <div *ngFor="let chaniyo of chaniyos" class="order-card">
+        <h3>Chaniyo</h3> - Style: {{chaniyo.style}}, Price: {{chaniyo.price | currency}}
     </div>
     
-    <div *ngFor="let pant of pants">
-        Pant - Rubber T: {{pant.rubberT}}, Price: {{pant.price | currency}}
+    <div *ngFor="let pant of pants" class="order-card">
+        <h3>Pant</h3> - Rubber T: {{pant.rubberT}}, Price: {{pant.price | currency}}
     </div>
 
 <!-- Blouse Popup -->

@@ -45,6 +45,14 @@
   .item-details p {
     margin: 5px 0;
   }
+  .bill-button{
+    color: white;
+    background-color: blue;
+    box-shadow: inset 2px 2px 4px white;
+    border: none;
+    padding: 8px 10px;
+    cursor: pointer;
+  }
   
   @media (max-width: 600px) {
     .item-card {

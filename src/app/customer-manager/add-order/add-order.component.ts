@@ -4,12 +4,14 @@ import { Component, OnInit } from '@angular/core';
 import {ReactiveFormsModule, NgModelGroup, FormsModule } from '@angular/forms';
 import { OrderServiceService } from '../../services/order-service.service';
 import { ResponseDto } from '../../interfaces/customer';
+import { CustomerServiceService } from '../../services/customer-service.service';
 interface Ordertable {
   customerId?: number;
   branchName?: string;
   orderDate?: string;
   deliveryDate?: string;
   totalPrice?: number;
+  orderstatus?:boolean;
 }
 
 interface addOrderDto{
@@ -67,13 +69,15 @@ interface Pant {
   selector: 'app-add-order',
   standalone: true,
   imports: [NgClass, NgFor, CommonModule, HttpClientModule,ReactiveFormsModule,FormsModule],
-  providers:[OrderServiceService],
+  providers:[OrderServiceService,CustomerServiceService],
   templateUrl: './add-order.component.html',
   styleUrl: './add-order.component.css'
 })
-export class AddOrderComponent {
+export class AddOrderComponent implements OnInit{
   order: Ordertable = {};
-  constructor(private  orderService: OrderServiceService) {}
+  constructor(private  orderService: OrderServiceService,
+    private customerService:CustomerServiceService
+  ) {}
 
   // Arrays to hold added items
   blouses: Blouse[] = [];
@@ -207,10 +211,19 @@ export class AddOrderComponent {
     this.addOrder.chaniyo = this.chaniyos;
     this.addOrder.dresses = this.dresses;
     this.addOrder.pants = this.pants;
+    this.addOrder.ordertable.orderstatus = false;
     console.log(this.addOrder);
     this.orderService.addOrder(this.addOrder).subscribe({
       next:(response:ResponseDto)=>{
         console.log(response);
+      }
+    });
+  }
+  customerIds: any[] = [];
+  ngOnInit(){
+    this.customerService.getAllCustomer().subscribe({
+      next:(response:ResponseDto)=>{
+        this.customerIds = response.responseObject;
       }
     });
   }

@@ -7,7 +7,7 @@
         <a href="#">Home</a>
         <a routerLink="/customer-manager/customer">Customers</a>
         <a routerLink="/customer-manager/order">Order</a>
-        <a href="#">Measurement</a>
+        <a routerLink="/customer-manager/measurement">Measurement</a>
         <a (click)="logout()" style="border-radius: 20px; background-color: red; box-shadow: inset 2px 2px 5px #2d3748;  cursor: pointer;">Logout</a>
         <button aria-label="Notifications" class="notification-btn">
           <img src="../../../assets/notification.png" alt="Notifications" class="icon" />
@@ -30,7 +30,7 @@
       <a href="#" (click)="toggleMenu()">Home</a>
       <a routerLink="/customer-manager/customer" (click)="toggleMenu()">Customers</a>
       <a routerLink="/customer-manager/order" (click)="toggleMenu()">Order</a>
-      <a href="#" (click)="toggleMenu()">Measurement</a>
+      <a routerLink="/customer-manager/measurement" (click)="toggleMenu()">Measurement</a>
       <a href="#" (click)="logout()">Logout</a>
     </div>
   </nav>

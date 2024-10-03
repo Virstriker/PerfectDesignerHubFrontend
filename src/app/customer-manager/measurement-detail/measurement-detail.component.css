@@ -1,0 +1,57 @@
+/* measurements-form.component.css */
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  margin-left: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  width: 30%;
+  margin-top: 20px;
+  padding: 10px 20px;
+  display: block;
+  cursor: pointer;
+}
+h2{
+  text-align: center;
+  margin: 10px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+@media (min-width: 768px) {
+  .form-group {
+    display: inline-block;
+    width: 45%;
+    margin-right: 5%;
+  }
+
+  .form-group:nth-child(2n) {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-group {
+    margin-left: 0px;
+  }
+}

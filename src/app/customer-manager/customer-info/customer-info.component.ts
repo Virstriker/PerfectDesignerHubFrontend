@@ -65,4 +65,7 @@ export class CustomerInfoComponent implements OnInit {
   goToOrder(id:number){
     this.router.navigateByUrl("/customer-manager/order-info/"+id);
   }
+  goToMeasurment(){
+    this.router.navigateByUrl('customer-manager/measurement-detail/'+this.customer.id);
+  }
 }

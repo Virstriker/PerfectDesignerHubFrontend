@@ -162,7 +162,15 @@ button[type="submit"] {
   background-color: #e74c3c;
   color: white;
 }
-
+.order-card{
+  background-color: #9dd8ff;
+  box-sizing: border-box;
+  box-shadow: inset 2px 2px 4px rgb(0, 153, 255);
+  border-right: 2px solid black;
+  border-bottom: 2px  solid black;
+  padding: 10px 20px;
+  margin: 10px 0px;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
   .order-form {
@@ -233,4 +241,10 @@ input[type="file"] {
 
 .file-upload-label:active {
   background-color: #2980b9; /* Darker background on click */
+}
+#selectCustomer{
+  width: calc(100% - 20px);
+  border-radius: 4px;
+  border: 1px solid gray;
+  padding: 10px;  
 }

@@ -46,4 +46,8 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "AddNewOrder";
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
+  getBillPdf(order:any):Observable<Blob>{
+    const url = this.baseOrderUrl + "GenerateBill";
+    return this.http.post<Blob>(url, order,{ headers: this.getAuthHeaders() });
+  }
 }

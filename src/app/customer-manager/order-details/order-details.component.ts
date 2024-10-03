@@ -9,14 +9,14 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers:[OrderServiceService],
+  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule],
+  providers: [OrderServiceService],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css'
 })
 export class OrderDetailsComponent implements OnInit {
   order: OrderDetails = {
-    orderDto:{
+    orderDto: {
       branchname: '',
       customer: '',
       deliverydate: '',
@@ -31,7 +31,7 @@ export class OrderDetailsComponent implements OnInit {
     chaniyo: [],
     pants: []
   };
-  orderId!:number;
+  orderId!: number;
   constructor(private orderService: OrderServiceService,
     private route: ActivatedRoute
   ) { } // Assume OrderService is a service to fetch data
@@ -49,6 +49,29 @@ export class OrderDetailsComponent implements OnInit {
         } else {
           alert(response.message);
         }
+      }
+    });
+  }
+  generateBillPdf() {
+    this.orderService.getBillPdf(this.order).subscribe({
+      next: (response:any)=>{
+        // Create a blob object from the PDF data
+      const blob = new Blob([response], { type: 'application/pdf' });
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      
+      // Set the download attribute with the file name
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${this.order.orderDto.customer}.pdf`;
+      
+      // Append the link to the body temporarily and trigger click to download
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up the link after triggering the download
+      document.body.removeChild(link);
+
       }
     });
   }

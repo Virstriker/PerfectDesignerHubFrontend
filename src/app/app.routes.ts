@@ -6,6 +6,8 @@ import { CustomerInfoComponent } from './customer-manager/customer-info/customer
 import { OrderComponent } from './customer-manager/order/order.component';
 import { OrderDetailsComponent } from './customer-manager/order-details/order-details.component';
 import { AddOrderComponent } from './customer-manager/add-order/add-order.component';
+import { MeasurementComponent } from './customer-manager/measurement/measurement.component';
+import { MeasurementDetailComponent } from './customer-manager/measurement-detail/measurement-detail.component';
 
 export const routes: Routes = [
     {path:'login',component:LoginComponent},
@@ -14,6 +16,8 @@ export const routes: Routes = [
         {path:'customer-info/:id',component:CustomerInfoComponent},
         {path:'order',component:OrderComponent},
         {path:'order-info/:id',component:OrderDetailsComponent},
-        {path:'add-order',component:AddOrderComponent}
+        {path:'add-order',component:AddOrderComponent},
+        {path:'measurement',component:MeasurementComponent},
+        {path:'measurement-detail/:id',component:MeasurementDetailComponent}
     ]}
 ];
