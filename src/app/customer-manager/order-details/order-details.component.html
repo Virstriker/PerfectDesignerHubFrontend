@@ -1,5 +1,8 @@
 <div class="order-details-container">
-  <h2>Order Details</h2>
+  <div id="order-header">
+    <h2>Order Details</h2>
+    <a class="back-link" (click)="goBack()">Back</a>
+  </div>
   <div class="order-info">
     <p><strong>Order ID:</strong> {{ order.orderDto.id }}</p>
     <p><strong>Branch:</strong> {{ order.orderDto.branchname }}</p>
@@ -76,5 +79,6 @@
       </div>
     </div>
   </div>
-  <button (click)="generateBillPdf()" class="bill-button">Generate Bil</button>
+  <button class="button-63" (click)="generateBillPdf()" role="button">Generate Bil</button>
+
 </div>

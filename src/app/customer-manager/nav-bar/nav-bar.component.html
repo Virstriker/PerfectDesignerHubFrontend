@@ -4,8 +4,7 @@
   
       <!-- Desktop Menu -->
       <div class="menu desktop-menu">
-        <a href="#">Home</a>
-        <a routerLink="/customer-manager/customer">Customers</a>
+        <a routerLink="/customer-manager">Customers</a>
         <a routerLink="/customer-manager/order">Order</a>
         <a routerLink="/customer-manager/measurement">Measurement</a>
         <a (click)="logout()" style="border-radius: 20px; background-color: red; box-shadow: inset 2px 2px 5px #2d3748;  cursor: pointer;">Logout</a>
@@ -27,8 +26,7 @@
   
     <!-- Mobile Menu Items -->
     <div *ngIf="isOpen" class="mobile-menu">
-      <a href="#" (click)="toggleMenu()">Home</a>
-      <a routerLink="/customer-manager/customer" (click)="toggleMenu()">Customers</a>
+      <a routerLink="/customer-manager" (click)="toggleMenu()">Customers</a>
       <a routerLink="/customer-manager/order" (click)="toggleMenu()">Order</a>
       <a routerLink="/customer-manager/measurement" (click)="toggleMenu()">Measurement</a>
       <a href="#" (click)="logout()">Logout</a>

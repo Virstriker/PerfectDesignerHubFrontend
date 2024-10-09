@@ -5,6 +5,7 @@ import {ReactiveFormsModule, NgModelGroup, FormsModule } from '@angular/forms';
 import { OrderServiceService } from '../../services/order-service.service';
 import { ResponseDto } from '../../interfaces/customer';
 import { CustomerServiceService } from '../../services/customer-service.service';
+import { Router } from '@angular/router';
 interface Ordertable {
   customerId?: number;
   branchName?: string;
@@ -76,7 +77,8 @@ interface Pant {
 export class AddOrderComponent implements OnInit{
   order: Ordertable = {};
   constructor(private  orderService: OrderServiceService,
-    private customerService:CustomerServiceService
+    private customerService:CustomerServiceService,
+    private rout:Router
   ) {}
 
   // Arrays to hold added items
@@ -198,6 +200,7 @@ export class AddOrderComponent implements OnInit{
     })
     console.log(this.newChaniyo);
   }
+  
  addOrder:addOrderDto={
   ordertable:{},
   blouses:[],
@@ -206,16 +209,22 @@ export class AddOrderComponent implements OnInit{
   pants:[],
  };
   onSubmit(){
+    this.order.orderDate = new Date().toDateString();
     this.addOrder.ordertable = this.order;
     this.addOrder.blouses = this.blouses;
     this.addOrder.chaniyo = this.chaniyos;
     this.addOrder.dresses = this.dresses;
     this.addOrder.pants = this.pants;
-    this.addOrder.ordertable.orderstatus = false;
+    this.addOrder.ordertable.orderstatus = true;
     console.log(this.addOrder);
     this.orderService.addOrder(this.addOrder).subscribe({
       next:(response:ResponseDto)=>{
-        console.log(response);
+        if(response.isSuccess){
+          alert("Order Added");
+          this.rout.navigateByUrl("/customer-manager/order");
+        }else{
+          alert("Order Not Added");
+        }
       }
     });
   }

@@ -96,11 +96,12 @@ export class MeasurementDetailComponent implements OnInit {
     private measurementsService: MeasurementServiceService
   ) {
   }
+  customerId : number = 0;
 
   ngOnInit(): void {
-    const customerId = +this.route.snapshot.paramMap.get('id')!;
-    this.measurements.customerId = customerId;
-    this.loadMeasurements(customerId);
+    this.customerId = +this.route.snapshot.paramMap.get('id')!;
+    this.measurements.customerId = this.customerId;
+    this.loadMeasurements(this.customerId);
   }
 
   loadMeasurements(customerId: number) {
@@ -120,6 +121,7 @@ export class MeasurementDetailComponent implements OnInit {
 
   submitForm() {
     if(this.recordExists){
+      this.measurements.customerId = this.customerId;
       this.measurementsService.updateMeasurements(this.measurements.id,this.measurements).subscribe({
         next: (data:ResponseDto) => {
             if(data.isSuccess){

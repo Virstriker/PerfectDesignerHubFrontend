@@ -4,6 +4,7 @@ import { constant } from '../constants/constants';
 import { ResponseDto } from '../interfaces/customer';
 import { Observable } from 'rxjs/internal/Observable';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -46,8 +47,24 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "AddNewOrder";
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
-  getBillPdf(order:any):Observable<Blob>{
-    const url = this.baseOrderUrl + "GenerateBill";
-    return this.http.post<Blob>(url, order,{ headers: this.getAuthHeaders() });
+  generatePdf(data:any): void {
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    this.http.post('http://localhost:3000/generate-pdf', data, { headers, responseType: 'arraybuffer' })
+      .subscribe(response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.name;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }, error => {
+        console.error('Error generating PDF:', error);
+      });
   }
+  
 }

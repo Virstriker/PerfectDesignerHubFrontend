@@ -60,6 +60,7 @@
 }
 
 .order-card {
+  cursor: pointer;
   background-color: #f9f9f9; /* Light background for cards */
   border: 1px solid #e1e1e1; /* Light border for separation */
   border-radius: 12px; /* More rounded corners */

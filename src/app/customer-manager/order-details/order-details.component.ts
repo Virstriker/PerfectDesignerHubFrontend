@@ -5,7 +5,21 @@ import { CommonModule, NgFor } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
 
+interface InvoiceData {
+  name: string;
+  date: Date;
+  id: number;
+  items: Item[];
+  tax: number;
+  grandTotal: number;
+}
 @Component({
   selector: 'app-order-details',
   standalone: true,
@@ -53,26 +67,60 @@ export class OrderDetailsComponent implements OnInit {
     });
   }
   generateBillPdf() {
-    this.orderService.getBillPdf(this.order).subscribe({
-      next: (response:any)=>{
-        // Create a blob object from the PDF data
-      const blob = new Blob([response], { type: 'application/pdf' });
-      
-      // Create a temporary link element
-      const link = document.createElement('a');
-      
-      // Set the download attribute with the file name
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${this.order.orderDto.customer}.pdf`;
-      
-      // Append the link to the body temporarily and trigger click to download
-      document.body.appendChild(link);
-      link.click();
-      
-      // Clean up the link after triggering the download
-      document.body.removeChild(link);
-
+    const data:InvoiceData = {
+      name: this.order.orderDto.customer,
+      date: new Date(),
+      id: this.order.orderDto.id,
+      items: [],
+      tax: 0,
+      grandTotal: 0
+    };
+    for(var blouse of this.order.blouses){
+      const item:Item = {
+        name:'Blouse',
+        price:blouse.price,
+        quantity:1,
+        totalPrice:blouse.price
       }
-    });
+      data.grandTotal +=  item.totalPrice;
+      data.items.push(item);
+    }
+    for(var pant of this.order.pants){
+      const item:Item = {
+        name:'Pant',
+        price:pant.price,
+        quantity:1,
+        totalPrice:pant.price
+      }
+      data.grandTotal +=  item.totalPrice;
+      data.items.push(item);
+    }
+    for(var chaniy of this.order.chaniyo){
+      const item:Item = {
+        name:'Chaniyo',
+        price:chaniy.price,
+        quantity:1,
+        totalPrice:chaniy.price
+      }
+      data.grandTotal +=  item.totalPrice;
+      data.items.push(item);
+    }
+    for(var dress of this.order.dresses){
+      const item:Item = {
+        name:'Dress',
+        price:dress.price,
+        quantity:1,
+        totalPrice:dress.price
+      }
+      data.grandTotal +=  item.totalPrice;
+      data.items.push(item);
+    }
+    data.grandTotal -= data.tax;
+    this.orderService.generatePdf(data);
+   
+  }
+  goBack() {
+    // Implement the logic to go back, e.g., navigating to the previous page
+    window.history.back();
   }
 }

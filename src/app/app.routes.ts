@@ -8,11 +8,13 @@ import { OrderDetailsComponent } from './customer-manager/order-details/order-de
 import { AddOrderComponent } from './customer-manager/add-order/add-order.component';
 import { MeasurementComponent } from './customer-manager/measurement/measurement.component';
 import { MeasurementDetailComponent } from './customer-manager/measurement-detail/measurement-detail.component';
+import { SiteHomePageComponent } from './site-home-page/site-home-page.component';
 
 export const routes: Routes = [
+    {path:'',component:SiteHomePageComponent},
     {path:'login',component:LoginComponent},
     {path:'customer-manager',component:CustomerManagerComponent,children:[
-        {path:'customer',component:CustomerComponent},
+        {path:'',component:CustomerComponent},
         {path:'customer-info/:id',component:CustomerInfoComponent},
         {path:'order',component:OrderComponent},
         {path:'order-info/:id',component:OrderDetailsComponent},

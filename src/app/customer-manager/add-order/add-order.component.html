@@ -1,6 +1,5 @@
 <div class="order-form">
     <h2>Add Order</h2>
-    
     <form>
         <label>Customer ID:</label>
 <select [(ngModel)]="order.customerId" name="customerId" id="selectCustomer" required>
@@ -9,9 +8,6 @@
 
         <label>Branch Name:</label>
         <input type="text" [(ngModel)]="order.branchName" name="branchName" required />
-
-        <label>Order Date:</label>
-        <input type="date" [(ngModel)]="order.orderDate" name="orderDate" required />
 
         <label>Delivery Date:</label>
         <input type="date" [(ngModel)]="order.deliveryDate" name="deliveryDate" required />

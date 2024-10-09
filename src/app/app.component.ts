@@ -12,20 +12,18 @@ export class AppComponent implements  OnInit {
   constructor(private route:Router){}
   title = 'perfect';
   ngOnInit(): void {
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   const decodedToken = this.decodeToken(token);
-    //   const currentTime = Math.floor(Date.now() / 1000);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = this.decodeToken(token);
+      const currentTime = Math.floor(Date.now() / 1000);
 
-    //   if (decodedToken.exp < currentTime) {
-    //     localStorage.removeItem('token');
-    //     this.route.navigateByUrl('/login');
-    //   } else {
-    //     this.route.navigateByUrl('/customer-manager');
-    //   }
-    // } else {
-    //   this.route.navigateByUrl('/login');
-    // }
+      if (decodedToken.exp < currentTime) {
+        localStorage.removeItem('token');
+        this.route.navigateByUrl('/login');
+      }
+    } else {
+      this.route.navigateByUrl('/login');
+    }
   }
 
   private decodeToken(token: string): any {
