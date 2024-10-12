@@ -57,7 +57,7 @@ export class OrderServiceService {
       'Content-Type': 'application/json'
     });
     const url = this.constant.pdfUrl+'generate-pdf';
-    this.http.post('url', data, { headers, responseType: 'arraybuffer' })
+    this.http.post(url, data, { headers, responseType: 'arraybuffer' })
       .subscribe(response => {
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
