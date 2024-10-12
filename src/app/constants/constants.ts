@@ -6,4 +6,5 @@ import { Injectable } from '@angular/core';
 export class constant {
   // public Url: string = 'http://192.168.1.9:5035/';
   public Url: string = 'https://perfectdesignerhub.runasp.net/';
+  public pdfUrl: string = 'https://pdf-generator-node-js.vercel.app/'
 }
