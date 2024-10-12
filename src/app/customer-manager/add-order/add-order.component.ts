@@ -33,7 +33,7 @@ interface Blouse {
   sleeve?: string;
   detail?: string;
   clothimage?: string;
-  designimage?: string;
+  desingimage?: string;
   price?: number;
 }
 
@@ -47,7 +47,7 @@ interface Dress {
   sleeve?: string;
   detail?: string;
   clothimage?: string;
-  designimage?: string;
+  desingimage?: string;
   price?: number;
 }
 
@@ -55,7 +55,7 @@ interface Chaniyo {
   style?: string;
   detail?: string;
   clothimage?: string;
-  designimage?: string;
+  desingimage?: string;
   price?: number;
 }
 
@@ -95,7 +95,8 @@ export class AddOrderComponent implements OnInit{
   showPantPopup = false;
 
   // New item variables for pop-ups
-  newBlouse: Blouse = {};
+  newBlouse: Blouse = {
+  };
   newDress: Dress = {};
   newChaniyo: Chaniyo = {};
   newPant: Pant = {};
@@ -103,7 +104,8 @@ export class AddOrderComponent implements OnInit{
   // Methods to open pop-ups
   openBlousePopup() {
       this.showBlousePopup = true; 
-      this.newBlouse = {}; // Reset for new entry
+      this.newBlouse = {
+      };
   }
 
   openDressPopup() {
@@ -153,7 +155,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newBlouse.designimage = Data.data.display_url;
+        this.newBlouse.desingimage = Data.data.display_url;
     }
     })
   }
@@ -170,7 +172,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newDress.designimage = Data.data.display_url;
+        this.newDress.desingimage = Data.data.display_url;
     }
     })
   }
@@ -187,7 +189,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newChaniyo.designimage = Data.data.display_url;
+        this.newChaniyo.desingimage = Data.data.display_url;
     }
     })
     console.log(this.newChaniyo);
