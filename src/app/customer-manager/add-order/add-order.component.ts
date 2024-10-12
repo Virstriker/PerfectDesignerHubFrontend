@@ -1,4 +1,4 @@
-import { NgClass, NgFor, CommonModule } from '@angular/common';
+import { NgClass, NgFor, CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {ReactiveFormsModule, NgModelGroup, FormsModule } from '@angular/forms';
@@ -33,7 +33,7 @@ interface Blouse {
   sleeve?: string;
   detail?: string;
   clothimage?: string;
-  desingimage?: string;
+  designimage?: string;
   price?: number;
 }
 
@@ -47,7 +47,7 @@ interface Dress {
   sleeve?: string;
   detail?: string;
   clothimage?: string;
-  desingimage?: string;
+  designimage?: string;
   price?: number;
 }
 
@@ -55,7 +55,7 @@ interface Chaniyo {
   style?: string;
   detail?: string;
   clothimage?: string;
-  desingimage?: string;
+  designimage?: string;
   price?: number;
 }
 
@@ -70,7 +70,7 @@ interface Pant {
   selector: 'app-add-order',
   standalone: true,
   imports: [NgClass, NgFor, CommonModule, HttpClientModule,ReactiveFormsModule,FormsModule],
-  providers:[OrderServiceService,CustomerServiceService],
+  providers:[OrderServiceService,CustomerServiceService,DatePipe],
   templateUrl: './add-order.component.html',
   styleUrl: './add-order.component.css'
 })
@@ -78,7 +78,8 @@ export class AddOrderComponent implements OnInit{
   order: Ordertable = {};
   constructor(private  orderService: OrderServiceService,
     private customerService:CustomerServiceService,
-    private rout:Router
+    private rout:Router,
+    private datePipe:DatePipe
   ) {}
 
   // Arrays to hold added items
@@ -152,7 +153,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newBlouse.desingimage = Data.data.display_url;
+        this.newBlouse.designimage = Data.data.display_url;
     }
     })
   }
@@ -169,7 +170,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newDress.desingimage = Data.data.display_url;
+        this.newDress.designimage = Data.data.display_url;
     }
     })
   }
@@ -186,7 +187,7 @@ export class AddOrderComponent implements OnInit{
     const file = event.target.files[0];
     this.orderService.getImageUrl(file).subscribe({
       next: (Data) => {
-        this.newChaniyo.desingimage = Data.data.display_url;
+        this.newChaniyo.designimage = Data.data.display_url;
     }
     })
     console.log(this.newChaniyo);
@@ -208,14 +209,28 @@ export class AddOrderComponent implements OnInit{
   dresses:[],
   pants:[],
  };
+ formatDate(dateStr: string): string | null {
+  // Parse the string into a JavaScript Date object
+  const dateObj = new Date(dateStr);
+
+  // Format the date using Angular's DatePipe
+  return this.datePipe.transform(dateObj, 'yyyy-MM-dd');
+}
   onSubmit(){
-    this.order.orderDate = new Date().toDateString();
+    const formattedDate = this.formatDate(new Date().toDateString());
+    if (formattedDate !== null) {
+      this.order.orderDate = formattedDate;
+    } else {
+      // Handle the case where formatDate returns null
+      console.error('Failed to format date');
+      // You might want to set a default date or show an error message
+    }
     this.addOrder.ordertable = this.order;
     this.addOrder.blouses = this.blouses;
     this.addOrder.chaniyo = this.chaniyos;
     this.addOrder.dresses = this.dresses;
     this.addOrder.pants = this.pants;
-    this.addOrder.ordertable.orderstatus = true;
+    this.addOrder.ordertable.orderstatus = false;
     console.log(this.addOrder);
     this.orderService.addOrder(this.addOrder).subscribe({
       next:(response:ResponseDto)=>{

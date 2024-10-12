@@ -9,6 +9,7 @@ import { AddOrderComponent } from './customer-manager/add-order/add-order.compon
 import { MeasurementComponent } from './customer-manager/measurement/measurement.component';
 import { MeasurementDetailComponent } from './customer-manager/measurement-detail/measurement-detail.component';
 import { SiteHomePageComponent } from './site-home-page/site-home-page.component';
+import { OrderNotificationComponent } from './customer-manager/order-notification/order-notification.component';
 
 export const routes: Routes = [
     {path:'',component:SiteHomePageComponent},
@@ -20,6 +21,7 @@ export const routes: Routes = [
         {path:'order-info/:id',component:OrderDetailsComponent},
         {path:'add-order',component:AddOrderComponent},
         {path:'measurement',component:MeasurementComponent},
-        {path:'measurement-detail/:id',component:MeasurementDetailComponent}
+        {path:'measurement-detail/:id',component:MeasurementDetailComponent},
+        {path:'notification',component:OrderNotificationComponent}
     ]}
 ];

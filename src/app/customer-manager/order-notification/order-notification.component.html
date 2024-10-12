@@ -1,0 +1,56 @@
+<div class="order-filter">
+  <button (click)="toggleFilterVisibility()">Show Filters</button>
+
+  <div class="quick-filters">
+    <button (click)="applyQuickFilter('thisWeek')">This Week</button>
+    <button (click)="applyQuickFilter('nextWeek')">Next Week</button>
+    <button (click)="applyQuickFilter('thisMonth')">This Month</button>
+    <button (click)="applyQuickFilter('nextMonth')">Next Month</button>
+  </div>
+
+  <div *ngIf="showFilters" class="detailed-filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="dateType">Date Type:</label>
+        <select id="dateType" [(ngModel)]="filter.isDeliveryDate">
+          <option [ngValue]="false">Order Date</option>
+          <option [ngValue]="true">Delivery Date</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="orderStatus">Order Status:</label>
+        <select id="orderStatus" [(ngModel)]="filter.isComplete">
+          <option [ngValue]="false">Active</option>
+          <option [ngValue]="true">Complete</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="fromDate">From Date:</label>
+        <input type="date" id="fromDate" [(ngModel)]="filter.fromDate">
+      </div>
+      <div class="filter-group">
+        <label for="toDate">To Date:</label>
+        <input type="date" id="toDate" [(ngModel)]="filter.toDate">
+      </div>
+    </div>
+    <button (click)="applyFilter()">Apply Filter</button>
+  </div>
+</div>
+<div class="order-cards-container">
+  <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of orders">
+    <div class="order-card-header">
+      <h4>Order #{{order.id}}</h4>
+      <div class="order-status" [ngClass]="order.orderstatus ? 'complete' : 'active'">
+        {{ order.orderstatus ? 'Complete' : 'Active' }}
+      </div>
+    </div>
+    <div class="order-details">
+      <p><strong>Branch Name:</strong> {{order.branchname}}</p>
+      <p><strong>Customer:</strong> {{order.customer}}</p>
+      <p><strong>Order Date:</strong> {{order.orderdate}}</p>
+      <p><strong>Delivery Date:</strong> {{order.deliverydate}}</p>
+    </div>
+  </div>
+</div>

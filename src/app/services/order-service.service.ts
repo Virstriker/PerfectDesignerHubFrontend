@@ -47,6 +47,10 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "AddNewOrder";
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
+  getFilterOrders(order:any):Observable<ResponseDto>{
+    const url = this.baseOrderUrl + "filterOrders";
+    return this.http.post<ResponseDto>(url,order,{ headers: this.getAuthHeaders() });
+  }
   generatePdf(data:any): void {
 
     const headers = new HttpHeaders({
