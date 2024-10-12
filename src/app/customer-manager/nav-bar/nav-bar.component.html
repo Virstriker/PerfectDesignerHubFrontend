@@ -16,7 +16,7 @@
       <!-- Mobile Menu -->
       <div class="mobile-controls">
         <button aria-label="Notifications" class="notification-btn">
-          <img src="../../../assets/notification.png" alt="Notifications" class="icon" />
+          <img src="../../../assets/notification.png" routerLink="/customer-manager/notification" alt="Notifications" class="icon" />
         </button>
         <button (click)="toggleMenu()" class="menu-btn" aria-label="Toggle menu">
           <img [src]="isOpen ? '../../../assets/close.png' : '../../../assets/Hamburger_icon.svg.png'" alt="Menu" class="icon" />
@@ -29,7 +29,7 @@
       <a routerLink="/customer-manager" (click)="toggleMenu()">Customers</a>
       <a routerLink="/customer-manager/order" (click)="toggleMenu()">Order</a>
       <a routerLink="/customer-manager/measurement" (click)="toggleMenu()">Measurement</a>
-      <a routerLink="/customer-manager/notification" (click)="logout()">Logout</a>
+      <a (click)="logout()">Logout</a>
     </div>
   </nav>
   
