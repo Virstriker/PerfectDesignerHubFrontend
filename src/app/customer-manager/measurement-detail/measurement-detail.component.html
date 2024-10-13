@@ -202,8 +202,23 @@
         <label for="chaniyaheap">Chaniya Length:</label>
         <input id="chaniyalength" [(ngModel)]="measurements.chaniyaheap" type="number" placeholder="Enter Chaniya Length" >
       </div>
-  
-      <button (click)="submitForm()" type="submit" class="btn">Submit</button>
+      <div class="btn-group">
+        <button (click)="submitForm()" type="submit" class="btn">Submit</button>
+        <button (click)="openPopUp()" class="btn">GeneratePdf</button>
+      </div>
     </div>
   </div>
-  
+  <div *ngIf="showItemNumberPopup" class="popup">
+    <div class="popup-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <span class="close" (click)="showItemNumberPopup = false">&times;</span>
+      <h2>Item Number Confirmation</h2>
+      <div class="form-group">
+        <label for="itemNumber">Item Number:</label>
+        <input id="itemNumber" [(ngModel)]="itemNumber" type="number" placeholder="Enter Item Number">
+      </div>
+      <div class="btn-group">
+        <button (click)="confirmItemNumber()">Confirm</button>
+        <button (click)="showItemNumberPopup = false">Cancel</button>
+      </div>
+    </div>
+  </div>

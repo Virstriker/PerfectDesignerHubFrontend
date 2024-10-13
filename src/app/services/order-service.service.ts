@@ -70,5 +70,23 @@ export class OrderServiceService {
         console.error('Error generating PDF:', error);
       });
   }
-  
+  generateReadyMeasurmentPdf(data:any): void {
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    const url = this.constant.pdfUrl+'generate-measurements-pdf';
+    this.http.post(url, data, { headers, responseType: 'arraybuffer' })
+      .subscribe(response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.customerName+"-"+data.id;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }, error => {
+        console.error('Error generating PDF:', error);
+      });
+  }
 }

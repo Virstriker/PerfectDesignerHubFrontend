@@ -5,6 +5,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { MeasurementServiceService } from '../../services/measurement-service.service';
 import { ResponseDto } from '../../interfaces/customer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OrderServiceService } from '../../services/order-service.service';
 export interface Measurements {
   id: number;
   customerId: number;
@@ -46,7 +47,7 @@ export interface Measurements {
   selector: 'app-measurement-detail',
   standalone: true,
   imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers:[MeasurementServiceService],
+  providers:[MeasurementServiceService,OrderServiceService],
   templateUrl: './measurement-detail.component.html',
   styleUrl: './measurement-detail.component.css'
 })
@@ -93,7 +94,8 @@ export class MeasurementDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private measurementsService: MeasurementServiceService
+    private measurementsService: MeasurementServiceService,
+    private orderService: OrderServiceService
   ) {
   }
   customerId : number = 0;
@@ -142,5 +144,56 @@ export class MeasurementDetailComponent implements OnInit {
           }
         });
       }
+    }
+    showItemNumberPopup: boolean = false;
+    itemNumber: number = 0;
+    openPopUp(){
+      this.showItemNumberPopup = true;
+    }
+    confirmItemNumber() {
+        // Logic to handle item number confirmation
+        alert(`Item number ${this.itemNumber} confirmed!`);
+        this.showItemNumberPopup = false;
+        this.generateReadyMeasurmentPdf();
+    }
+    generateReadyMeasurmentPdf(){
+      const readyMeasurment = {
+        id: this.itemNumber,
+    customerName: this.customerName, // This will be passed in as a parameter
+    sholder: this.measurements.sholder,
+    sholderslope: this.measurements.sholderslope,
+    neckround: this.measurements.neckround,
+    frontneckdeep: this.measurements.frontneckdeep,
+    backneckdeep: this.measurements.backneckdeep,
+    acrossfront: this.measurements.acrossfront,
+    acrossback: this.measurements.acrossback,
+    chest: this.measurements.chest,
+    bust: this.measurements.bust,
+    weist: this.measurements.weist,
+    heap: this.measurements.heap,
+    armholdleft: this.measurements.armholdleft,
+    armholdright: this.measurements.armholdright,
+    bicepleft: this.measurements.bicepleft,
+    bicepright: this.measurements.bicepright,
+    mori: this.measurements.mori,
+    sleevelength: this.measurements.sleevelength,
+    apexpointlength: this.measurements.apexpointlength,
+    blouselength: this.measurements.blouselength,
+    sidecutlength: this.measurements.sidecutlength,
+    dresslength: this.measurements.dresslength,
+    onepiecelength: this.measurements.onepiecelength,
+    pantweist: this.measurements.pantweist,
+    pantheap: this.measurements.pantheap,
+    pantcroch: this.measurements.pantcroch,
+    pantjang: this.measurements.pantjang,
+    pantknee: this.measurements.pantknee,
+    pantankel: this.measurements.pantankel,
+    pantmori: this.measurements.pantmori,
+    pantlength: this.measurements.pantlength,
+    chaniyawrist: this.measurements.chaniyawrist,
+    chaniyaheap: this.measurements.chaniyaheap,
+    chaniyalength: this.measurements.chaniyalength
+      }
+      this.orderService.generateReadyMeasurmentPdf(readyMeasurment)
     }
 }
