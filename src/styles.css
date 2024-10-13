@@ -3,3 +3,26 @@
     padding: 0;
     box-sizing: border-box;
 }
+.image {
+
+    background-image: url('./assets/Pc.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    position: fixed; /* Keep the background fixed */
+    width: 100%; /* Ensure it covers the full width */
+    height: 100vh; /* Ensure it covers the full height */
+    z-index: -100;
+}
+
+@media (max-width: 768px) {
+    .image{
+        background-image: url('./assets/Phone.png');
+        background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    position: fixed; /* Keep the background fixed */
+    width: 100%; /* Ensure it covers the full width */
+    height: 100vh; /* Ensure it covers the full height */
+    }
+}
