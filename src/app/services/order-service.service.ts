@@ -37,7 +37,10 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "GetOrderId/"+Id;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
-
+  completeOrder(Id:number): Observable<ResponseDto> {
+    const url = this.baseOrderUrl + "CompleteOrder/"+Id;
+    return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
+  }
   getImageUrl(file:any): Observable<any>{
     const formData: FormData = new FormData();
     formData.append('image', file);

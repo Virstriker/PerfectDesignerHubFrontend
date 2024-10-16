@@ -6,22 +6,23 @@
   <div class="customer-info">
     <div class="info-item">
       <label>Name:</label>
-      <span>{{customer.name}}</span>
+      <input type="text" class="customer-input" [(ngModel)]="customer.name" [disabled]="edit"/>
     </div>
     <div class="info-item">
       <label>Surname:</label>
-      <span>{{customer.surname}}</span>
+      <input type="text" class="customer-input" [(ngModel)]="customer.surname" [disabled]="edit"/>
     </div>
     <div class="info-item">
       <label>Phone Number:</label>
-      <span>{{customer.phonenumber}}</span>
+      <input type="text" class="customer-input" [(ngModel)]="customer.phonenumber" [disabled]="edit"/>
     </div>
     <div class="info-item">
       <label>Address:</label>
-      <span>{{customer.address}}</span>
+      <input type="text" class="customer-input" [(ngModel)]="customer.address" [disabled]="edit"/>
     </div>
   </div>
   
+  <button class="see-measurement-btn edit-btn" id="EditCustomer" (click)="editCustomer()">Edit Customer</button>
     <button class="see-measurement-btn" (click)="goToMeasurment()">See Measurement</button>
   
     <h3 class="order-detail">Order Details</h3>
@@ -35,8 +36,8 @@
         </div>
         
         <div class="order-dates">
-          <p><strong>Start Date:</strong> {{order.orderdate}}</p>
-          <p><strong>End Date:</strong> {{order.deliverydate}}</p>
+          <p><strong>Order Date:</strong> {{order.orderdate.split("T")[0]}}</p>
+          <p><strong>Delivery Date:</strong> {{order.deliverydate.split("T")[0]}}</p>
         </div>
       </div>
     </div>

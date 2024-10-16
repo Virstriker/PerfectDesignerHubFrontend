@@ -75,7 +75,9 @@ interface Pant {
   styleUrl: './add-order.component.css'
 })
 export class AddOrderComponent implements OnInit{
-  order: Ordertable = {};
+  order: Ordertable = {
+    branchName:'Main'
+  };
   constructor(private  orderService: OrderServiceService,
     private customerService:CustomerServiceService,
     private rout:Router,

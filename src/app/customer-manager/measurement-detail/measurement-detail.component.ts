@@ -9,39 +9,39 @@ import { OrderServiceService } from '../../services/order-service.service';
 export interface Measurements {
   id: number;
   customerId: number;
-  sholder?: number;
-  sholderslope?: number;
-  neckround?: number;
-  frontneckdeep?: number;
-  backneckdeep?: number;
-  acrossfront?: number;
-  acrossback?: number;
-  chest?: number;
-  bust?: number;
-  weist?: number;
-  heap?: number;
-  armholdleft?: number;
-  armholdright?: number;
-  bicepleft?: number;
-  bicepright?: number;
-  mori?: number;
-  sleevelength?: number;
-  apexpointlength?: number;
-  blouselength?: number;
-  sidecutlength?: number;
-  dresslength?: number;
-  onepiecelength?: number;
-  pantweist?: number;
-  pantheap?: number;
-  pantcroch?: number;
-  pantjang?: number;
-  pantknee?: number;
-  pantankel?: number;
-  pantmori?: number;
-  pantlength?: number;
-  chaniyawrist?: number;
-  chaniyaheap?: number;
-  chaniyalength?: number;
+  sholder?: string;
+  sholderslope?: string;
+  neckround?: string;
+  frontneckdeep?: string;
+  backneckdeep?: string;
+  acrossfront?: string;
+  acrossback?: string;
+  chest?: string;
+  bust?: string;
+  weist?: string;
+  heap?: string;
+  armholdleft?: string;
+  armholdright?: string;
+  bicepleft?: string;
+  bicepright?: string;
+  mori?: string;
+  sleevelength?: string;
+  apexpointlength?: string;
+  blouselength?: string;
+  sidecutlength?: string;
+  dresslength?: string;
+  onepiecelength?: string;
+  pantweist?: string;
+  pantheap?: string;
+  pantcroch?: string;
+  pantjang?: string;
+  pantknee?: string;
+  pantankel?: string;
+  pantmori?: string;
+  pantlength?: string;
+  chaniyawrist?: string;
+  chaniyaheap?: string;
+  chaniyalength?: string;
 }
 @Component({
   selector: 'app-measurement-detail',
@@ -52,43 +52,44 @@ export interface Measurements {
   styleUrl: './measurement-detail.component.css'
 })
 export class MeasurementDetailComponent implements OnInit {
+
   customerName!:string;
   measurements: Measurements = {
-    id:0,
+    id: 0,
     customerId: 0,
-    sholder: 0,
-    sholderslope: 0,
-    neckround: 0,
-    frontneckdeep: 0,
-    backneckdeep: 0,
-    acrossfront: 0,
-    acrossback: 0,
-    chest: 0,
-    bust: 0,
-    weist: 0,
-    heap: 0,
-    armholdleft: 0,
-    armholdright: 0,
-    bicepleft: 0,
-    bicepright: 0,
-    mori: 0,
-    sleevelength: 0,
-    apexpointlength: 0,
-    blouselength: 0,
-    sidecutlength: 0,
-    dresslength: 0,
-    onepiecelength: 0,
-    pantweist: 0,
-    pantheap: 0,
-    pantcroch: 0,
-    pantjang: 0,
-    pantknee: 0,
-    pantankel: 0,
-    pantmori: 0,
-    pantlength: 0,
-    chaniyawrist: 0,
-    chaniyaheap: 0,
-    chaniyalength: 0,
+    sholder: '',
+    sholderslope: '',
+    neckround: '',
+    frontneckdeep: '',
+    backneckdeep: '',
+    acrossfront: '',
+    acrossback: '',
+    chest: '',
+    bust: '',
+    weist: '',
+    heap: '',
+    armholdleft: '',
+    armholdright: '',
+    bicepleft: '',
+    bicepright: '',
+    mori: '',
+    sleevelength: '',
+    apexpointlength: '',
+    blouselength: '',
+    sidecutlength: '',
+    dresslength: '',
+    onepiecelength: '',
+    pantweist: '',
+    pantheap: '',
+    pantcroch: '',
+    pantjang: '',
+    pantknee: '',
+    pantankel: '',
+    pantmori: '',
+    pantlength: '',
+    chaniyawrist: '',
+    chaniyaheap: '',
+    chaniyalength: '',
   };
   recordExists = false;
 
@@ -159,7 +160,7 @@ export class MeasurementDetailComponent implements OnInit {
     generateReadyMeasurmentPdf(){
       const readyMeasurment = {
         id: this.itemNumber,
-    customerName: this.customerName, // This will be passed in as a parameter
+    customerName: this.customerName, 
     sholder: this.measurements.sholder,
     sholderslope: this.measurements.sholderslope,
     neckround: this.measurements.neckround,

@@ -1,13 +1,13 @@
 <div class="order-form">
     <h2>Add Order</h2>
     <form>
-        <label>Customer ID:</label>
+        <label>Customer:</label>
         <select [(ngModel)]="order.customerId" name="customerId" id="selectCustomer" required>
-            <option *ngFor="let customer of customerIds" [value]="customer.id">{{ customer.name }}</option>
+            <option *ngFor="let customer of customerIds" [value]="customer.id">{{ customer.name+" "+customer.surname }}</option>
         </select>
 
         <label>Branch Name:</label>
-        <input type="text" [(ngModel)]="order.branchName" name="branchName" required />
+        <input type="text" [(ngModel)]="order.branchName" name="branchName" disabled required />
 
         <label>Delivery Date:</label>
         <input type="date" [(ngModel)]="order.deliveryDate" name="deliveryDate" required />

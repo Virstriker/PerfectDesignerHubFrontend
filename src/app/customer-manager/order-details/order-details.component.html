@@ -79,6 +79,9 @@
       </div>
     </div>
   </div>
-  <button class="button-63" (click)="generateBillPdf()" role="button">Generate Bil</button>
+  <div class="btn-div">
+    <button class="complete" *ngIf="!order.orderDto.orderstatus" (click)="completeOrder()" role="button">Complete Order</button>
+    <button class="button-63" (click)="generateBillPdf()" role="button">Generate Bil</button>
+  </div>
 
 </div>

@@ -39,4 +39,8 @@ export class CustomerServiceService {
     const url = this.basCustomerUrl + "findById/"+id;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
+  updateCustomer(customer:any):Observable<ResponseDto>{
+    const url = this.basCustomerUrl + "UpdateCustomer";
+    return this.http.post<ResponseDto>(url,customer ,{ headers: this.getAuthHeaders() });
+  }
 }

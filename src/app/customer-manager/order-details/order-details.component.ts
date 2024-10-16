@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderCard, OrderDetails, ResponseDto } from '../../interfaces/customer';
 import { OrderServiceService } from '../../services/order-service.service';
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -23,7 +23,7 @@ interface InvoiceData {
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [NgFor,NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule],
   providers: [OrderServiceService],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css'
@@ -65,6 +65,15 @@ export class OrderDetailsComponent implements OnInit {
         }
       }
     });
+  }
+  completeOrder(){
+    this.orderService.completeOrder(this.orderId).subscribe({
+      next:  (response: ResponseDto) => {
+        if(response.isSuccess){
+          alert("Order Completed");
+        }
+      }
+    })
   }
   generateBillPdf() {
     const data:InvoiceData = {

@@ -70,7 +70,22 @@
       margin-right: 0;
     }
   }
-  
+  .btn-div{
+    display: flex;
+    flex-direction: row;
+  }
+  .complete{
+    background: rgb(71, 255, 71);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    max-height: 50px;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    margin: 20px 0px;
+    cursor: pointer;
+  }
   .button-63 {
     margin: 20px;
     align-items: center;
@@ -107,3 +122,4 @@
       min-width: 196px;
     }
   }
+  

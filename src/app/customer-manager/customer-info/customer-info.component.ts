@@ -17,6 +17,7 @@ import { OrderServiceService } from '../../services/order-service.service';
 })
 export class CustomerInfoComponent implements OnInit {
   customerId!: number;
+  edit:boolean=true;
   customer: Customer = {
     id: 1,
     name: '',
@@ -50,14 +51,24 @@ export class CustomerInfoComponent implements OnInit {
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.customerOrders = response.responseObject;
-          console.log(this.customerOrders)
-        } else {
-          alert(response.message);
         }
       }
     });
   }
-
+  editCustomer(){
+    if(this.edit){
+      (document.getElementById("EditCustomer") as HTMLButtonElement).innerText = "Submit";
+      this.edit=false;
+    }else{
+      this.customerService.updateCustomer(this.customer).subscribe({
+        next: (response: ResponseDto) => {
+          alert(response.message);
+        }
+      });
+      (document.getElementById("EditCustomer") as HTMLButtonElement).innerText = "Edit Customer";
+      this.edit=true;
+    }
+  }
   goBack() {
     // Implement the logic to go back, e.g., navigating to the previous page
     window.history.back();
