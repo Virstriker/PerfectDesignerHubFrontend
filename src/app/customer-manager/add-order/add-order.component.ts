@@ -221,6 +221,10 @@ export class AddOrderComponent implements OnInit{
   return this.datePipe.transform(dateObj, 'yyyy-MM-dd');
 }
   onSubmit(){
+    if(this.order.customerId===null){
+      alert('Please select customer');
+      return;
+    }
     const formattedDate = this.formatDate(new Date().toDateString());
     if (formattedDate !== null) {
       this.order.orderDate = formattedDate;
