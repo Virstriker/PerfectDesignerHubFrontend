@@ -52,7 +52,8 @@ export class MeasurementComponent implements OnInit {
       this.customerService.searchCustomer(this.searchTerm).subscribe({
         next: (response:ResponseDto) =>{
           if(response.isSuccess){
-            this.filteredCustomers = response.responseObject;
+            this.customers = response.responseObject.sort((a: Customer, b: Customer) => a.name.localeCompare(b.name));
+            this.filteredCustomers =this.customers;
           }else{
             alert("No customer found");
           }

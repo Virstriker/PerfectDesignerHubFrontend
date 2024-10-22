@@ -24,8 +24,8 @@ export class OrderComponent implements OnInit{
     this.orderService.getAllOrders().subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
-          this.orders = response.responseObject;
-          console.log(this.orders)
+          this.orders = response.responseObject.sort((a: OrderCard, b: OrderCard) => b.id - a.id);
+          console.log(this.orders);
         } else {
           alert(response.message);
         }

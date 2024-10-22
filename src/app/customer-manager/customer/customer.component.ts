@@ -40,7 +40,7 @@ export class CustomerComponent implements OnInit {
   getAllCustomers() {
     this.customerService.getAllCustomer().subscribe({
       next: (response: ResponseDto) => {
-        this.customers = response.responseObject;
+        this.customers = response.responseObject.sort((a: Customer, b: Customer) => a.name.localeCompare(b.name));
         this.filteredCustomers = this.customers;
         console.log('Customers loaded:', this.customers);
       },
