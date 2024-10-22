@@ -85,7 +85,7 @@ span {
   padding: 10px 20px; /* Vertical and horizontal padding */
   font-size: 16px; /* Font size */
   cursor: pointer; /* Pointer cursor on hover */
-  margin: 20px 0px;
+  margin: 20px 10px;
   transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
 }
 
@@ -222,6 +222,7 @@ span {
       text-align: center; /* Center text in mobile view */
       margin-top: 20px; /* Add margin to ensure separation from other elements */
     }
+    
   }
 
 .customer-input {
@@ -234,7 +235,4 @@ span {
 
 .customer-input:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Optional: Add a focus effect */
-}
-.edit-btn{
-  margin: 20px;
 }
