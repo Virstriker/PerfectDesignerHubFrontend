@@ -14,7 +14,12 @@
     </div>
     <div class="info-item">
       <label>Phone Number:</label>
-      <input type="text" class="customer-input" [(ngModel)]="customer.phonenumber" [disabled]="edit"/>
+      <div class="phone-input-container">
+        <input type="text" class="customer-input" [(ngModel)]="customer.phonenumber" [disabled]="edit"/>
+        <a [href]="'tel:+91' + customer.phonenumber" class="phone-icon">
+          <img src="../../../assets/call.png" alt="Call" title="Call customer">
+        </a>
+      </div>
     </div>
     <div class="info-item">
       <label>Address:</label>

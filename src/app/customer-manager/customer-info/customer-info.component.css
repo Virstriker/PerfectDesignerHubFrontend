@@ -236,3 +236,17 @@ span {
 .customer-input:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Optional: Add a focus effect */
 }
+.phone-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.phone-icon {
+  margin-left: 10px;
+}
+
+.phone-icon img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
