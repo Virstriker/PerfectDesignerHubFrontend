@@ -1,0 +1,143 @@
+<div class="daily-order-container">
+  <!-- Status Filter Tabs -->
+  <div class="status-tabs">
+    <button class="tab-btn" [class.active]="selectedStatus === 1" (click)="filterByStatus(1)">
+      Active
+    </button>
+    <button class="tab-btn" [class.active]="selectedStatus === 2" (click)="filterByStatus(2)">
+      Complete
+    </button>
+    <button class="tab-btn" [class.active]="selectedStatus === 3" (click)="filterByStatus(3)">
+      Delivered
+    </button>
+  </div>
+
+  <!-- Add Order Button -->
+  <div class="action-bar">
+    <button class="add-order-btn" (click)="addNewOrder()">
+      <i class="fas fa-plus"></i> Add New Order
+    </button>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="table-container">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer Name</th>
+          <th>Detail</th>
+          <th>Delivery Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of filteredOrders" class="order-row">
+          <td>{{order.id}}</td>
+          <td>{{order.customerName}}</td>
+          <td>{{order.orderDetail}}</td>
+          <td>{{order.orderDate | date}}</td>
+          <td>₹{{order.orderAmount}}</td>
+          <td>
+            <span (click)="updateDailyOrderState(order)" class="status-badge"
+              [class]="getStatusText(order.orderState).toLowerCase()">
+              {{getStatusText(order.orderState)}}
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>TotalAmount : ₹{{totalAmount}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div class="modal-overlay" [class.show]="isModalOpen" (click)="closeModal()">
+    <div class="modal" [class.show]="isModalOpen" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Add New Order</h2>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div class="form-group">
+          <label for="customer">Customer</label>
+          <select id="customer" [(ngModel)]="newOrder.customerId" required>
+            <option value="">Select Customer</option>
+            <option *ngFor="let customer of customerIds" [value]="customer.id">
+              {{customer.name+" "+customer.surname}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="detail">Items</label>
+          <div class="items-list">
+            <div class="item-row" *ngFor="let item of orderItems; let i = index">
+              <select [(ngModel)]="item.name" required>
+                <option value="">Select Item</option>
+                <option value="Dress">Dress</option>
+                <option value="Kurti">Kurti</option>
+                <option value="Pant">Pant</option>
+                <option value="Plazo">Plazo</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Chaniyacholi">Chaniyacholi</option>
+                <option value="Chaniyo">Chaniyo</option>
+                <option value="One Piece">One Piece</option>
+                <option value="Dhoti">Dhoti</option>
+                <option value="Altration">Altration</option>
+                <option value="Fabric">Fabric</option>
+                <option value="Shrug">Shrug</option>
+                <option value="Chunni">Chunni</option>
+                <option value="Sarara">Sarara</option>
+                <option value="Blazer">Blazer</option>
+              </select>
+              <input type="number" [(ngModel)]="item.quantity" placeholder="Quantity">
+              <button type="button" class="remove-item" (click)="removeItem(i)">&times;</button>
+            </div>
+            <button type="button" class="add-item-btn" (click)="addItem()">+ Add Item</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="deliveryDate">Delivery Date</label>
+          <input type="date" id="deliveryDate" [(ngModel)]="newOrder.orderDate" required>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="number" id="amount" [(ngModel)]="newOrder.orderAmount" required>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeModal()">Cancel</button>
+        <button class="submit-btn" (click)="submitOrder()">Add Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add this new modal for amount update -->
+  <div class="modal-overlay" [class.show]="isAmountModalOpen" (click)="closeAmountModal()">
+    <div class="modal" [class.show]="isAmountModalOpen" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Update Order Amount</h2>
+        <button class="close-btn" (click)="closeAmountModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="updateAmount">Amount</label>
+          <input type="number" id="updateAmount" [(ngModel)]="updateAmount" required>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="cancel-btn" (click)="closeAmountModal()">Cancel</button>
+        <button class="submit-btn" (click)="confirmAmountUpdate()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>

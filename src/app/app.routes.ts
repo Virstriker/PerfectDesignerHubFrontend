@@ -10,6 +10,7 @@ import { MeasurementComponent } from './customer-manager/measurement/measurement
 import { MeasurementDetailComponent } from './customer-manager/measurement-detail/measurement-detail.component';
 import { SiteHomePageComponent } from './site-home-page/site-home-page.component';
 import { OrderNotificationComponent } from './customer-manager/order-notification/order-notification.component';
+import { DailyOrderComponent } from './customer-manager/daily-order/daily-order.component';
 
 export const routes: Routes = [
     {path:'',component:SiteHomePageComponent},
@@ -22,6 +23,7 @@ export const routes: Routes = [
         {path:'add-order',component:AddOrderComponent},
         {path:'measurement',component:MeasurementComponent},
         {path:'measurement-detail/:id',component:MeasurementDetailComponent},
-        {path:'notification',component:OrderNotificationComponent}
+        {path:'notification',component:OrderNotificationComponent},
+        {path:'daily-order',component:DailyOrderComponent}
     ]}
 ];

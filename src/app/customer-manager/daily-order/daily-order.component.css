@@ -1,0 +1,287 @@
+.daily-order-container {
+    padding: 20px;
+    background: #f8f9fa;
+  }
+  
+  .status-tabs {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .tab-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .tab-btn.active {
+    background: #007bff;
+    color: white;
+  }
+  
+  .tab-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .action-bar {
+    margin-bottom: 20px;
+  }
+  
+  .add-order-btn {
+    padding: 10px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .add-order-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+  }
+  
+  .table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .orders-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+  }
+  
+  .order-row {
+    transition: background-color 0.3s ease;
+  }
+  
+  .order-row:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    text-transform: capitalize;
+    cursor: pointer;
+  }
+  
+  .status-badge.active {
+    background: #e3f2fd;
+    color: #0d47a1;
+  }
+  
+  .status-badge.complete {
+    background: #e8f5e9;
+    color: #1b5e20;
+  }
+  
+  .status-badge.delivered {
+    background: #f3e5f5;
+    color: #4a148c;
+  }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.modal.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  color: #666;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.submit-btn {
+  background: #28a745;
+  color: white;
+}
+
+.cancel-btn:hover,
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.submit-btn:hover {
+  background: #218838;
+}
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.item-row input[type="text"] {
+  flex: 2;
+}
+
+.item-row input[type="number"] {
+  flex: 1;
+  width: 80px;
+}
+
+.remove-item {
+  padding: 5px 10px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-item-btn {
+  margin-top: 10px;
+  padding: 8px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+} 
+.item-row select {
+  flex: 2;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+} 
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-overlay.show {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
