@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -43,7 +43,7 @@ interface OrderItem {
   templateUrl: './daily-order.component.html',
   styleUrl: './daily-order.component.css'
 })
-export class DailyOrderComponent {
+export class DailyOrderComponent implements OnInit {
   // Class properties/constants
   orders: Array<Order> = new Array<Order>();
   customerIds: any[] = [];
@@ -61,6 +61,7 @@ export class DailyOrderComponent {
   isAmountModalOpen: boolean = false;
   updateAmount: number = 0;
   selectedOrder: any = null;
+  currentDate: Date = new Date();
 
   // Constructor
   constructor(
@@ -72,6 +73,7 @@ export class DailyOrderComponent {
 
   // Lifecycle methods
   ngOnInit() {
+    this.currentDate = new Date();
     this.customerService.getAllCustomer().subscribe({
       next: (response: ResponseDto) => {
         this.customerIds = response.responseObject.sort((a: Customer, b: Customer) =>
@@ -107,7 +109,9 @@ export class DailyOrderComponent {
     this.isModalOpen = false;
     this.resetForm();
   }
-
+  isPastOrder(orderDate: Date): boolean {
+    return new Date(orderDate) < this.currentDate;
+  }
   submitOrder(): void {
     if (!this.newOrder.customerId || !this.newOrder.orderAmount) {
       alert('Please fill in all required fields');

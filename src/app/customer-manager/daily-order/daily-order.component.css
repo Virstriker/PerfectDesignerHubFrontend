@@ -285,3 +285,8 @@
   justify-content: center;
   align-items: center;
 }
+
+.past-order {
+  background-color: red; /* Change to your desired color */
+  color: white; /* Optional: Change text color for better visibility */
+}

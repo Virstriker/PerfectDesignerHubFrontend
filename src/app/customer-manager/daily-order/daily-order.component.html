@@ -33,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let order of filteredOrders" class="order-row">
+        <tr *ngFor="let order of filteredOrders" class="order-row" [ngClass]="{'past-order': isPastOrder(order.orderDate)}">
           <td>{{order.id}}</td>
           <td>{{order.customerName}}</td>
           <td>{{order.orderDetail}}</td>

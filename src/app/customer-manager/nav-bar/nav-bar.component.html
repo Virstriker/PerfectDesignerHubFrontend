@@ -6,8 +6,9 @@
       <div class="menu desktop-menu">
         <a routerLink="/customer-manager">Customers</a>
         <a routerLink="/customer-manager/order">Order</a>
-        <a routerLink="/customer-manager/daily-order">DailyOrder</a>
         <a routerLink="/customer-manager/measurement">Measurement</a>
+        <a routerLink="/customer-manager/daily-order">DailyOrder</a>
+        <a routerLink="/customer-manager/daily-work">DailyWork</a>
         <a (click)="logout()" style="border-radius: 20px; background-color: red; box-shadow: inset 2px 2px 5px #2d3748;  cursor: pointer;">Logout</a>
         <button aria-label="Notifications" class="notification-btn">
           <img src="../../../assets/notification.png" routerLink="/customer-manager/notification" alt="Notifications" class="icon" />
@@ -29,8 +30,9 @@
     <div *ngIf="isOpen" class="mobile-menu">
       <a routerLink="/customer-manager" (click)="toggleMenu()">Customers</a>
       <a routerLink="/customer-manager/order" (click)="toggleMenu()">Order</a>
-      <a routerLink="/customer-manager/daily-order" (click)="toggleMenu()">DailyOrder</a>
       <a routerLink="/customer-manager/measurement" (click)="toggleMenu()">Measurement</a>
+      <a routerLink="/customer-manager/daily-order" (click)="toggleMenu()">DailyOrder</a>
+      <a routerLink="/customer-manager/daily-work" (click)="toggleMenu()">DailyWork</a>
       <a (click)="logout()">Logout</a>
     </div>
   </nav>
