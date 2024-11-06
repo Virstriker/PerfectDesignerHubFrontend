@@ -36,6 +36,7 @@ export class DailyWorkComponent implements OnInit {
     { id: '2', employeeName: 'Jane Smith' },
     { id: '3', employeeName: 'abc' }
   ];
+  Withdraw:boolean = false;
   totalWork:number = 0;
   constructor(private dailyWorkService:DailyWorkService){}
   newWork = {
@@ -112,11 +113,15 @@ export class DailyWorkComponent implements OnInit {
   }
 
   submitWork() {
-    if (this.newWork.employeeId && this.newWork.workDetail) {
+    if (this.newWork.employeeId) {
+      if(this.Withdraw){
+        this.newWork.workAmount = this.newWork.workAmount - 2*this.newWork.workAmount;
+      }
       this.dailyWorkService.addDailyWork(this.newWork).subscribe({
         next:(respone:ResponseDto)=>{
           if(respone.isSuccess){
             alert(respone.message);
+            this.getDailyWorkOfEmployee(this.selectedEmployee);
             this.closeDialog();
           }else{
             alert(respone.message);

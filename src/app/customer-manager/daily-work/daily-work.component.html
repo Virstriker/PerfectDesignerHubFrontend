@@ -63,6 +63,10 @@
       <div class="form-group">
         <label>Amount:</label>
         <input type="number" [(ngModel)]="newWork.workAmount" required>
+        <br><br>
+        <span>Withdraw : 
+          <input type="checkbox" name="checkbox" id="WCheckbox" [(ngModel)]="Withdraw" style="width: auto;">
+        </span>
       </div>
       <div class="button-group">
         <button class="cancel" (click)="closeDialog()">Cancel</button>
