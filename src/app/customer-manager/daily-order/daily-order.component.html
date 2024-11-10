@@ -1,5 +1,15 @@
 <div class="daily-order-container">
-  <!-- Status Filter Tabs -->
+  
+  <!-- Date Filter Section -->
+  <h3 class="filter-heading">Date Filter</h3>
+  <div class="date-filter-buttons">
+    <button class="filter-btn" [class.active]="selectedDateFilter === 'today'" (click)="filterToday()">Today</button>
+    <button class="filter-btn" [class.active]="selectedDateFilter === 'thisMonth'" (click)="filterThisMonth()">This Month</button>
+    <button class="filter-btn" [class.active]="selectedDateFilter === 'all'" (click)="filterAll()">All</button>
+  </div>
+
+  <!-- Status Filter Section -->
+  <h3 class="filter-heading">Order Status</h3>
   <div class="status-tabs">
     <button class="tab-btn" [class.active]="selectedStatus === 1" (click)="filterByStatus(1)">
       Active
@@ -27,17 +37,19 @@
           <th>ID</th>
           <th>Customer Name</th>
           <th>Detail</th>
+          <th>Order Date</th>
           <th>Delivery Date</th>
           <th>Amount</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let order of filteredOrders" class="order-row" [ngClass]="{'past-order': isPastOrder(order.orderDate)}">
+        <tr *ngFor="let order of filteredOrders" class="order-row" [ngClass]="{'past-order': isPastOrder(order.deliveryDate)}">
           <td>{{order.id}}</td>
           <td>{{order.customerName}}</td>
           <td>{{order.orderDetail}}</td>
           <td>{{order.orderDate | date}}</td>
+          <td>{{order.deliveryDate | date}}</td>
           <td>₹{{order.orderAmount}}</td>
           <td>
             <span (click)="updateDailyOrderState(order)" class="status-badge"
@@ -103,7 +115,7 @@
 
         <div class="form-group">
           <label for="deliveryDate">Delivery Date</label>
-          <input type="date" id="deliveryDate" [(ngModel)]="newOrder.orderDate" required>
+          <input type="date" id="deliveryDate" [(ngModel)]="newOrder.deliveryDate" required>
         </div>
 
         <div class="form-group">

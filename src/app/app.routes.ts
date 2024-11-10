@@ -12,8 +12,10 @@ import { SiteHomePageComponent } from './site-home-page/site-home-page.component
 import { OrderNotificationComponent } from './customer-manager/order-notification/order-notification.component';
 import { DailyOrderComponent } from './customer-manager/daily-order/daily-order.component';
 import { DailyWorkComponent } from './customer-manager/daily-work/daily-work.component';
+import { CustomerAddComponent } from './customer-add/customer-add.component';
 
 export const routes: Routes = [
+    {path: 'customer-add',component: CustomerAddComponent},
     {path:'',component:SiteHomePageComponent},
     {path:'login',component:LoginComponent},
     {path:'customer-manager',component:CustomerManagerComponent,children:[

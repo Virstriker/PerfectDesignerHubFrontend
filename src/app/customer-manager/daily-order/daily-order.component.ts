@@ -13,6 +13,7 @@ interface Order {
   customerName: string;
   customerId: number;
   orderDetail: string;
+  deliveryDate: Date;
   orderDate: Date;
   orderAmount: number;
   orderState: number;
@@ -54,7 +55,7 @@ export class DailyOrderComponent implements OnInit {
   newOrder = {
     customerId: 0,
     orderDetail: '',
-    orderDate: new Date(),
+    deliveryDate: new Date(),
     orderAmount: 0,
     orderState: 1
   };
@@ -62,6 +63,11 @@ export class DailyOrderComponent implements OnInit {
   updateAmount: number = 0;
   selectedOrder: any = null;
   currentDate: Date = new Date();
+  filter = {
+    fromDate: '',
+    toDate: ''
+  };
+  selectedDateFilter: string = 'all'; // Default to 'all'
 
   // Constructor
   constructor(
@@ -182,7 +188,7 @@ export class DailyOrderComponent implements OnInit {
     this.newOrder = {
       customerId: 0,
       orderDetail: '',
-      orderDate: new Date(),
+      deliveryDate: new Date(),
       orderAmount: 0,
       orderState: 1
     };
@@ -197,5 +203,40 @@ export class DailyOrderComponent implements OnInit {
         console.error('Error loading orders:', error);
       }
     });
+  }
+
+  filterToday() {
+    this.selectedDateFilter = 'today';
+    const today = new Date();
+    this.filter.fromDate = this.datePipe.transform(today, 'yyyy-MM-dd') || '';
+    this.filter.toDate = this.filter.fromDate;
+    this.filterByDate();
+  }
+
+  filterThisMonth() {
+    this.selectedDateFilter = 'thisMonth';
+    const date = new Date();
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    
+    this.filter.fromDate = this.datePipe.transform(firstDay, 'yyyy-MM-dd') || '';
+    this.filter.toDate = this.datePipe.transform(lastDay, 'yyyy-MM-dd') || '';
+    this.filterByDate();
+  }
+  filterByDate(){
+    this.dailyOrderService.getDailyOrdersByDate(this.filter).subscribe({
+      next: (response: ResponseDto) => {
+        this.orders = response.responseObject;
+      },
+      error: (error) => {
+        console.error('Error loading orders:', error);
+      }
+    });
+  }
+  filterAll() {
+    this.selectedDateFilter = 'all';
+    this.filter.fromDate = '';
+    this.filter.toDate = '';
+    this.loadOrders();
   }
 }

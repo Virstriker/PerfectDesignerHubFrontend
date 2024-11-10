@@ -30,4 +30,7 @@ export class DailyOrderServiceService {
     var url = this.baseDailyOrderUrl+"status/"+order.id+"/"+order.orderState;
     return this.http.put<ResponseDto>(url,order.orderAmount,{headers:this.getAuthHeaders()});
   }
+  public getDailyOrdersByDate(date:any): Observable<ResponseDto> {
+    return this.http.post<ResponseDto>(this.baseDailyOrderUrl+"date",date,{headers:this.getAuthHeaders()});
+  }
 }
