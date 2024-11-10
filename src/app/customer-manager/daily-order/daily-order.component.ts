@@ -97,6 +97,12 @@ export class DailyOrderComponent implements OnInit {
   // Getters
   get filteredOrders(): Order[] {
     var filter = this.orders.filter(order => order.orderState === this.selectedStatus);
+    if(this.selectedDateFilter === 'today' && this.selectedStatus===3){
+      filter = this.orders.filter(order => 
+        order.orderState === this.selectedStatus && 
+        new Date(order.deliveryDate).toDateString() === this.currentDate.toDateString()
+      );
+    }
     this.totalAmount = filter.reduce((sum, order) => sum + order.orderAmount, 0);
     return filter;
   }
