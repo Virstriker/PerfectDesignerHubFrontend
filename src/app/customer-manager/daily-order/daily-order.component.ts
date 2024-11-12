@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -68,13 +68,29 @@ export class DailyOrderComponent implements OnInit {
     toDate: ''
   };
   selectedDateFilter: string = 'all'; // Default to 'all'
+  customerSearchTerm: string = '';
+  filteredCustomerIds: any[] = [];
+
+  @ViewChild('searchInput') searchInput!: ElementRef;
+
+  isDropdownOpen = false;
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    if (!this.searchInput.nativeElement.contains(event.target)) {
+      this.isDropdownOpen = false;
+      this.customerSearchTerm = '';
+      this.filterCustomers();
+    }
+  }
 
   // Constructor
   constructor(
     private customerService: CustomerServiceService,
     private rout: Router,
     private datePipe: DatePipe,
-    private dailyOrderService: DailyOrderServiceService
+    private dailyOrderService: DailyOrderServiceService,
+    private elementRef: ElementRef
   ) { }
 
   // Lifecycle methods
@@ -85,6 +101,7 @@ export class DailyOrderComponent implements OnInit {
         this.customerIds = response.responseObject.sort((a: Customer, b: Customer) =>
           a.name.localeCompare(b.name)
         );
+        this.filteredCustomerIds = this.customerIds;
       }
     });
     this.dailyOrderService.getDailyOrders().subscribe({
@@ -244,5 +261,36 @@ export class DailyOrderComponent implements OnInit {
     this.filter.fromDate = '';
     this.filter.toDate = '';
     this.loadOrders();
+  }
+
+  filterCustomers() {
+    if (!this.customerSearchTerm) {
+      this.filteredCustomerIds = this.customerIds;
+      return;
+    }
+    
+    const searchTerm = this.customerSearchTerm.toLowerCase();
+    this.filteredCustomerIds = this.customerIds.filter(customer => {
+      const fullName = `${customer.name} ${customer.surname}`.toLowerCase();
+      return fullName.includes(searchTerm);
+    });
+  }
+
+  toggleDropdown(event: Event) {
+    event.preventDefault();
+    this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) {
+      this.filteredCustomerIds = this.customerIds;
+      setTimeout(() => {
+        this.searchInput?.nativeElement?.focus();
+      });
+    }
+  }
+
+  selectCustomer(customer: any) {
+    this.newOrder.customerId = customer.id;
+    this.isDropdownOpen = false;
+    this.customerSearchTerm = '';
+    this.filterCustomers();
   }
 }
