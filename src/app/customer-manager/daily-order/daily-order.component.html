@@ -35,10 +35,10 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Customer Name</th>
+          <th>Customer</th>
           <th>Detail</th>
-          <th>Order Date</th>
-          <th>Delivery Date</th>
+          <th>Order</th>
+          <th>Delivery</th>
           <th>Amount</th>
           <th>Status</th>
         </tr>
@@ -46,20 +46,22 @@
       <tbody>
         <tr *ngFor="let order of filteredOrders" class="order-row" [ngClass]="{'past-order': isPastOrder(order.deliveryDate)}">
           <td>{{order.id}}</td>
-          <td>{{order.customerName}}</td>
-          <td>{{order.orderDetail}}</td>
-          <td>{{order.orderDate | date}}</td>
-          <td>{{order.deliveryDate | date}}</td>
+          <td title="{{order.customerName}}">{{order.customerName}}</td>
+          <td title="{{order.orderDetail}}">{{order.orderDetail}}</td>
+          <td>{{order.orderDate | date:'shortDate'}}</td>
+          <td>{{order.deliveryDate | date:'shortDate'}}</td>
           <td>₹{{order.orderAmount}}</td>
           <td>
-            <span (click)="updateDailyOrderState(order)" class="status-badge"
-              [class]="getStatusText(order.orderState).toLowerCase()">
+            <span (click)="updateDailyOrderState(order)" 
+                  class="status-badge"
+                  [class]="getStatusText(order.orderState).toLowerCase()">
               {{getStatusText(order.orderState)}}
             </span>
           </td>
         </tr>
+        <!-- Total amount row -->
         <tr>
-          <td>TotalAmount : ₹{{totalAmount}}</td>
+          <td colspan="7">Total Amount: ₹{{totalAmount}}</td>
         </tr>
       </tbody>
     </table>
