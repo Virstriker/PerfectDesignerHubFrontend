@@ -197,4 +197,111 @@ export class MeasurementDetailComponent implements OnInit {
       }
       this.orderService.generateReadyMeasurmentPdf(readyMeasurment)
     }
+    printThermal() {
+      console.log("Print Thermal called");
+      
+      // Create an array of measurement fields with their labels
+      const measurementFields = [
+        { label: 'Front Neck Deep', value: this.measurements.frontneckdeep },
+        { label: 'Back Neck Deep', value: this.measurements.backneckdeep },
+        { label: 'Apex Point Length', value: this.measurements.apexpointlength },
+        { label: 'Blouse Length', value: this.measurements.blouselength },
+        { label: 'Side Cut Length', value: this.measurements.sidecutlength },
+        { label: 'Dress Length', value: this.measurements.dresslength },
+        { label: 'Neck Round', value: this.measurements.neckround },
+        { label: 'Shoulder', value: this.measurements.sholder },
+        { label: 'Shoulder Slope', value: this.measurements.sholderslope },
+        { label: 'Across Front', value: this.measurements.acrossfront },
+        { label: 'Across Back', value: this.measurements.acrossback },
+        { label: 'Chest', value: this.measurements.chest },
+        { label: 'Bust', value: this.measurements.bust },
+        { label: 'Waist', value: this.measurements.weist },
+        { label: 'Hip', value: this.measurements.heap },
+        { label: 'Armhole Left', value: this.measurements.armholdleft },
+        { label: 'Armhole Right', value: this.measurements.armholdright },
+        { label: 'Bicep Left', value: this.measurements.bicepleft },
+        { label: 'Bicep Right', value: this.measurements.bicepright },
+        { label: 'Sleeve Length', value: this.measurements.sleevelength },
+        { label: 'Mori', value: this.measurements.mori },
+        { label: 'Pant Waist', value: this.measurements.pantweist },
+        { label: 'Pant Hip', value: this.measurements.pantheap },
+        { label: 'Pant Crotch', value: this.measurements.pantcroch },
+        { label: 'Pant Jang', value: this.measurements.pantjang },
+        { label: 'Pant Knee', value: this.measurements.pantknee },
+        { label: 'Pant Ankle', value: this.measurements.pantankel },
+        { label: 'Pant Mori', value: this.measurements.pantmori },
+        { label: 'Pant Length', value: this.measurements.pantlength },
+        { label: 'Chaniya Wrist', value: this.measurements.chaniyawrist },
+        { label: 'Chaniya Length', value: this.measurements.chaniyalength },
+        { label: 'Chaniya Hip', value: this.measurements.chaniyaheap },
+        { label: 'One Piece Length', value: this.measurements.onepiecelength }
+      ];
+
+      // Create the print content (remove customer name and date from here)
+      let printContent = '';  // Start with empty string
+
+      // Filter out empty or zero values and format the measurements
+      measurementFields.forEach(field => {
+        if (field.value && field.value.toString() !== '0') {
+          printContent += `${field.label}: ${field.value}\n`;
+        }
+      });
+
+      // Create a hidden iframe for printing
+      const printFrame = document.createElement('iframe');
+      printFrame.style.position = 'fixed';
+      printFrame.style.right = '0';
+      printFrame.style.bottom = '0';
+      printFrame.style.width = '2in';
+      printFrame.style.height = '0';
+      document.body.appendChild(printFrame);
+
+      // Wait for iframe to load before writing content
+      printFrame.onload = () => {
+        const doc = printFrame.contentDocument;
+        if (doc) {
+          doc.open();
+          doc.write(`
+            <html>
+              <head>
+                <style>
+                  body {
+                    font-family: monospace;
+                    font-size: 14px;
+                    font-weight: bold;
+                    line-height: 1.3;
+                    margin: 0;
+                    padding: 0;
+                    width: 2in;
+                  }
+                  .customer-name {
+                    font-size: 16px;
+                    font-weight: 900;
+                    text-align: center;
+                    margin-bottom: 5px;
+                  }
+                  .separator {
+                    font-weight: bold;
+                    margin: 5px 0;
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="customer-name">${this.customerName}</div>
+                <div class="separator">------------------------</div>
+                <pre>${printContent}</pre>
+              </body>
+            </html>
+          `);
+          doc.close();
+          
+          setTimeout(() => {
+            if (printFrame.contentWindow) {
+              printFrame.contentWindow.print();
+              setTimeout(() => document.body.removeChild(printFrame), 1000);
+            }
+          }, 250);
+        }
+      };
+    }
 }
