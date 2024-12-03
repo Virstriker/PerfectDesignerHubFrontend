@@ -206,7 +206,7 @@
       <div class="btn-group">
         <button (click)="submitForm()" type="submit" class="btn">Submit</button>
         <button (click)="openPopUp()" class="btn">GeneratePdf</button>
-        <button (click)="printThermal()" [disabled]="isPrinting">
+        <button (click)="printThermal()">
           {{ isPrinting ? 'Preparing...' : 'Print Receipt' }}
         </button>
       </div>
