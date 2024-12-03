@@ -46,7 +46,7 @@ export interface Measurements {
 @Component({
   selector: 'app-measurement-detail',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
+  imports: [CommonModule,FormsModule,RouterModule,HttpClientModule],
   providers:[MeasurementServiceService,OrderServiceService],
   templateUrl: './measurement-detail.component.html',
   styleUrl: './measurement-detail.component.css'
@@ -198,9 +198,7 @@ export class MeasurementDetailComponent implements OnInit {
       this.orderService.generateReadyMeasurmentPdf(readyMeasurment)
     }
     printThermal() {
-      console.log("Print Thermal called");
-      
-      // Create an array of measurement fields with their labels
+      // Create measurement fields array (keep existing code)
       const measurementFields = [
         { label: 'Front Neck Deep', value: this.measurements.frontneckdeep },
         { label: 'Back Neck Deep', value: this.measurements.backneckdeep },
@@ -237,71 +235,70 @@ export class MeasurementDetailComponent implements OnInit {
         { label: 'One Piece Length', value: this.measurements.onepiecelength }
       ];
 
-      // Create the print content (remove customer name and date from here)
-      let printContent = '';  // Start with empty string
-
-      // Filter out empty or zero values and format the measurements
+      // Create the print content
+      let printContent = '';
       measurementFields.forEach(field => {
         if (field.value && field.value.toString() !== '0') {
           printContent += `${field.label}: ${field.value}\n`;
         }
       });
 
-      // Create a hidden iframe for printing
-      const printFrame = document.createElement('iframe');
-      printFrame.style.position = 'fixed';
-      printFrame.style.right = '0';
-      printFrame.style.bottom = '0';
-      printFrame.style.width = '2in';
-      printFrame.style.height = '0';
-      document.body.appendChild(printFrame);
-
-      // Wait for iframe to load before writing content
-      printFrame.onload = () => {
-        const doc = printFrame.contentDocument;
-        if (doc) {
-          doc.open();
-          doc.write(`
-            <html>
-              <head>
-                <style>
+      // Create a new window for printing
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Print Measurements - ${this.customerName}</title>
+              <style>
+                @page {
+                  size: 2in auto;
+                  margin: 0;
+                }
+                body {
+                  font-family: monospace;
+                  font-size: 14px;
+                  font-weight: bold;
+                  line-height: 1.3;
+                  margin: 0;
+                  padding: 8px;
+                  width: 2in;
+                }
+                .customer-name {
+                  font-size: 16px;
+                  font-weight: 900;
+                  text-align: center;
+                  margin-bottom: 5px;
+                }
+                .separator {
+                  font-weight: bold;
+                  margin: 5px 0;
+                }
+                @media print {
                   body {
-                    font-family: monospace;
-                    font-size: 14px;
-                    font-weight: bold;
-                    line-height: 1.3;
-                    margin: 0;
-                    padding: 0;
-                    width: 2in;
+                    width: 100%;
                   }
-                  .customer-name {
-                    font-size: 16px;
-                    font-weight: 900;
-                    text-align: center;
-                    margin-bottom: 5px;
-                  }
-                  .separator {
-                    font-weight: bold;
-                    margin: 5px 0;
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="customer-name">${this.customerName}</div>
-                <div class="separator">------------------------</div>
-                <pre>${printContent}</pre>
-              </body>
-            </html>
-          `);
-          doc.close();
-          
-          setTimeout(() => {
-            if (printFrame.contentWindow) {
-              printFrame.contentWindow.print();
-              setTimeout(() => document.body.removeChild(printFrame), 1000);
-            }
-          }, 250);
-        }
-      };
+                }
+              </style>
+            </head>
+            <body>
+              <div class="customer-name">${this.customerName}</div>
+              <div class="separator">------------------------</div>
+              <pre>${printContent}</pre>
+              <script>
+                window.onload = function() {
+                  window.print();
+                  setTimeout(function() {
+                    window.close();
+                  }, 500);
+                };
+              </script>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        alert('Please allow popups for this website to print measurements.');
+      }
     }
 }
