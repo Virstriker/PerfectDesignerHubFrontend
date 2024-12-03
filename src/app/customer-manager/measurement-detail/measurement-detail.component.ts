@@ -273,8 +273,9 @@ export class MeasurementDetailComponent implements OnInit {
                   font-weight: bold;
                   line-height: 1.4;
                   padding: 8px;
-                  max-width: 3in;
+                  max-width: 58mm;
                   margin: 0 auto;
+                  color: black;
                 }
 
                 .customer-name {
@@ -296,13 +297,13 @@ export class MeasurementDetailComponent implements OnInit {
 
                 @media print {
                   @page {
-                    size: 80mm auto;
+                    size: 58mm auto;
                     margin: 0;
                   }
 
                   body {
-                    width: 72mm;
-                    padding: 4mm;
+                    width: 54mm;
+                    padding: 2mm;
                   }
 
                   .measurement-content {
