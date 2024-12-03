@@ -92,6 +92,7 @@ export class MeasurementDetailComponent implements OnInit {
     chaniyalength: '',
   };
   recordExists = false;
+  isPrinting = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -198,6 +199,8 @@ export class MeasurementDetailComponent implements OnInit {
       this.orderService.generateReadyMeasurmentPdf(readyMeasurment)
     }
     printThermal() {
+      if (this.isPrinting) return;
+      
       const measurementFields = [
         { label: 'Front Neck Deep', value: this.measurements.frontneckdeep },
         { label: 'Back Neck Deep', value: this.measurements.backneckdeep },
@@ -234,104 +237,43 @@ export class MeasurementDetailComponent implements OnInit {
         { label: 'One Piece Length', value: this.measurements.onepiecelength }
       ];
 
-      // Create the print content
-      let printContent = '';
-      measurementFields.forEach(field => {
-        if (field.value && field.value.toString() !== '0') {
-          printContent += `${field.label}: ${field.value}\n`;
-        }
-      });
+      this.isPrinting = true;
+      const originalContent = document.body.innerHTML;
 
-      // Create a new window for printing
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Print Measurements - ${this.customerName}</title>
-              <style>
-                * {
-                  margin: 0;
-                  padding: 0;
-                  box-sizing: border-box;
-                }
-                
-                html, body {
-                  width: 100%;
-                  height: auto;
-                  margin: 0;
-                  padding: 0;
-                  background-color: white;
-                }
+      try {
+        const printContent = `
+          <div style="
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 8px;
+            max-width: 58mm;
+            margin: 0 auto;
+            color: black;
+          ">
+            <div style="text-align: center; font-size: 18px; margin-bottom: 8px;">
+              ${this.customerName}
+            </div>
+            <div style="border-top: 1px solid black; margin: 4px 0;"></div>
+            <pre style="white-space: pre-line; margin: 0;">${
+              measurementFields
+                .filter(field => field.value && field.value.toString() !== '0')
+                .map(field => `${field.label}: ${field.value}`)
+                .join('\n')
+            }</pre>
+          </div>
+        `;
 
-                body {
-                  font-family: monospace;
-                  font-size: 16px;
-                  font-weight: bold;
-                  line-height: 1.4;
-                  padding: 8px;
-                  max-width: 58mm;
-                  margin: 0 auto;
-                  color: black;
-                }
-
-                .customer-name {
-                  font-size: 18px;
-                  font-weight: bold;
-                  text-align: center;
-                  margin-bottom: 8px;
-                }
-
-                .separator {
-                  border-top: 1px solid #000;
-                  margin: 4px 0;
-                }
-
-                .measurement-content {
-                  white-space: pre-line;
-                  word-wrap: break-word;
-                }
-
-                @media print {
-                  @page {
-                    size: 58mm auto;
-                    margin: 0;
-                  }
-
-                  body {
-                    width: 54mm;
-                    padding: 2mm;
-                  }
-
-                  .measurement-content {
-                    page-break-inside: avoid;
-                  }
-                }
-              </style>
-            </head>
-            <body>
-              <div class="customer-name">${this.customerName}</div>
-              <div class="separator"></div>
-              <div class="measurement-content">${printContent}</div>
-              <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                  setTimeout(function() {
-                    window.print();
-                    setTimeout(function() {
-                      window.close();
-                    }, 500);
-                  }, 250);
-                });
-              </script>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-      } else {
-        alert('Please allow popups for this website to print measurements.');
+        document.body.innerHTML = printContent;
+        window.print();
+      } catch (error) {
+        console.error('Print error:', error);
+        alert('There was an error while trying to print. Please try again.');
+      } finally {
+        setTimeout(() => {
+          document.body.innerHTML = originalContent;
+          this.isPrinting = false;
+        }, 250);
       }
     }
 }
