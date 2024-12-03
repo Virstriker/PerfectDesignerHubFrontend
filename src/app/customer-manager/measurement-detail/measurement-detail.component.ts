@@ -198,7 +198,6 @@ export class MeasurementDetailComponent implements OnInit {
       this.orderService.generateReadyMeasurmentPdf(readyMeasurment)
     }
     printThermal() {
-      // Create measurement fields array (keep existing code)
       const measurementFields = [
         { label: 'Front Neck Deep', value: this.measurements.frontneckdeep },
         { label: 'Back Neck Deep', value: this.measurements.backneckdeep },
@@ -247,51 +246,84 @@ export class MeasurementDetailComponent implements OnInit {
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(`
+          <!DOCTYPE html>
           <html>
             <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>Print Measurements - ${this.customerName}</title>
               <style>
-                @page {
-                  size: 2in auto;
+                * {
                   margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
                 }
+                
+                html, body {
+                  width: 100%;
+                  height: auto;
+                  margin: 0;
+                  padding: 0;
+                  background-color: white;
+                }
+
                 body {
                   font-family: monospace;
-                  font-size: 14px;
-                  font-weight: bold;
-                  line-height: 1.3;
-                  margin: 0;
-                  padding: 8px;
-                  width: 2in;
-                }
-                .customer-name {
                   font-size: 16px;
-                  font-weight: 900;
-                  text-align: center;
-                  margin-bottom: 5px;
-                }
-                .separator {
                   font-weight: bold;
-                  margin: 5px 0;
+                  line-height: 1.4;
+                  padding: 8px;
+                  max-width: 3in;
+                  margin: 0 auto;
                 }
+
+                .customer-name {
+                  font-size: 18px;
+                  font-weight: bold;
+                  text-align: center;
+                  margin-bottom: 8px;
+                }
+
+                .separator {
+                  border-top: 1px solid #000;
+                  margin: 4px 0;
+                }
+
+                .measurement-content {
+                  white-space: pre-line;
+                  word-wrap: break-word;
+                }
+
                 @media print {
+                  @page {
+                    size: 80mm auto;
+                    margin: 0;
+                  }
+
                   body {
-                    width: 100%;
+                    width: 72mm;
+                    padding: 4mm;
+                  }
+
+                  .measurement-content {
+                    page-break-inside: avoid;
                   }
                 }
               </style>
             </head>
             <body>
               <div class="customer-name">${this.customerName}</div>
-              <div class="separator">------------------------</div>
-              <pre>${printContent}</pre>
+              <div class="separator"></div>
+              <div class="measurement-content">${printContent}</div>
               <script>
-                window.onload = function() {
-                  window.print();
+                document.addEventListener('DOMContentLoaded', function() {
                   setTimeout(function() {
-                    window.close();
-                  }, 500);
-                };
+                    window.print();
+                    setTimeout(function() {
+                      window.close();
+                    }, 500);
+                  }, 250);
+                });
               </script>
             </body>
           </html>
