@@ -9,33 +9,162 @@ import { OrderServiceService } from '../../services/order-service.service';
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers:[OrderServiceService],
+  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule],
+  providers: [OrderServiceService],
   templateUrl: './order.component.html',
-  styleUrl: './order.component.css'
+  styleUrls: ['./order.component.css']
 })
-export class OrderComponent implements OnInit{
+export class OrderComponent implements OnInit {
+  orders: OrderCard[] = [];
+  filteredOrders: OrderCard[] = [];
   searchTerm: string = '';
-  orders:OrderCard [] = [];
-  constructor(private orderService:OrderServiceService,
-    private route:Router
-  ){}
+  selectedStatus: string = '1';
+  selectedDateFilter: string = 'today';
+
+  constructor(private orderService: OrderServiceService, private route: Router) { }
+
   ngOnInit(): void {
-    this.orderService.getAllOrders().subscribe({
-      next: (response: ResponseDto) => {
-        if (response.isSuccess) {
-          this.orders = response.responseObject.sort((a: OrderCard, b: OrderCard) => b.id - a.id);
-          console.log(this.orders);
-        } else {
-          alert(response.message);
-        }
+    this.applyFilters();
+    // this.orderService.getAllOrders().subscribe({
+    //   next: (response: ResponseDto) => {
+    //     if (response.isSuccess) {
+    //       this.orders = response.responseObject;
+    //       // this.orders = [
+    //       //   {
+    //       //     id: 1,
+    //       //     branchname: 'Main',
+    //       //     customer: 'John Doe',
+    //       //     orderdate: '2022-12-01',
+    //       //     deliverydate: '2022-12-20',
+    //       //     ordertables: '3',
+    //       //     totalPrice: 1000,
+    //       //     orderstatus: 1
+    //       //   },
+    //       //   {
+    //       //     id: 2,
+    //       //     branchname: 'Main',
+    //       //     customer: 'Jane Doe',
+    //       //     orderdate: '2022-11-25',
+    //       //     deliverydate: '2022-12-15',
+    //       //     ordertables: '2',
+    //       //     totalPrice: 500,
+    //       //     orderstatus: 2
+    //       //   },
+    //       //   {
+    //       //     id: 3,
+    //       //     branchname: 'Main',
+    //       //     customer: 'Bob Smith',
+    //       //     orderdate: '2022-11-15',
+    //       //     deliverydate: '2022-11-30',
+    //       //     ordertables: '1',
+    //       //     totalPrice: 100,
+    //       //     orderstatus: 3
+    //       //   }
+    //       // ];
+    //       this.applyFilters();
+    //     } else {
+    //       alert(response.message);
+    //     }
+    //   },
+    //   error: (error) => {
+    //     console.error(error);
+    //   }
+    // });
+    
+  }
+  lastFilter:string = 'today';
+  applyFilters() {
+    let filtered = this.orders;
+    // Apply date filter
+    if (this.selectedDateFilter !== this.lastFilter) {
+      this.lastFilter = this.selectedDateFilter;
+      const today = new Date();
+      const startDate = new Date();
+
+      switch (this.selectedDateFilter) {
+        case 'today':
+          this.orderService.getFilterOrders({
+            startDate: new Date(),
+            endDate: new Date()
+          }).subscribe({
+            next: (response: ResponseDto) => {
+              if (response.isSuccess) {
+                this.orders = response.responseObject;
+                this.filteredOrders = this.orders.filter(order =>
+                  order.orderstatus === parseInt(this.selectedStatus)
+                );
+              } else {
+                alert(response.message);
+              }
+            }
+          })
+          break;
+        case 'week':
+          this.orderService.getFilterOrders({
+            startDate: new Date(today.setDate(today.getDate() - today.getDay())),
+            endDate: new Date(today.setDate(today.getDate() - today.getDay() + 6))
+          }).subscribe({
+            next: (response: ResponseDto) => {
+              if (response.isSuccess) {
+                this.orders = response.responseObject;
+                this.filteredOrders = this.orders.filter(order =>
+                  order.orderstatus === parseInt(this.selectedStatus)
+                );
+              } else {
+                alert(response.message);
+              }
+            }
+          })
+          break;
+        case 'month':
+          this.orderService.getFilterOrders({
+            startDate: new Date(today.getFullYear(), today.getMonth(), 1),
+            endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0)
+          }).subscribe({
+            next: (response: ResponseDto) => {
+              if (response.isSuccess) {
+                this.orders = response.responseObject;
+                this.filteredOrders = this.orders.filter(order =>
+                  order.orderstatus === parseInt(this.selectedStatus)
+                );
+              } else {
+                alert(response.message);
+              }
+            }
+          })
+          break;
       }
-    });
+      // filtered = filtered.filter(order => {
+      //   const orderDate = new Date(order.orderdate);
+      //   return orderDate >= startDate && orderDate <= today;
+      // });
+    }
+    
+    console.log(filtered,this.orders);
+    // Apply status filter
+    if (this.selectedStatus !== 'all') {
+      filtered = filtered.filter(order =>
+        order.orderstatus === parseInt(this.selectedStatus)
+      );
+    }
+    this.filteredOrders = filtered;
   }
-  goToOrder(id:number){
-    this.route.navigateByUrl("/customer-manager/order-info/"+id);
+
+  goToOrder(id: number) {
+    this.route.navigateByUrl("/customer-manager/order-details/" + id);
   }
-  addOrder(){
+
+  addOrder() {
     this.route.navigateByUrl("/customer-manager/add-order");
+  }
+
+  getStatusText(orderstatus: number): string {
+    if (orderstatus == 1) {
+      return 'Active';
+    } else if (orderstatus == 2) {
+      return 'Complete';
+    } else {
+      return 'Delivered';
+    }
   }
 }

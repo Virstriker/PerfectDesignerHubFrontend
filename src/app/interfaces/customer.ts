@@ -28,9 +28,9 @@ export interface Customer {
   deliverydate: string;
   id: number;
   orderdate: string;
-  orderstatus: boolean;
+  orderstatus: number;
   ordertables: string;
-   totalPrice:number;
+   totalprice:number;
   }
 
   export interface LoginDto {

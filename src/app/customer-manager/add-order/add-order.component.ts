@@ -1,261 +1,140 @@
-import { NgClass, NgFor, CommonModule, DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import {ReactiveFormsModule, NgModelGroup, FormsModule } from '@angular/forms';
-import { OrderServiceService } from '../../services/order-service.service';
-import { ResponseDto } from '../../interfaces/customer';
-import { CustomerServiceService } from '../../services/customer-service.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-interface Ordertable {
-  customerId?: number;
-  branchName?: string;
-  orderDate?: string;
-  deliveryDate?: string;
-  totalPrice?: number;
-  orderstatus?:boolean;
-}
+import { DatePipe } from '@angular/common';
+import { OrderServiceService } from '../../services/order-service.service';
+import { CustomerServiceService } from '../../services/customer-service.service';
+import { addOrderDto, TopItem, BottomItem } from '../../interfaces/order';
+import { AddItemDialogComponent } from './add-item-dialog/add-item-dialog.component';
 
-interface addOrderDto{
-  ordertable :Ordertable;
-  blouses:Array<Blouse>;
-  dresses:Array<Dress>;
-  pants:Array<Pant>;
-  chaniyo:Array<Chaniyo>;
-}
-
-interface Blouse {
-  style?: string;
-  neckDesign?: string;
-  astar?: boolean;
-  openingSide?: string;
-  neck?: string;
-  dori?: boolean;
-  sleeve?: string;
-  detail?: string;
-  clothimage?: string;
-  desingimage?: string;
-  price?: number;
-}
-
-interface Dress {
-  style?: string;
-  neckDesign?: string;
-  astar?: boolean;
-  openingSide?: string;
-  backOfNeck?: string;
-  chain?: boolean;
-  sleeve?: string;
-  detail?: string;
-  clothimage?: string;
-  desingimage?: string;
-  price?: number;
-}
-
-interface Chaniyo {
-  style?: string;
-  detail?: string;
-  clothimage?: string;
-  desingimage?: string;
-  price?: number;
-}
-
-interface Pant {
-  rubberT?: string;
-  neckDesign?: string;
-  pocket?: boolean;
-  detail?: string;
-  price?: number;
-}
 @Component({
-  selector: 'app-add-order',
   standalone: true,
-  imports: [NgClass, NgFor, CommonModule, HttpClientModule,ReactiveFormsModule,FormsModule],
-  providers:[OrderServiceService,CustomerServiceService,DatePipe],
+  selector: 'app-add-order',
   templateUrl: './add-order.component.html',
-  styleUrl: './add-order.component.css'
+  imports: [FormsModule, HttpClientModule, CommonModule, AddItemDialogComponent],
+  providers: [OrderServiceService, CustomerServiceService, DatePipe],
+  styleUrls: ['./add-order.component.css']
 })
-export class AddOrderComponent implements OnInit{
-  order: Ordertable = {
-    branchName:'Main'
+export class AddOrderComponent implements OnInit {
+  order: addOrderDto = {
+    order: {
+      customerid: 0,
+      branchname: 'Main',
+      orderdate: new Date().toISOString().split('T')[0],
+      deliverydate: '',
+      totalprice: 0,
+      orderstatus: 1
+    },
+    tops: [],
+    bottoms: []
   };
-  constructor(private  orderService: OrderServiceService,
-    private customerService:CustomerServiceService,
-    private rout:Router,
-    private datePipe:DatePipe
-  ) {}
 
-  // Arrays to hold added items
-  blouses: Blouse[] = [];
-  dresses: Dress[] = [];
-  chaniyos: Chaniyo[] = [];
-  pants: Pant[] = [];
+  showItemDialog = false;
+  editingItemType: 'top' | 'bottom' | null = null;
+  editingItemData: TopItem | BottomItem | null = null;
+  editingItemIndex: number | null = null;
+  customerIds: any[] = [];
 
-  // Pop-up visibility flags
-  showBlousePopup = false;
-  showDressPopup = false;
-  showChaniyoPopup = false;
-  showPantPopup = false;
+  constructor(
+    private orderService: OrderServiceService,
+    private customerService: CustomerServiceService,
+    private router: Router,
+    private datePipe: DatePipe
+  ) { }
 
-  // New item variables for pop-ups
-  newBlouse: Blouse = {
-  };
-  newDress: Dress = {};
-  newChaniyo: Chaniyo = {};
-  newPant: Pant = {};
-
-  // Methods to open pop-ups
-  openBlousePopup() {
-      this.showBlousePopup = true; 
-      this.newBlouse = {
-      };
+  ngOnInit() {
+    this.loadCustomers();
   }
 
-  openDressPopup() {
-      this.showDressPopup = true; 
-      this.newDress = {}; // Reset for new entry
-  }
-
-  openChaniyoPopup() {
-      this.showChaniyoPopup = true; 
-      this.newChaniyo = {}; // Reset for new entry
-  }
-
-  openPantPopup() {
-      this.showPantPopup = true; 
-      this.newPant = {}; // Reset for new entry
-  }
-
-  // Methods to add items
-  addBlouse() {
-      if (this.newBlouse.style && this.newBlouse.price) {
-          this.blouses.push(this.newBlouse);
-          this.showBlousePopup = false; // Close popup after adding
-      }
-  }
-
-  addDress() {
-      if (this.newDress.style && this.newDress.price) {
-          this.dresses.push(this.newDress);
-          this.showDressPopup = false; // Close popup after adding
-      }
-  }
-
-  addChaniyo() {
-      if (this.newChaniyo.style && this.newChaniyo.price) {
-          this.chaniyos.push(this.newChaniyo);
-          this.showChaniyoPopup = false; // Close popup after adding
-      }
-  }
-
-  addPant() {
-      if (this.newPant.rubberT && this.newPant.price) {
-          this.pants.push(this.newPant);
-          this.showPantPopup = false; // Close popup after adding
-      }
-  }
-  onBlouseDesignImageUpload(event: any) {
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newBlouse.desingimage = Data.data.display_url;
-    }
-    })
-  }
-  onBlouseClothImageUpload(event:any){
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newBlouse.clothimage = Data.data.display_url;
-    }
-    })
-  }
-
-  onDressDesignImageUpload(event: any) {
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newDress.desingimage = Data.data.display_url;
-    }
-    })
-  }
-  onDressClothImageUpload(event:any){
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newDress.clothimage = Data.data.display_url;
-    }
-    })
-  }
-
-  onChaniyoDesignImageUpload(event: any) {
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newChaniyo.desingimage = Data.data.display_url;
-    }
-    })
-    console.log(this.newChaniyo);
-  }
-  onChaniyoClothImageUpload(event:any){
-    const file = event.target.files[0];
-    this.orderService.getImageUrl(file).subscribe({
-      next: (Data) => {
-        this.newChaniyo.clothimage = Data.data.display_url;
-    }
-    })
-    console.log(this.newChaniyo);
-  }
-  
- addOrder:addOrderDto={
-  ordertable:{},
-  blouses:[],
-  chaniyo:[],
-  dresses:[],
-  pants:[],
- };
- formatDate(dateStr: string): string | null {
-  // Parse the string into a JavaScript Date object
-  const dateObj = new Date(dateStr);
-
-  // Format the date using Angular's DatePipe
-  return this.datePipe.transform(dateObj, 'yyyy-MM-dd');
-}
-  onSubmit(){
-    if(this.order.customerId===null){
-      alert('Please select customer');
-      return;
-    }
-    const formattedDate = this.formatDate(new Date().toDateString());
-    if (formattedDate !== null) {
-      this.order.orderDate = formattedDate;
-    } else {
-      // Handle the case where formatDate returns null
-      console.error('Failed to format date');
-      // You might want to set a default date or show an error message
-    }
-    this.addOrder.ordertable = this.order;
-    this.addOrder.blouses = this.blouses;
-    this.addOrder.chaniyo = this.chaniyos;
-    this.addOrder.dresses = this.dresses;
-    this.addOrder.pants = this.pants;
-    this.addOrder.ordertable.orderstatus = false;
-    console.log(this.addOrder);
-    this.orderService.addOrder(this.addOrder).subscribe({
-      next:(response:ResponseDto)=>{
-        if(response.isSuccess){
-          alert("Order Added");
-          this.rout.navigateByUrl("/customer-manager/order");
-        }else{
-          alert("Order Not Added");
+  loadCustomers() {
+    this.customerService.getAllCustomer().subscribe({
+      next: (response: any) => {
+        if (response.responseObject) {
+          this.customerIds = response.responseObject;
         }
+      },
+      error: (error) => {
+        console.error('Error loading customers:', error);
       }
     });
   }
-  customerIds: any[] = [];
-  ngOnInit(){
-    this.customerService.getAllCustomer().subscribe({
-      next:(response:ResponseDto)=>{
-        this.customerIds = response.responseObject;
+
+  openItemPopup() {
+    this.showItemDialog = true;
+    this.editingItemType = null;
+    this.editingItemData = null;
+    this.editingItemIndex = null;
+  }
+
+  closeItemDialog() {
+    this.showItemDialog = false;
+  }
+
+  editItem(type: 'top' | 'bottom', index: number) {
+    this.editingItemType = type;
+    this.editingItemIndex = index;
+    this.editingItemData = type === 'top' ? { ...this.order.tops[index] } : { ...this.order.bottoms[index] };
+    this.showItemDialog = true;
+  }
+
+  onItemSaved(event: { type: string; item: TopItem | BottomItem }) {
+    if (this.editingItemIndex !== null) {
+      if (event.type === 'top') {
+        this.order.tops[this.editingItemIndex] = event.item as TopItem;
+      } else {
+        this.order.bottoms[this.editingItemIndex] = event.item as BottomItem;
+      }
+    } else {
+      if (event.type === 'top') {
+        this.order.tops.push(event.item as TopItem);
+      } else {
+        this.order.bottoms.push(event.item as BottomItem);
+      }
+    }
+    this.calculateTotalPrice();
+    this.closeItemDialog();
+  }
+
+  calculateTotalPrice() {
+    let total = 0;
+    this.order.tops.forEach(item => total += item.price);
+    this.order.bottoms.forEach(item => total += item.price);
+    this.order.order.totalprice = total;
+  }
+
+  onSubmit() {
+    if (!this.order.order.customerid) {
+      alert('Please select a customer');
+      return;
+    }
+
+    if (!this.order.order.deliverydate) {
+      alert('Please select a delivery date');
+      return;
+    }
+
+    const formattedDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    if (formattedDate) {
+      this.order.order.orderdate = formattedDate;
+    } else {
+      console.error('Failed to format date');
+      return;
+    }
+
+    this.orderService.addOrder(this.order).subscribe({
+      next: (response: any) => {
+        if (response.isSuccess) {
+          alert('Order Added Successfully');
+          this.router.navigateByUrl('/customer-manager/order');
+        } else {
+          alert('Failed to add order');
+        }
+      },
+      error: (error) => {
+        console.error('Error adding order:', error);
+        alert('Failed to add order');
       }
     });
   }

@@ -12,7 +12,7 @@ export class OrderServiceService {
 
   constructor(private http: HttpClient, private constant: constant) { }
 
-  baseOrderUrl: string = this.constant.Url + "Order/";
+  baseOrderUrl: string = this.constant.pdfUrl + "orders";
   url = 'https://api.imgbb.com/1/upload?key=b6d6c1051566438a8d968fa96b850f87';
   responseImage!:any;
   private getAuthHeaders(): HttpHeaders {
@@ -24,21 +24,21 @@ export class OrderServiceService {
   }
 
   getAllOrders(): Observable<ResponseDto> {
-    const url = this.baseOrderUrl + "GetAllOrders";
+    const url = this.baseOrderUrl;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
 
   getAllOrderByCustomerId(customerId:number): Observable<ResponseDto> {
-    const url = this.baseOrderUrl + "GetOrderByCustomerId/"+customerId;
+    const url = this.baseOrderUrl + "/GetOrderByCustomerId/"+customerId;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
 
   getOrderDetailsById(Id:number): Observable<ResponseDto> {
-    const url = this.baseOrderUrl + "GetOrderId/"+Id;
+    const url = this.baseOrderUrl + "/"+Id;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
   completeOrder(Id:number): Observable<ResponseDto> {
-    const url = this.baseOrderUrl + "CompleteOrder/"+Id;
+    const url = this.baseOrderUrl + "/CompleteOrder/"+Id;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
   getImageUrl(file:any): Observable<any>{
@@ -47,11 +47,11 @@ export class OrderServiceService {
     return this.http.post(this.url, formData);
   }
   addOrder(order:any): Observable<ResponseDto>{
-    const url = this.baseOrderUrl + "AddNewOrder";
+    const url = this.baseOrderUrl;
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
   getFilterOrders(order:any):Observable<ResponseDto>{
-    const url = this.baseOrderUrl + "filterOrders";
+    const url = this.baseOrderUrl + "/date-range";
     return this.http.post<ResponseDto>(url,order,{ headers: this.getAuthHeaders() });
   }
   generatePdf(data:any): void {

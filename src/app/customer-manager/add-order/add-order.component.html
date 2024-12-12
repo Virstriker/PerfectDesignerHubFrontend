@@ -2,229 +2,44 @@
     <h2>Add Order</h2>
     <form>
         <label>Customer:</label>
-        <select [(ngModel)]="order.customerId" name="customerId" id="selectCustomer" required>
+        <select [(ngModel)]="order.order.customerid" name="customerId" id="selectCustomer" required>
             <option *ngFor="let customer of customerIds" [value]="customer.id">{{ customer.name+" "+customer.surname }}</option>
         </select>
 
         <label>Branch Name:</label>
-        <input type="text" [(ngModel)]="order.branchName" name="branchName" disabled required />
+        <input type="text" [(ngModel)]="order.order.branchname" name="branchName" disabled required />
 
         <label>Delivery Date:</label>
-        <input type="date" [(ngModel)]="order.deliveryDate" name="deliveryDate" required />
+        <input type="date" [(ngModel)]="order.order.deliverydate" name="deliveryDate" required />
 
-        <button type="button" (click)="openBlousePopup()">Add Blouse</button>
-        <button type="button" (click)="openDressPopup()">Add Dress</button>
-        <button type="button" (click)="openChaniyoPopup()">Add Chaniyo</button>
-        <button type="button" (click)="openPantPopup()">Add Pant</button>
+        <button type="button" (click)="openItemPopup()" class="add-item-btn">Add Item</button>
     </form>
 
     <!-- Display added items -->
-    <h3>Added Items</h3>
-
-    <div *ngFor="let blouse of blouses" class="order-card">
-        <h3>Blouse</h3> - Style: {{blouse.style}} ,Price: {{blouse.price | currency}}
-    </div>
-
-    <div *ngFor="let dress of dresses" class="order-card">
-        <h3>Dress</h3> - Style: {{dress.style}}, Price: {{dress.price | currency}}
-    </div>
-
-    <div *ngFor="let chaniyo of chaniyos" class="order-card">
-        <h3>Chaniyo</h3> - Style: {{chaniyo.style}}, Price: {{chaniyo.price | currency}}
-    </div>
-
-    <div *ngFor="let pant of pants" class="order-card">
-        <h3>Pant</h3> - Rubber T: {{pant.rubberT}}, Price: {{pant.price | currency}}
-    </div>
-
-    <!-- Blouse Popup -->
-    <div *ngIf="showBlousePopup" class="overlay">
-        <div class="popup">
-            <h4>Add Blouse</h4>
-            <label>Style:</label>
-            <select class="select" [(ngModel)]="newBlouse.style" required>
-                <option value="Princess Cut">Princess Cut</option>
-                <option value="Princess Cut">Princess Cut With Pad</option>
-                <option value="Katori">Katori</option>
-                <option value="4Gents">4Gents</option>
-                <option value="Sabiya Sachi">Sabiya Sachi</option>
-            </select>
-            <label>Neck Design:</label>
-            <select class="select" [(ngModel)]="newBlouse.neckDesign" required>
-                <option value="Round">Round</option>
-                <option value="Boat">Boat Cut</option>
-                <option value="Stand">Stand</option>
-                <option value="A.Work">A.Work</option>
-                <option value="A.Whatsapp">A.Whatsapp</option>
-                <option value="A.Measurment">A.Measurment</option>
-                <option value="A.Drawing">A.Drawing</option>
-            </select>
-            <label>astar:</label>
-            <input type="checkbox" [defaultValue]="false" [(ngModel)]="newBlouse.astar" />
-            <label>Opening Side:</label>
-            <select class="select" [(ngModel)]="newBlouse.openingSide" required>
-                <option value="Front">Front</option>
-                <option value="Back">Back</option>
-                <option value="Side">Side</option>
-                <option value="Chain">Chain</option>
-            </select>
-            <label>Neck:</label>
-            <select class="select" [(ngModel)]="newBlouse.neck" required>
-                <option value="Piping">Piping</option>
-                <option value="Ureph Patti">Ureph Patti</option>
-                <option value="Canvas">Canvas</option>
-                <option value="Hemming">Hemming</option>
-                <option value="Dori">Dori</option>
-            </select>
-            <label>Dori:</label>
-            <input type="checkbox" [defaultValue]="false" [(ngModel)]="newBlouse.dori" />
-            <label>Sleeve:</label>
-            <select class="select" [(ngModel)]="newBlouse.sleeve" required>
-                <option value="Sleeve Less">Sleeve Less</option>
-                <option value="Cape">Cape</option>
-                <option value="Elbow">Elbow</option>
-                <option value="3/4TH">3/4TH</option>
-                <option value="Full">Full</option>
-            </select>
-            <label>Detail:</label>
-            <input type="text" [(ngModel)]="newBlouse.detail" />
-            <label>Cloth Image:</label>
-            <input type="file" id="blouseClothImage" (change)="onBlouseClothImageUpload($event)" />
-            <label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
-
-            <label>Design Image:</label>
-            <input type="file" id="blouseDesignImage" (change)="onBlouseDesignImageUpload($event)" />
-            <label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
-
-            <label>Price:</label>
-            <input type="number" [(ngModel)]="newBlouse.price" required />
-
-            <!-- Add and close buttons -->
-            <button (click)="addBlouse()">Add</button>
-            <button (click)="showBlousePopup = false">Close</button>
+    <div class="items-container">
+        <div *ngFor="let item of order.tops; let i = index" class="order-card">
+            <h3>Top</h3>
+            <p>Item: {{item.item}}</p>
+            <p>Style: {{item.style}}</p>
+            <p>Price: {{item.price | currency}}</p>
+            <button (click)="editItem('top', i)" class="edit-btn">Edit</button>
+        </div>
+        <div *ngFor="let item of order.bottoms; let i = index" class="order-card">
+            <h3>Bottom</h3>
+            <p>Item: {{item.item}}</p>
+            <p>Style: {{item.style}}</p>
+            <p>Price: {{item.price | currency}}</p>
+            <button (click)="editItem('bottom', i)" class="edit-btn">Edit</button>
         </div>
     </div>
 
-    <!-- Dress Popup -->
-    <div *ngIf="showDressPopup" class="overlay">
-        <div class="popup">
-            <h4>Add Dress</h4>
-            <label>Style:</label>
-            <select class="select" [(ngModel)]="newDress.style" required>
-                <option value="Kurti">Kurti</option>
-                <option value="One Piece">One Piece</option>
-                <option value="Short Top">Short Top</option>
-                <option value="Frok">Frok</option>
-            </select>
-            <label>Neck Design:</label>
-            <select class="select" [(ngModel)]="newDress.neckDesign" required>
-                <option value="Round">Round</option>
-                <option value="Boat">Boat Cut</option>
-                <option value="Stand">Stand</option>
-                <option value="A.Work">A.Work</option>
-                <option value="A.Whatsapp">A.Whatsapp</option>
-                <option value="A.Measurment">A.Measurment</option>
-                <option value="A.Drawing">A.Drawing</option>
-            </select>
-            <label>Astar:</label>
-            <input type="checkbox" [defaultValue]="false" [(ngModel)]="newDress.astar" />
-            <label>Opening Side:</label>
-            <select class="select" [(ngModel)]="newDress.openingSide" required>
-                <option value="Side Cut">Side Cut</option>
-                <option value="A Line">A Line</option>
-            </select>
-            <label>Back of Neck:</label>
-            <select class="select" [(ngModel)]="newDress.backOfNeck" required>
-                <option value="Deep">Deep</option>
-                <option value="Pack">Pack</option>
-            </select>
-            <label>Chain:</label>
-            <input type="checkbox" [defaultValue]="false" [(ngModel)]="newDress.chain" />
-            <label>Sleeve:</label>
-            <select class="select" [(ngModel)]="newDress.sleeve" required>
-                <option value="Sleeve Less">Sleeve Less</option>
-                <option value="Cape">Cape</option>
-                <option value="Elbow">Elbow</option>
-                <option value="3/4TH">3/4TH</option>
-                <option value="Full">Full</option>
-            </select>
-            <label>Detail:</label>
-            <input type="text" [(ngModel)]="newDress.detail" />
-            <label>Cloth Image:</label>
-            <input type="file" id="blouseClothImage" (change)="onDressClothImageUpload($event)" />
-            <label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
-            <label>Design Image:</label>
-            <input type="file" id="blouseDesignImage" (change)="onDressDesignImageUpload($event)" />
-            <label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
-            <label>Price:</label>
-            <input type="number" [(ngModel)]="newDress.price" required />
-            <!-- Add and close buttons -->
-            <button (click)="addDress()">Add</button>
-            <button (click)="showDressPopup = false">Close</button>
+    <button (click)="onSubmit()" class="submit-btn">Submit Order</button>
 
-        </div>
-    </div>
-
-    <!-- Chaniyo Popup -->
-    <div *ngIf="showChaniyoPopup" class="overlay">
-        <div class="popup">
-            <h4>Add Chaniyo</h4>
-            <label>Style:</label>
-            <select class="select" [(ngModel)]="newChaniyo.style" required>
-                <option value="Umbrella Gher">Umbrella Gher</option>
-                <option value="Kali">Kali</option>
-                <option value="Plits">Plits</option>
-                <option value="Step">Step</option>
-            </select>
-            <label>Detail:</label>
-            <input type="text" [(ngModel)]="newChaniyo.detail" />
-            <label>Cloth Image:</label>
-            <input type="file" id="blouseClothImage" (change)="onChaniyoClothImageUpload($event)" />
-            <label for="blouseClothImage" class="file-upload-label">Upload Cloth Image</label>
-
-            <label>Design Image:</label>
-            <input type="file" id="blouseDesignImage" (change)="onChaniyoDesignImageUpload($event)" />
-            <label for="blouseDesignImage" class="file-upload-label">Upload Design Image</label>
-
-            <label>Price:</label>
-            <input type="number" [(ngModel)]="newChaniyo.price" required />
-
-            <!-- Add and close buttons -->
-            <button (click)="addChaniyo()">Add</button>
-            <button (click)="showChaniyoPopup = false">Close</button>
-        </div>
-    </div>
-
-    <!-- Pant Popup -->
-    <div *ngIf="showPantPopup" class="overlay">
-        <div class="popup">
-            <h4>Add Pant</h4>
-            <label>Style:</label>
-            <select class="select" [(ngModel)]="newPant.neckDesign" required>
-                <option value="Pant">Pant</option>
-                <option value="Plazo">Plazo</option>
-                <option value="Dhoti">Dhoti</option>
-                <option value="Salvar">Salvar</option>
-                <option value="Sharara">Sharara</option>
-            </select>
-            <label>Belt:</label>
-            <select class="select" [(ngModel)]="newPant.rubberT" required>
-                <option value="Belt Rubber">Belt Rubber</option>
-                <option value="Full Rubber">Full Rubber</option>
-                <option value="Nadi">Nadi</option>
-            </select>
-            <label>Pocket:</label>
-            <input type="checkbox" [defaultValue]="false" [(ngModel)]="newPant.pocket" />
-            <label>Detail:</label>
-            <input type="text" [(ngModel)]="newPant.detail" />
-            <label>Price:</label>
-            <input type="number" [(ngModel)]="newPant.price" required />
-            <!-- Add and close buttons -->
-            <button (click)="addPant()">Add</button>
-            <button (click)="showPantPopup = false">Close</button>
-        </div>
-    </div>
-    <button (click)="onSubmit()">
-        Submit
-    </button>
+    <app-add-item-dialog 
+        *ngIf="showItemDialog"
+        [itemType]="editingItemType"
+        [itemData]="editingItemData"
+        (closeDialog)="closeItemDialog()"
+        (saveItem)="onItemSaved($event)">
+    </app-add-item-dialog>
 </div>

@@ -8,20 +8,54 @@
       Add Order
     </button>
   </div>
-  <div class="order-cards-container">
-    <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of orders">
-      <div class="order-card-header">
-        <h4>Order #{{order.id}}</h4>
-        <div class="order-status" [ngClass]="order.orderstatus ? 'complete' : 'active'">
-          {{ order.orderstatus ? 'Complete' : 'Active' }}
-        </div>
-      </div>
-      <div class="order-details">
-        <p><strong>Branch Name:</strong> {{order.branchname}}</p>
-        <p><strong>Customer:</strong> {{order.customer}}</p>
-        <p><strong>Order Date:</strong> {{order.orderdate.split("T")[0]}}</p>
-        <p><strong>Delivery Date:</strong> {{order.deliverydate.split("T")[0]}}</p>
-      </div>
+  
+  <div class="filters-container">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="1">Active</option>
+        <option value="2">Complete</option>
+        <option value="3">Delivered</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Order Date:</label>
+      <select [(ngModel)]="selectedDateFilter" (change)="applyFilters()">
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
     </div>
   </div>
+  
+  <table class="order-detail-table">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer Name</th>
+        <th>Branch Name</th>
+        <th>Order Date</th>
+        <th>Delivery Date</th>
+        <th>Order Tables</th>
+        <th>Total Price</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of filteredOrders" (click)="goToOrder(order.id)">
+        <td>{{order.id}}</td>
+        <td>{{order.customer}}</td>
+        <td>{{order.branchname}}</td>
+        <td>{{order.orderdate.split('T')[0]}}</td>
+        <td>{{order.deliverydate.split('T')[0]}}</td>
+        <td>{{order.ordertables}}</td>
+        <td>${{order.totalprice}}</td>
+        <td>
+          <span class="order-status" [ngClass]="order.orderstatus == 1 ? 'active' : order.orderstatus == 2 ? 'complete' : 'Delivered'">
+            {{ getStatusText(order.orderstatus) }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

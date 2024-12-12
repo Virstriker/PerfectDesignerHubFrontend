@@ -1,0 +1,227 @@
+<div class="dialog-overlay" *ngIf="showDialog">
+    <div class="dialog-content">
+        <div class="dialog-header">
+            <h2>Add Item</h2>
+            <button class="close-btn" (click)="close()">&times;</button>
+        </div>
+
+        <div class="type-selection" *ngIf="!selectedType">
+            <button (click)="selectType('top')" class="type-btn">Top</button>
+            <button (click)="selectType('bottom')" class="type-btn">Bottom</button>
+        </div>
+
+        <div *ngIf="selectedType === 'top'" class="form-container">
+            <div class="form-group">
+                <label>Item:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.item" readonly [value]="topForm.item" />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of topOptions" 
+                                [class.active]="topForm.item === option" 
+                                (click)="selectTopItem(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Style:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.style" [value]="topForm.style" readonly />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of styleOptions"
+                                [class.active]="topForm.style === option"
+                                (click)="selectTopStyle(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Front Neck Design:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.frontneckdesign" readonly [value]="topForm.frontneckdesign" />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of frontNeckDesignOptions"
+                                [class.active]="topForm.frontneckdesign === option"
+                                (click)="selectFrontNeck(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Back Neck Design:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.backneckdesign" readonly [value]="topForm.backneckdesign" />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of backNeckDesignOptions"
+                                [class.active]="topForm.backneckdesign === option"
+                                (click)="selectBackNeck(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Opening Side:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.openingside" readonly />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of openingsideOptions"
+                                [class.active]="topForm.openingside === option"
+                                (click)="topForm.openingside = option">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>In Neck:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.inneck" readonly />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of inneckOptions"
+                                [class.active]="topForm.inneck === option"
+                                (click)="topForm.inneck = option">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Back of Neck:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.backofneck" readonly />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of backofneckOptions"
+                                [class.active]="topForm.backofneck === option"
+                                (click)="topForm.backofneck = option">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Sleeve:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.sleeve" readonly />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of sleeveOptions"
+                                [class.active]="topForm.sleeve === option"
+                                (click)="topForm.sleeve = option">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Detail:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="topForm.detail" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Price:</label>
+                <div class="form-content">
+                    <input type="number" [(ngModel)]="topForm.price" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Options:</label>
+                <div class="form-content">
+                    <div class="checkbox-group">
+                        <input type="checkbox" [(ngModel)]="topForm.astar" id="astar">
+                        <label for="astar">Astar</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" [(ngModel)]="topForm.dori" id="dori">
+                        <label for="dori">Dori</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Cloth Image:</label>
+                <div class="form-content">
+                    <input type="file" (change)="onClothImageUpload($event)" accept="image/*">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Design Image:</label>
+                <div class="form-content">
+                    <input type="file" (change)="onDesignImageUpload($event)" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="selectedType === 'bottom'" class="form-container">
+            <div class="form-group">
+                <label>Item:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="bottomForm.item" readonly [value]="bottomForm.item" />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of bottomItemOptions" 
+                                [class.active]="bottomForm.item === option" 
+                                (click)="selectBottomItem(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Style:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="bottomForm.style" readonly [value]="bottomForm.style"/>
+                    <div class="option-buttons">
+                        <button *ngFor="let option of styleOptions"
+                                [class.active]="bottomForm.style === option"
+                                (click)="selectBottomStyle(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Rubber:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="bottomForm.rubber" readonly [value]="bottomForm.rubber" />
+                    <div class="option-buttons">
+                        <button *ngFor="let option of rubberOptions"
+                                [class.active]="bottomForm.rubber === option"
+                                (click)="selectRubber(option)">{{option}}</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Pocket:</label>
+                <div class="form-content">
+                    <div class="checkbox-group">
+                        <input type="checkbox" [(ngModel)]="bottomForm.pocket" id="pocket">
+                        <label for="pocket">Pocket</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Detail:</label>
+                <div class="form-content">
+                    <input type="text" [(ngModel)]="bottomForm.detail" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Price:</label>
+                <div class="form-content">
+                    <input type="number" [(ngModel)]="bottomForm.price" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Design Image:</label>
+                <div class="form-content">
+                    <input type="file" (change)="onDesignImageUpload($event)" accept="image/*">
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog-footer">
+            <button class="cancel-btn" (click)="close()">Cancel</button>
+            <button class="save-btn" (click)="onSave()">Save</button>
+        </div>
+    </div>
+</div>

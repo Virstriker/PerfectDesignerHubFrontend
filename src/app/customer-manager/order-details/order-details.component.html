@@ -1,87 +1,174 @@
 <div class="order-details-container">
-  <div id="order-header">
-    <h2>Order Details</h2>
-    <a class="back-link" (click)="goBack()">Back</a>
-  </div>
-  <div class="order-info">
-    <p><strong>Order ID:</strong> {{ order.orderDto.id }}</p>
-    <p><strong>Branch:</strong> {{ order.orderDto.branchname }}</p>
-    <p><strong>Customer:</strong> {{ order.orderDto.customer }}</p>
-    <p><strong>Order Date:</strong> {{ order.orderDto.orderdate }}</p>
-    <p><strong>Delivery Date:</strong> {{ order.orderDto.deliverydate }}</p>
-    <p><strong>Order Status:</strong> {{ order.orderDto.orderstatus ? 'Completed' : 'Pending' }}</p>
-    <p><strong>Order Tables:</strong> {{ order.orderDto.ordertables }}</p>
-    <p><strong>Total Price:</strong> {{ order.orderDto.totalPrice | currency }}</p>
-  </div>
-
-  <div class="clothing-items">
-    <h3>Blouses</h3>
-    <div *ngFor="let blouse of order.blouses" class="item-card">
-      <img [src]="blouse.clothimage" alt="Blouse Cloth" class="item-image">
-      <img [src]="blouse.desingimage" alt="Blouse Design" class="item-image">
-      <div class="item-details">
-        <p><strong>ID:</strong> {{ blouse.id }}</p>
-        <p><strong>Order Table ID:</strong> {{ blouse.ordertableid }}</p>
-        <p><strong>Style:</strong> {{ blouse.style }}</p>
-        <p><strong>Neck Design:</strong> {{ blouse.neckdesign }}</p>
-        <p><strong>Astar:</strong> {{ blouse.astar ? 'Yes' : 'No' }}</p>
-        <p><strong>Opening Side:</strong> {{ blouse.openingside }}</p>
-        <p><strong>Neck:</strong> {{ blouse.neck }}</p>
-        <p><strong>Dori:</strong> {{ blouse.dori ? 'Yes' : 'No' }}</p>
-        <p><strong>Sleeve:</strong> {{ blouse.sleeve }}</p>
-        <p><strong>Detail:</strong> {{ blouse.detail }}</p>
-        <p><strong>Price:</strong> {{ blouse.price | currency }}</p>
-      </div>
-    </div>
-
-    <h3>Dresses</h3>
-    <div *ngFor="let dress of order.dresses" class="item-card">
-      <img [src]="dress.clothimage" alt="Dress Cloth" class="item-image">
-      <img [src]="dress.desingimage" alt="Dress Design" class="item-image">
-      <div class="item-details">
-        <p><strong>ID:</strong> {{ dress.id }}</p>
-        <p><strong>Order Table ID:</strong> {{ dress.ordertableid }}</p>
-        <p><strong>Style:</strong> {{ dress.style }}</p>
-        <p><strong>Neck Design:</strong> {{ dress.neckdesign }}</p>
-        <p><strong>Astar:</strong> {{ dress.astar ? 'Yes' : 'No' }}</p>
-        <p><strong>Opening Side:</strong> {{ dress.openingside }}</p>
-        <p><strong>Back of Neck:</strong> {{ dress.backofneck }}</p>
-        <p><strong>Chain:</strong> {{ dress.chain ? 'Yes' : 'No' }}</p>
-        <p><strong>Sleeve:</strong> {{ dress.sleeve }}</p>
-        <p><strong>Detail:</strong> {{ dress.detail }}</p>
-        <p><strong>Price:</strong> {{ dress.price | currency }}</p>
-      </div>
-    </div>
-
-    <h3>Chaniyo</h3>
-    <div *ngFor="let chaniyo of order.chaniyo" class="item-card">
-      <img [src]="chaniyo.clothimage" alt="Chaniyo Cloth" class="item-image">
-      <img [src]="chaniyo.desingimage" alt="Chaniyo Design" class="item-image">
-      <div class="item-details">
-        <p><strong>ID:</strong> {{ chaniyo.id }}</p>
-        <p><strong>Order Table ID:</strong> {{ chaniyo.ordertableid }}</p>
-        <p><strong>Style:</strong> {{ chaniyo.style }}</p>
-        <p><strong>Detail:</strong> {{ chaniyo.detail }}</p>
-        <p><strong>Price:</strong> {{ chaniyo.price | currency }}</p>
-      </div>
-    </div>
-
-    <h3>Pants</h3>
-    <div *ngFor="let pant of order.pants" class="item-card">
-      <div class="item-details">
-        <p><strong>ID:</strong> {{ pant.id }}</p>
-        <p><strong>Order Table ID:</strong> {{ pant.ordertableid }}</p>
-        <p><strong>Rubber Type:</strong> {{ pant.rubbert }}</p>
-        <p><strong>Neck Design:</strong> {{ pant.neckdesign }}</p>
-        <p><strong>Pocket:</strong> {{ pant.pocket ? 'Yes' : 'No' }}</p>
-        <p><strong>Detail:</strong> {{ pant.detail }}</p>
-        <p><strong>Price:</strong> {{ pant.price | currency }}</p>
+  <div class="order-header">
+    <div class="header-content">
+      <h2>Order Details</h2>
+      <div class="header-actions">
+        <button class="edit-btn" *ngIf="!isEditing" (click)="toggleEdit()">
+          <i class="fas fa-edit"></i> Edit Order
+        </button>
+        <button class="save-btn" *ngIf="isEditing" (click)="saveChanges()">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+        <button class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+        <button class="back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
       </div>
     </div>
   </div>
-  <div class="btn-div">
-    <button class="complete" *ngIf="!order.orderDto.orderstatus" (click)="completeOrder()" role="button">Complete Order</button>
-    <button class="button-63" (click)="generateBillPdf()" role="button">Generate Bil</button>
+
+  <div class="order-content">
+    <div class="order-summary">
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3>Order Information</h3>
+          <span class="status-badge" [ngClass]="order.order.orderstatus ? 'completed' : 'pending'">
+            {{ order.order.orderstatus ? 'Completed' : 'Pending' }}
+          </span>
+        </div>
+        <div class="summary-body">
+          <div class="info-row">
+            <div class="info-item">
+              <label>Customer ID:</label>
+              <span>{{ order.order.customerid }}</span>
+            </div>
+            <div class="info-item">
+              <label>Branch:</label>
+              <input *ngIf="isEditing" type="text" [(ngModel)]="order.order.branchname" name="branchName">
+              <span *ngIf="!isEditing">{{ order.order.branchname }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-item">
+              <label>Order Date:</label>
+              <span>{{ order.order.orderdate | date:'mediumDate' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Delivery Date:</label>
+              <input *ngIf="isEditing" type="date" [(ngModel)]="order.order.deliverydate" name="deliveryDate">
+              <span *ngIf="!isEditing">{{ order.order.deliverydate | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-item">
+              <label>Total Price:</label>
+              <span class="total-price">{{ order.order.totalprice | currency }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="items-section">
+      <div class="section-header">
+        <h3>Order Items</h3>
+        <button *ngIf="isEditing" class="add-item-btn" (click)="openItemPopup()">
+          <i class="fas fa-plus"></i> Add Item
+        </button>
+      </div>
+
+      <div class="items-grid">
+        <!-- Top Items -->
+        <div class="category-section" *ngIf="order.tops.length > 0">
+          <h4>Top Items</h4>
+          <div class="items-container">
+            <div *ngFor="let item of order.tops; let i = index" class="item-card">
+              <div class="item-images" *ngIf="item.clothimage || item.designimage">
+                <img *ngIf="item.clothimage" [src]="item.clothimage" alt="Cloth" class="item-image">
+                <img *ngIf="item.designimage" [src]="item.designimage" alt="Design" class="item-image">
+              </div>
+              <div class="item-content">
+                <div class="item-header">
+                  <h5>{{ item.item }}</h5>
+                  <span class="price">{{ item.price | currency }}</span>
+                </div>
+                <div class="item-details">
+                  <div class="detail-row">
+                    <span><strong>Style:</strong> {{ item.style }}</span>
+                    <span><strong>Sleeve:</strong> {{ item.sleeve }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span><strong>Front Neck:</strong> {{ item.frontneckdesign }}</span>
+                    <span><strong>Back Neck:</strong> {{ item.backneckdesign }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span><strong>Opening:</strong> {{ item.openingside }}</span>
+                    <span><strong>In Neck:</strong> {{ item.inneck }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span><strong>Astar:</strong> {{ item.astar ? 'Yes' : 'No' }}</span>
+                    <span><strong>Dori:</strong> {{ item.dori ? 'Yes' : 'No' }}</span>
+                  </div>
+                  <p class="detail-note">{{ item.detail }}</p>
+                </div>
+                <div class="item-actions" *ngIf="isEditing">
+                  <button class="edit-item-btn" (click)="editItem('top', i)">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="delete-item-btn" (click)="deleteItem('top', i)">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Items -->
+        <div class="category-section" *ngIf="order.bottoms.length > 0">
+          <h4>Bottom Items</h4>
+          <div class="items-container">
+            <div *ngFor="let item of order.bottoms; let i = index" class="item-card">
+              <div class="item-images" *ngIf="item.designimage">
+                <img [src]="item.designimage" alt="Design" class="item-image">
+              </div>
+              <div class="item-content">
+                <div class="item-header">
+                  <h5>{{ item.item }}</h5>
+                  <span class="price">{{ item.price | currency }}</span>
+                </div>
+                <div class="item-details">
+                  <div class="detail-row">
+                    <span><strong>Style:</strong> {{ item.style }}</span>
+                    <span><strong>Rubber:</strong> {{ item.rubber }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span><strong>Pocket:</strong> {{ item.pocket ? 'Yes' : 'No' }}</span>
+                  </div>
+                  <p class="detail-note">{{ item.detail }}</p>
+                </div>
+                <div class="item-actions" *ngIf="isEditing">
+                  <button class="edit-item-btn" (click)="editItem('bottom', i)">
+                    <i class="fas fa-edit"></i> Edit
+                  </button>
+                  <button class="delete-item-btn" (click)="deleteItem('bottom', i)">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <div class="order-actions">
+    <button class="complete-btn" *ngIf="!order.order.orderstatus" (click)="completeOrder()">
+      <i class="fas fa-check-circle"></i> Complete Order
+    </button>
+    <button class="generate-bill-btn" (click)="generateBillPdf()">
+      <i class="fas fa-file-pdf"></i> Generate Bill
+    </button>
+  </div>
+
+  <app-add-item-dialog 
+    *ngIf="showItemDialog"
+    [itemType]="editingItemType"
+    [itemData]="editingItemData"
+    (closeDialog)="closeItemDialog()"
+    (saveItem)="onItemSaved($event)">
+  </app-add-item-dialog>
 </div>

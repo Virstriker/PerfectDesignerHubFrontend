@@ -1,135 +1,163 @@
 import { Component, OnInit } from '@angular/core';
-import { OrderCard, OrderDetails, ResponseDto } from '../../interfaces/customer';
+import { Order, TopItem, BottomItem, addOrderDto } from '../../interfaces/order';
+import { ResponseDto } from '../../interfaces/customer';
 import { OrderServiceService } from '../../services/order-service.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-interface Item {
-  name: string;
-  price: number;
-  quantity: number;
-  totalPrice: number;
-}
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { AddItemDialogComponent } from '../add-order/add-item-dialog/add-item-dialog.component';
 
-interface InvoiceData {
-  name: string;
-  date: Date;
-  id: number;
-  items: Item[];
-  tax: number;
-  grandTotal: number;
-}
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [NgFor,NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [NgFor, NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule, AddItemDialogComponent],
   providers: [OrderServiceService],
   templateUrl: './order-details.component.html',
-  styleUrl: './order-details.component.css'
+  styleUrls: ['./order-details.component.css']
 })
 export class OrderDetailsComponent implements OnInit {
-  order: OrderDetails = {
-    orderDto: {
+  order: addOrderDto = {
+    order: {
+      customerid: 0,
       branchname: '',
-      customer: '',
-      deliverydate: '',
-      id: 0,
       orderdate: '',
-      orderstatus: false,
-      ordertables: '',
-      totalPrice: 0,
+      deliverydate: '',
+      totalprice: 0,
+      orderstatus: 0
     },
-    blouses: [],
-    dresses: [],
-    chaniyo: [],
-    pants: []
+    tops: [],
+    bottoms: []
   };
+  
   orderId!: number;
-  constructor(private orderService: OrderServiceService,
-    private route: ActivatedRoute
-  ) { } // Assume OrderService is a service to fetch data
+  isEditing = false;
+  originalOrder: addOrderDto | null = null;
+  showItemDialog = false;
+  editingItemType: string = '';
+  editingItemData: any = null;
+
+  constructor(
+    private orderService: OrderServiceService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.orderId = +params['id']; // Convert string to number using '+'
-      // Use this.customerId to fetch customer details
+      this.orderId = params['id'];
+      this.loadOrderDetails();
     });
+  }
+
+  loadOrderDetails() {
     this.orderService.getOrderDetailsById(this.orderId).subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.order = response.responseObject;
-          console.log(this.order)
-        } else {
-          alert(response.message);
         }
+      },
+      error: (error) => {
+        console.error('Error loading order details:', error);
       }
     });
   }
-  completeOrder(){
-    this.orderService.completeOrder(this.orderId).subscribe({
-      next:  (response: ResponseDto) => {
-        if(response.isSuccess){
-          alert("Order Completed");
+
+  toggleEdit() {
+    this.isEditing = !this.isEditing;
+    if (this.isEditing) {
+      this.originalOrder = JSON.parse(JSON.stringify(this.order));
+    }
+  }
+
+  cancelEdit() {
+    if (this.originalOrder) {
+      this.order = JSON.parse(JSON.stringify(this.originalOrder));
+    }
+    this.isEditing = false;
+  }
+
+  openItemPopup() {
+    this.editingItemType = '';
+    this.editingItemData = null;
+    this.showItemDialog = true;
+  }
+
+  closeItemDialog() {
+    this.showItemDialog = false;
+    this.editingItemType = '';
+    this.editingItemData = null;
+  }
+
+  editItem(type: string, index: number) {
+    this.editingItemType = type;
+    this.editingItemData = type === 'top' ? 
+      { ...this.order.tops[index] } : 
+      { ...this.order.bottoms[index] };
+    this.showItemDialog = true;
+  }
+
+  deleteItem(type: string, index: number) {
+    if (confirm('Are you sure you want to delete this item?')) {
+      if (type === 'top') {
+        this.order.tops.splice(index, 1);
+      } else {
+        this.order.bottoms.splice(index, 1);
+      }
+    }
+  }
+
+  onItemSaved(event: any) {
+    if (this.editingItemType === 'top') {
+      if (this.editingItemData) {
+        // Update existing top item
+        const index = this.order.tops.findIndex(item => 
+          item === this.editingItemData);
+        if (index !== -1) {
+          this.order.tops[index] = event;
+        } else {
+          this.order.tops.push(event);
         }
+      } else {
+        // Add new top item
+        this.order.tops.push(event);
       }
-    })
+    } else {
+      if (this.editingItemData) {
+        // Update existing bottom item
+        const index = this.order.bottoms.findIndex(item => 
+          item === this.editingItemData);
+        if (index !== -1) {
+          this.order.bottoms[index] = event;
+        } else {
+          this.order.bottoms.push(event);
+        }
+      } else {
+        // Add new bottom item
+        this.order.bottoms.push(event);
+      }
+    }
+    this.closeItemDialog();
   }
+
+  completeOrder() {
+    this.orderService.completeOrder(this.orderId).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess) {
+          this.loadOrderDetails();
+        }
+      },
+      error: (error) => {
+        console.error('Error completing order:', error);
+      }
+    });
+  }
+
   generateBillPdf() {
-    const data:InvoiceData = {
-      name: this.order.orderDto.customer,
-      date: new Date(),
-      id: this.order.orderDto.id,
-      items: [],
-      tax: 0,
-      grandTotal: 0
-    };
-    for(var blouse of this.order.blouses){
-      const item:Item = {
-        name:'Blouse',
-        price:blouse.price,
-        quantity:1,
-        totalPrice:blouse.price
-      }
-      data.grandTotal +=  item.totalPrice;
-      data.items.push(item);
-    }
-    for(var pant of this.order.pants){
-      const item:Item = {
-        name:'Pant',
-        price:pant.price,
-        quantity:1,
-        totalPrice:pant.price
-      }
-      data.grandTotal +=  item.totalPrice;
-      data.items.push(item);
-    }
-    for(var chaniy of this.order.chaniyo){
-      const item:Item = {
-        name:'Chaniyo',
-        price:chaniy.price,
-        quantity:1,
-        totalPrice:chaniy.price
-      }
-      data.grandTotal +=  item.totalPrice;
-      data.items.push(item);
-    }
-    for(var dress of this.order.dresses){
-      const item:Item = {
-        name:'Dress',
-        price:dress.price,
-        quantity:1,
-        totalPrice:dress.price
-      }
-      data.grandTotal +=  item.totalPrice;
-      data.items.push(item);
-    }
-    data.grandTotal -= data.tax;
-    this.orderService.generatePdf(data);
-   
+    // Implement PDF generation
   }
+
   goBack() {
-    // Implement the logic to go back, e.g., navigating to the previous page
-    window.history.back();
+    this.router.navigate(['/orders']);
   }
 }
