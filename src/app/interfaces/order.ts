@@ -7,6 +7,10 @@ export interface Order {
     orderstatus: number;
 }
 
+export interface getOrder extends Order{
+    customer:string;
+}
+
 export interface TopItem {
     item: string;
     style: string;
@@ -36,6 +40,11 @@ export interface BottomItem {
 
 export interface addOrderDto {
     order: Order;
+    tops: TopItem[];
+    bottoms: BottomItem[];
+}
+export interface getOrderDto {
+    order: getOrder;
     tops: TopItem[];
     bottoms: BottomItem[];
 }

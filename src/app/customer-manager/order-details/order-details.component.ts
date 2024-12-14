@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Order, TopItem, BottomItem, addOrderDto } from '../../interfaces/order';
+import { Order, TopItem, BottomItem, addOrderDto, getOrderDto } from '../../interfaces/order';
 import { ResponseDto } from '../../interfaces/customer';
 import { OrderServiceService } from '../../services/order-service.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
@@ -17,14 +17,15 @@ import { AddItemDialogComponent } from '../add-order/add-item-dialog/add-item-di
   styleUrls: ['./order-details.component.css']
 })
 export class OrderDetailsComponent implements OnInit {
-  order: addOrderDto = {
+  order: getOrderDto = {
     order: {
       customerid: 0,
+      customer: '1',
       branchname: '',
       orderdate: '',
       deliverydate: '',
       totalprice: 0,
-      orderstatus: 0
+      orderstatus: 0,
     },
     tops: [],
     bottoms: []
@@ -34,7 +35,7 @@ export class OrderDetailsComponent implements OnInit {
   isEditing = false;
   originalOrder: addOrderDto | null = null;
   showItemDialog = false;
-  editingItemType: string = '';
+  editingItemType: 'top' | 'bottom' | null = null; // Corrected type
   editingItemData: any = null;
 
   constructor(
@@ -57,7 +58,7 @@ export class OrderDetailsComponent implements OnInit {
           this.order = response.responseObject;
         }
       },
-      error: (error) => {
+      error: (error: any) => { // Corrected error handling
         console.error('Error loading order details:', error);
       }
     });
@@ -78,18 +79,18 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   openItemPopup() {
-    this.editingItemType = '';
+    this.editingItemType = null; // Initialize to null
     this.editingItemData = null;
     this.showItemDialog = true;
   }
 
   closeItemDialog() {
     this.showItemDialog = false;
-    this.editingItemType = '';
+    this.editingItemType = null; // Set to null
     this.editingItemData = null;
   }
 
-  editItem(type: string, index: number) {
+  editItem(type: 'top' | 'bottom', index: number) { // Corrected type
     this.editingItemType = type;
     this.editingItemData = type === 'top' ? 
       { ...this.order.tops[index] } : 
@@ -147,7 +148,7 @@ export class OrderDetailsComponent implements OnInit {
           this.loadOrderDetails();
         }
       },
-      error: (error) => {
+      error: (error: any) => { // Corrected error handling
         console.error('Error completing order:', error);
       }
     });
@@ -159,5 +160,23 @@ export class OrderDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/orders']);
+  }
+
+  saveChanges() {
+    this.orderService.updateOrder(this.orderId, this.order).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess) {
+          this.isEditing = false;
+          this.originalOrder = JSON.parse(JSON.stringify(this.order));
+          alert('Order updated successfully!');
+        } else {
+          alert('Error updating order. Please try again.');
+        }
+      },
+      error: (error: any) => { // Corrected error handling
+        console.error('Error updating order:', error);
+        alert('An unexpected error occurred. Please try again later.');
+      }
+    });
   }
 }

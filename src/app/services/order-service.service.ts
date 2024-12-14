@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { constant } from '../constants/constants';
 import { ResponseDto } from '../interfaces/customer';
 import { Observable } from 'rxjs/internal/Observable';
+import { addOrderDto } from '../interfaces/order';
 
 
 @Injectable({
@@ -91,5 +92,10 @@ export class OrderServiceService {
       }, error => {
         console.error('Error generating PDF:', error);
       });
+  }
+
+  updateOrder(orderId: number, updatedOrder: addOrderDto): Observable<ResponseDto> {
+    const url = `${this.baseOrderUrl}/${orderId}`;
+    return this.http.put<ResponseDto>(url, updatedOrder, { headers: this.getAuthHeaders() });
   }
 }
