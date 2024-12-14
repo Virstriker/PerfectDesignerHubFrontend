@@ -1,7 +1,7 @@
 <div class="order-details-container">
   <div class="order-header">
     <div class="header-content">
-      <h2>Order Details</h2>
+      <h2>Order Details </h2>
       <div class="header-actions">
         <button class="edit-btn" *ngIf="!isEditing" (click)="toggleEdit()">
           <i class="fas fa-edit"></i> Edit Order
@@ -111,6 +111,7 @@
                     <i class="fas fa-trash"></i> Delete
                   </button>
                 </div>
+                <button id="print" (click)="printItem(item)">Print</button>
               </div>
             </div>
           </div>
@@ -147,6 +148,7 @@
                     <i class="fas fa-trash"></i> Delete
                   </button>
                 </div>
+                <button id="print" (click)="printItem(item)">Print</button>
               </div>
             </div>
           </div>

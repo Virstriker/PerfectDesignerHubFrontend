@@ -203,12 +203,12 @@ export class MeasurementDetailComponent implements OnInit {
       this.isPrinting = true;
 
       const measurementFields = [
-        { label: 'Front Neck Deep', value: this.measurements.frontneckdeep },
-        { label: 'Back Neck Deep', value: this.measurements.backneckdeep },
-        { label: 'Apex Point Length', value: this.measurements.apexpointlength },
-        { label: 'Blouse Length', value: this.measurements.blouselength },
-        { label: 'Side Cut Length', value: this.measurements.sidecutlength },
-        { label: 'Dress Length', value: this.measurements.dresslength },
+        { label: 'FND', value: this.measurements.frontneckdeep },
+        { label: 'BND', value: this.measurements.backneckdeep },
+        { label: 'APL', value: this.measurements.apexpointlength },
+        { label: 'Blouse L', value: this.measurements.blouselength },
+        { label: 'Side Cut L', value: this.measurements.sidecutlength },
+        { label: 'Dress L', value: this.measurements.dresslength },
         { label: 'Neck Round', value: this.measurements.neckround },
         { label: 'Shoulder', value: this.measurements.sholder },
         { label: 'Shoulder Slope', value: this.measurements.sholderslope },
@@ -222,7 +222,7 @@ export class MeasurementDetailComponent implements OnInit {
         { label: 'Armhole Right', value: this.measurements.armholdright },
         { label: 'Bicep Left', value: this.measurements.bicepleft },
         { label: 'Bicep Right', value: this.measurements.bicepright },
-        { label: 'Sleeve Length', value: this.measurements.sleevelength },
+        { label: 'Sleeve L', value: this.measurements.sleevelength },
         { label: 'Mori', value: this.measurements.mori },
         { label: 'Pant Waist', value: this.measurements.pantweist },
         { label: 'Pant Hip', value: this.measurements.pantheap },
@@ -231,11 +231,11 @@ export class MeasurementDetailComponent implements OnInit {
         { label: 'Pant Knee', value: this.measurements.pantknee },
         { label: 'Pant Ankle', value: this.measurements.pantankel },
         { label: 'Pant Mori', value: this.measurements.pantmori },
-        { label: 'Pant Length', value: this.measurements.pantlength },
+        { label: 'Pant L', value: this.measurements.pantlength },
         { label: 'Chaniya Wrist', value: this.measurements.chaniyawrist },
-        { label: 'Chaniya Length', value: this.measurements.chaniyalength },
+        { label: 'Chaniya L', value: this.measurements.chaniyalength },
         { label: 'Chaniya Hip', value: this.measurements.chaniyaheap },
-        { label: 'One Piece Length', value: this.measurements.onepiecelength }
+        { label: 'One Piece L', value: this.measurements.onepiecelength }
       ];
 
       // Create a new window for printing

@@ -36,7 +36,6 @@
         <th>Branch Name</th>
         <th>Order Date</th>
         <th>Delivery Date</th>
-        <th>Order Tables</th>
         <th>Total Price</th>
         <th>Status</th>
       </tr>
@@ -48,7 +47,6 @@
         <td>{{order.branchname}}</td>
         <td>{{order.orderdate.split('T')[0]}}</td>
         <td>{{order.deliverydate.split('T')[0]}}</td>
-        <td>{{order.ordertables}}</td>
         <td>${{order.totalprice}}</td>
         <td>
           <span class="order-status" [ngClass]="order.orderstatus == 1 ? 'active' : order.orderstatus == 2 ? 'complete' : 'Delivered'">

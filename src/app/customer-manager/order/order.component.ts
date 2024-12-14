@@ -19,7 +19,7 @@ export class OrderComponent implements OnInit {
   filteredOrders: OrderCard[] = [];
   searchTerm: string = '';
   selectedStatus: string = '1';
-  selectedDateFilter: string = 'today';
+  selectedDateFilter: string = 'month';
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
 
@@ -151,7 +151,7 @@ export class OrderComponent implements OnInit {
   }
 
   goToOrder(id: number) {
-    this.route.navigateByUrl("/customer-manager/order-details/" + id);
+    this.route.navigateByUrl("/customer-manager/order-info/" + id);
   }
 
   addOrder() {
