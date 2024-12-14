@@ -9,6 +9,7 @@ export interface Order {
 
 export interface getOrder extends Order{
     customer:string;
+    phonenumber:number;
 }
 
 export interface TopItem {

@@ -26,6 +26,7 @@ export class OrderDetailsComponent implements OnInit {
       deliverydate: '',
       totalprice: 0,
       orderstatus: 0,
+      phonenumber: 0
     },
     tops: [],
     bottoms: []
@@ -251,6 +252,48 @@ export class OrderDetailsComponent implements OnInit {
       alert('Please allow popups for this website to print items.');
     }
   }
+
+  sendWhatsAppMessage() {
+    const phoneNumber = this.order.order.phonenumber.toString().replace(/[^0-9]/g, '');
+    
+    // Create a table-like structure using monospace font and proper spacing
+    let message = ' *PERFECT DESIGNER HUB* \n\n';
+    message += '*Order Details*\n';
+    message += '----------------------------\n\n';
+    
+    // Add header for items table
+    message += '```Item Name         Price```\n';
+    message += '```-----------------------```\n';
+    
+    // Add top items
+    this.order.tops.forEach(item => {
+      const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
+      message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
+    });
+    
+    // Add bottom items
+    this.order.bottoms.forEach(item => {
+      const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
+      message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
+    });
+    
+    // Add separator and total
+    message += '```-----------------------```\n';
+    message += '```Total           ₹' + this.order.order.totalprice.toString().padStart(6, ' ') + '```\n\n';
+    
+    // Add footer
+    message += '_Thank you for shopping at_\n';
+    message += '*PERFECT DESIGNER HUB*\n';
+    message += 'Visit us again soon! ';
+    
+    // Format phone number (remove any non-numeric characters and add country code if needed)
+    const formattedPhone = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
+    
+    // Open in web WhatsApp
+    const webWhatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+    window.open(webWhatsappUrl, '_blank');
+  }
+
 }
 
 function isTopItem(item: TopItem | BottomItem): item is TopItem {

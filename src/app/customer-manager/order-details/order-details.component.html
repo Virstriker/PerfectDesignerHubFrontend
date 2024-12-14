@@ -24,8 +24,14 @@
       <div class="summary-card">
         <div class="summary-header">
           <h3>Order Information</h3>
-          <span class="status-badge" [ngClass]="order.order.orderstatus ? 'completed' : 'pending'">
-            {{ order.order.orderstatus ? 'Completed' : 'Pending' }}
+          <span class="status-badge" [ngClass]="{
+            'active': order.order.orderstatus === 1,
+            'completed': order.order.orderstatus === 2,
+            'delivered': order.order.orderstatus === 3
+          }">
+            {{ order.order.orderstatus === 1 ? 'Active' : 
+               order.order.orderstatus === 2 ? 'Completed' : 
+               order.order.orderstatus === 3 ? 'Delivered' : 'Unknown' }}
           </span>
         </div>
         <div class="summary-body">
@@ -86,22 +92,22 @@
                 </div>
                 <div class="item-details">
                   <div class="detail-row">
-                    <span><strong>Style:</strong> {{ item.style }}</span>
-                    <span><strong>Sleeve:</strong> {{ item.sleeve }}</span>
+                    <span *ngIf="item.style"><strong>Style:</strong> {{ item.style }}</span>
+                    <span *ngIf="item.sleeve"><strong>Sleeve:</strong> {{ item.sleeve }}</span>
                   </div>
                   <div class="detail-row">
-                    <span><strong>Front Neck:</strong> {{ item.frontneckdesign }}</span>
-                    <span><strong>Back Neck:</strong> {{ item.backneckdesign }}</span>
+                    <span *ngIf="item.frontneckdesign"><strong>Front Neck:</strong> {{ item.frontneckdesign }}</span>
+                    <span *ngIf="item.backneckdesign"><strong>Back Neck:</strong> {{ item.backneckdesign }}</span>
                   </div>
                   <div class="detail-row">
-                    <span><strong>Opening:</strong> {{ item.openingside }}</span>
-                    <span><strong>In Neck:</strong> {{ item.inneck }}</span>
+                    <span *ngIf="item.openingside"><strong>Opening:</strong> {{ item.openingside }}</span>
+                    <span *ngIf="item.inneck"><strong>In Neck:</strong> {{ item.inneck }}</span>
                   </div>
                   <div class="detail-row">
-                    <span><strong>Astar:</strong> {{ item.astar ? 'Yes' : 'No' }}</span>
-                    <span><strong>Dori:</strong> {{ item.dori ? 'Yes' : 'No' }}</span>
+                    <span *ngIf="item.astar"><strong>Astar:</strong> {{ item.astar ? 'Yes' : 'No' }}</span>
+                    <span *ngIf="item.dori"><strong>Dori:</strong> {{ item.dori ? 'Yes' : 'No' }}</span>
                   </div>
-                  <p class="detail-note">{{ item.detail }}</p>
+                  <p class="detail-note" *ngIf="item.detail">{{ item.detail }}</p>
                 </div>
                 <div class="item-actions" *ngIf="isEditing">
                   <button class="edit-item-btn" (click)="editItem('top', i)">
@@ -132,13 +138,13 @@
                 </div>
                 <div class="item-details">
                   <div class="detail-row">
-                    <span><strong>Style:</strong> {{ item.style }}</span>
-                    <span><strong>Rubber:</strong> {{ item.rubber }}</span>
+                    <span *ngIf="item.style"><strong>Style:</strong> {{ item.style }}</span>
+                    <span *ngIf="item.rubber"><strong>Rubber:</strong> {{ item.rubber }}</span>
                   </div>
                   <div class="detail-row">
-                    <span><strong>Pocket:</strong> {{ item.pocket ? 'Yes' : 'No' }}</span>
+                    <span *ngIf="item.pocket"><strong>Pocket:</strong> {{ item.pocket ? 'Yes' : 'No' }}</span>
                   </div>
-                  <p class="detail-note">{{ item.detail }}</p>
+                  <p class="detail-note" *ngIf="item.detail">{{ item.detail }}</p>
                 </div>
                 <div class="item-actions" *ngIf="isEditing">
                   <button class="edit-item-btn" (click)="editItem('bottom', i)">
@@ -160,6 +166,9 @@
   <div class="order-actions">
     <button class="complete-btn" *ngIf="!order.order.orderstatus" (click)="completeOrder()">
       <i class="fas fa-check-circle"></i> Complete Order
+    </button>
+    <button class="whatsapp-btn" (click)="sendWhatsAppMessage()">
+      <i class="fab fa-whatsapp"></i> Send WhatsApp Message
     </button>
     <button class="generate-bill-btn" (click)="generateBillPdf()">
       <i class="fas fa-file-pdf"></i> Generate Bill

@@ -1,10 +1,46 @@
 <div class="order-form">
     <h2>Add Order</h2>
     <form>
-        <label>Customer:</label>
-        <select [(ngModel)]="order.order.customerid" name="customerId" id="selectCustomer" required>
-            <option *ngFor="let customer of customerIds" [value]="customer.id">{{ customer.name+" "+customer.surname }}</option>
-        </select>
+        <div class="form-group">
+            <label>Customer:</label>
+            <div class="search-select-container">
+                <div class="custom-select">
+                    <select 
+                        id="customer" 
+                        [(ngModel)]="order.order.customerid" 
+                        name="customerId"
+                        required
+                        (click)="toggleDropdown($event)"
+                        [class.active]="isDropdownOpen"
+                    >
+                        <option *ngFor="let customer of customerIds" [value]="customer.id" [hidden]="true">
+                            {{customer.name + " " + customer.surname}}
+                        </option>
+                    </select>
+                    
+                    <div class="dropdown-menu" *ngIf="isDropdownOpen">
+                        <input
+                            type="text"
+                            [(ngModel)]="customerSearchTerm"
+                            name="customerSearch"
+                            (input)="filterCustomers()"
+                            placeholder="Search customer..."
+                            class="search-input"
+                            #searchInput
+                        >
+                        <div class="options-container">
+                            <div 
+                                *ngFor="let customer of filteredCustomerIds" 
+                                class="option"
+                                (click)="selectCustomer(customer)"
+                            >
+                                {{customer.name + " " + customer.surname}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <label>Branch Name:</label>
         <input type="text" [(ngModel)]="order.order.branchname" name="branchName" disabled required />

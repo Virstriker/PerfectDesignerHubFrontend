@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -18,6 +18,8 @@ import { AddItemDialogComponent } from './add-item-dialog/add-item-dialog.compon
   styleUrls: ['./add-order.component.css']
 })
 export class AddOrderComponent implements OnInit {
+  @ViewChild('searchInput') searchInput!: ElementRef;
+
   order: addOrderDto = {
     order: {
       customerid: 0,
@@ -36,6 +38,9 @@ export class AddOrderComponent implements OnInit {
   editingItemData: TopItem | BottomItem | null = null;
   editingItemIndex: number | null = null;
   customerIds: any[] = [];
+  customerSearchTerm: string = '';
+  filteredCustomerIds: any[] = [];
+  isDropdownOpen = false;
 
   constructor(
     private orderService: OrderServiceService,
@@ -52,7 +57,10 @@ export class AddOrderComponent implements OnInit {
     this.customerService.getAllCustomer().subscribe({
       next: (response: any) => {
         if (response.responseObject) {
-          this.customerIds = response.responseObject;
+          this.customerIds = response.responseObject.sort((a: any, b: any) =>
+            (a.name + ' ' + a.surname).localeCompare(b.name + ' ' + b.surname)
+          );
+          this.filteredCustomerIds = this.customerIds;
         }
       },
       error: (error) => {
@@ -137,5 +145,40 @@ export class AddOrderComponent implements OnInit {
         alert('Failed to add order');
       }
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickOutside(event: Event) {
+    if (this.searchInput && !this.searchInput.nativeElement.contains(event.target)) {
+      this.isDropdownOpen = false;
+      this.customerSearchTerm = '';
+      this.filterCustomers();
+    }
+  }
+
+  toggleDropdown(event: Event) {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) {
+      this.filterCustomers();
+    }
+  }
+
+  filterCustomers() {
+    if (!this.customerSearchTerm) {
+      this.filteredCustomerIds = this.customerIds;
+    } else {
+      const searchTerm = this.customerSearchTerm.toLowerCase();
+      this.filteredCustomerIds = this.customerIds.filter(customer => 
+        (customer.name + ' ' + customer.surname).toLowerCase().includes(searchTerm)
+      );
+    }
+  }
+
+  selectCustomer(customer: any) {
+    this.order.order.customerid = customer.id;
+    this.isDropdownOpen = false;
+    this.customerSearchTerm = '';
+    this.filterCustomers();
   }
 }
