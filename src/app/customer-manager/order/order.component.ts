@@ -22,7 +22,19 @@ export class OrderComponent implements OnInit {
   selectedDateFilter: string = 'month';
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
-
+  searchOrder(){
+    console.log(this.searchTerm);
+    this.orderService.searchOrder(this.searchTerm).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess) {
+          this.orders = response.responseObject;
+          this.filteredOrders = this.orders;
+        } else {
+          alert(response.message);
+        }
+      },
+    })
+  }
   ngOnInit(): void {
     this.applyFilters();
     // this.orderService.getAllOrders().subscribe({

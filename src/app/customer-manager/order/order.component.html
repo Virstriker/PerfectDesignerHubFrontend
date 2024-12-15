@@ -2,7 +2,7 @@
   <div class="search-add-container">
     <div class="search-bar">
       <input type="text" placeholder="Search orders..." [(ngModel)]="searchTerm">
-      <img src="../../../assets/search.png" alt="Search" class="search-icon">
+      <img src="../../../assets/search.png" (click)="searchOrder()" alt="Search" class="search-icon">
     </div>
     <button class="add-order-btn" (click)="addOrder()">
       Add Order

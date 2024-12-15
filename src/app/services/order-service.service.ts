@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { constant } from '../constants/constants';
 import { ResponseDto } from '../interfaces/customer';
 import { Observable } from 'rxjs/internal/Observable';
-import { addOrderDto } from '../interfaces/order';
+import { addOrderDto, getOrderDto } from '../interfaces/order';
 
 
 @Injectable({
@@ -47,6 +47,12 @@ export class OrderServiceService {
     formData.append('image', file);
     return this.http.post(this.url, formData);
   }
+
+  searchOrder(id:any){
+    const url = this.baseOrderUrl + "/search/"+id;
+    return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
+  }
+
   addOrder(order:any): Observable<ResponseDto>{
     const url = this.baseOrderUrl;
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
@@ -55,6 +61,14 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "/date-range";
     return this.http.post<ResponseDto>(url,order,{ headers: this.getAuthHeaders() });
   }
+  
+  getTinyUrl(url:any): Observable<any>{
+    const tinyUrl = this.constant.pdfUrl+'create-tiny-url';
+    return this.http.post(tinyUrl, {
+      url: url
+    });
+  }
+
   generatePdf(data:any): void {
 
     const headers = new HttpHeaders({
@@ -94,8 +108,8 @@ export class OrderServiceService {
       });
   }
 
-  updateOrder(orderId: number, updatedOrder: addOrderDto): Observable<ResponseDto> {
-    const url = `${this.baseOrderUrl}/${orderId}`;
+  updateOrder(updatedOrder: getOrderDto): Observable<ResponseDto> {
+    const url = `${this.baseOrderUrl}`;
     return this.http.put<ResponseDto>(url, updatedOrder, { headers: this.getAuthHeaders() });
   }
 }

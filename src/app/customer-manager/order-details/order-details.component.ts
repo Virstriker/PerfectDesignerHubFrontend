@@ -36,8 +36,11 @@ export class OrderDetailsComponent implements OnInit {
   isEditing = false;
   originalOrder: addOrderDto | null = null;
   showItemDialog = false;
+  showWhatsAppDialog = false;
+  showQRDialog = false;
   editingItemType: 'top' | 'bottom' | null = null; 
   editingItemData: any = null;
+  qrCodeUrl: string = '';
 
   constructor(
     private orderService: OrderServiceService,
@@ -93,9 +96,11 @@ export class OrderDetailsComponent implements OnInit {
 
   editItem(type: 'top' | 'bottom', index: number) { 
     this.editingItemType = type;
+    // Create a deep copy of the item
     this.editingItemData = type === 'top' ? 
       { ...this.order.tops[index] } : 
       { ...this.order.bottoms[index] };
+    this.editingItemData._index = index; // Store the index for reference
     this.showItemDialog = true;
   }
 
@@ -110,32 +115,43 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   onItemSaved(event: any) {
+    const index = this.editingItemData?._index;
+    
     if (this.editingItemType === 'top') {
-      if (this.editingItemData) {
-        const index = this.order.tops.findIndex(item => 
-          item === this.editingItemData);
-        if (index !== -1) {
-          this.order.tops[index] = event;
-        } else {
-          this.order.tops.push(event);
-        }
+      if (index !== undefined) {
+        // Update existing item
+        const itemToUpdate = { ...event.item };
+        delete itemToUpdate._index; // Remove _index before saving
+        this.order.tops[index] = itemToUpdate;
       } else {
-        this.order.tops.push(event);
+        // Add new item
+        const newItem = { ...event.item };
+        delete newItem._index; // Remove _index before saving
+        this.order.tops.push(newItem);
       }
     } else {
-      if (this.editingItemData) {
-        const index = this.order.bottoms.findIndex(item => 
-          item === this.editingItemData);
-        if (index !== -1) {
-          this.order.bottoms[index] = event;
-        } else {
-          this.order.bottoms.push(event);
-        }
+      if (index !== undefined) {
+        // Update existing item
+        const itemToUpdate = { ...event.item };
+        delete itemToUpdate._index; // Remove _index before saving
+        this.order.bottoms[index] = itemToUpdate;
       } else {
-        this.order.bottoms.push(event);
+        // Add new item
+        const newItem = { ...event.item };
+        delete newItem._index; // Remove _index before saving
+        this.order.bottoms.push(newItem);
       }
     }
+    
+    // Recalculate total price
+    this.order.order.totalprice = this.calculateTotalPrice();
     this.closeItemDialog();
+  }
+
+  calculateTotalPrice(): number {
+    const topsTotal = this.order.tops.reduce((sum, item) => sum + (item.price || 0), 0);
+    const bottomsTotal = this.order.bottoms.reduce((sum, item) => sum + (item.price || 0), 0);
+    return topsTotal + bottomsTotal;
   }
 
   completeOrder() {
@@ -156,11 +172,11 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/orders']);
+    window.history.back();
   }
 
   saveChanges() {
-    this.orderService.updateOrder(this.orderId, this.order).subscribe({
+    this.orderService.updateOrder(this.order).subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.isEditing = false;
@@ -175,6 +191,33 @@ export class OrderDetailsComponent implements OnInit {
         alert('An unexpected error occurred. Please try again later.');
       }
     });
+  }
+
+  updateOrderStatus(newStatus: number) {
+    this.order.order.orderstatus = newStatus;
+    this.saveChanges();
+  }
+
+  askForWhatsAppAndUpdateStatus() {
+    this.showWhatsAppDialog = true;
+  }
+
+  closeWhatsAppDialog(sendMessage: boolean) {
+    this.showWhatsAppDialog = false;
+    if (sendMessage) {
+      this.sendWhatsAppMessage();
+    }
+    this.updateOrderStatus(3);
+  }
+
+  showQRCode() {
+    const upiLink = `upi://pay?pa=vijaygohel202@oksbi&pn=vijay gohelk&am=${this.order.order.totalprice}&cu=INR`;
+    this.qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(upiLink)}`;
+    this.showQRDialog = true;
+  }
+
+  closeQRDialog() {
+    this.showQRDialog = false;
   }
 
   printItem(item: TopItem | BottomItem) {
@@ -252,8 +295,8 @@ export class OrderDetailsComponent implements OnInit {
       alert('Please allow popups for this website to print items.');
     }
   }
-
-  sendWhatsAppMessage() {
+  
+  async sendWhatsAppMessage() {
     const phoneNumber = this.order.order.phonenumber.toString().replace(/[^0-9]/g, '');
     
     // Create a table-like structure using monospace font and proper spacing
@@ -280,7 +323,12 @@ export class OrderDetailsComponent implements OnInit {
     // Add separator and total
     message += '```-----------------------```\n';
     message += '```Total           ₹' + this.order.order.totalprice.toString().padStart(6, ' ') + '```\n\n';
-    
+    var upi = 
+    await this.orderService.getTinyUrl(this.order.order.totalprice.toString()).toPromise().then((response: ResponseDto) => {
+        if (response.isSuccess) {
+          message += '```Pay Here: ' + response.responseObject + '```\n\n';
+        }
+    })
     // Add footer
     message += '_Thank you for shopping at_\n';
     message += '*PERFECT DESIGNER HUB*\n';
