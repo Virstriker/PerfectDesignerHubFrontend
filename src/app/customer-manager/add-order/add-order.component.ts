@@ -170,7 +170,7 @@ export class AddOrderComponent implements OnInit {
     } else {
       const searchTerm = this.customerSearchTerm.toLowerCase();
       this.filteredCustomerIds = this.customerIds.filter(customer => 
-        (customer.name + ' ' + customer.surname).toLowerCase().includes(searchTerm)
+        customer.phonenumber.toString().includes(searchTerm)
       );
     }
   }

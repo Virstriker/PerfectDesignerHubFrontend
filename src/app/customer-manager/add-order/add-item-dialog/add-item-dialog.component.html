@@ -168,7 +168,7 @@
                 <div class="form-content">
                     <input type="text" [(ngModel)]="bottomForm.style" readonly [value]="bottomForm.style"/>
                     <div class="option-buttons">
-                        <button *ngFor="let option of styleOptions"
+                        <button *ngFor="let option of styleOptionsBottom"
                                 [class.active]="bottomForm.style === option"
                                 (click)="selectBottomStyle(option)">{{option}}</button>
                     </div>
