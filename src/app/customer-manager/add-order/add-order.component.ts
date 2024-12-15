@@ -83,7 +83,8 @@ export class AddOrderComponent implements OnInit {
   editItem(type: 'top' | 'bottom', index: number) {
     this.editingItemType = type;
     this.editingItemIndex = index;
-    this.editingItemData = type === 'top' ? { ...this.order.tops[index] } : { ...this.order.bottoms[index] };
+    const item = type === 'top' ? this.order.tops[index] : this.order.bottoms[index];
+    this.editingItemData = JSON.parse(JSON.stringify(item)); // Deep copy to preserve all fields
     this.showItemDialog = true;
   }
 

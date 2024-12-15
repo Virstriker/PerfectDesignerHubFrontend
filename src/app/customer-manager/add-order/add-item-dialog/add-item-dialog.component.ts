@@ -65,9 +65,18 @@ export class AddItemDialogComponent implements OnChanges {
     }
     if (changes['itemData'] && this.itemData) {
       if (this.itemType === 'top') {
-        this.topForm = { ...this.itemData as TopItem };
+        const topItem = this.itemData as TopItem;
+        this.topForm = {
+          ...topItem,
+          designimage: topItem.designimage || '',
+          clothimage: topItem.clothimage || ''
+        };
       } else if (this.itemType === 'bottom') {
-        this.bottomForm = { ...this.itemData as BottomItem };
+        const bottomItem = this.itemData as BottomItem;
+        this.bottomForm = {
+          ...bottomItem,
+          designimage: bottomItem.designimage || ''
+        };
       }
     }
   }

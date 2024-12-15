@@ -65,14 +65,22 @@
 .form-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0;
     padding: 20px;
+    background-color: white;
+    border-radius: 4px;
 }
 
 .form-group {
     display: flex;
     align-items: center;
     gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.form-group:last-child {
+    border-bottom: none;
 }
 
 .form-group label {
@@ -89,10 +97,10 @@
 
 .option-buttons {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 5px 0;
+    width: 100%;
 }
 
 .option-buttons button {
@@ -104,12 +112,17 @@
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s;
-    white-space: nowrap;
+    margin: 2px;
+    min-width: fit-content;
 }
 
 .option-buttons button.active {
     background-color: #1976d2;
     color: white;
+}
+
+.option-buttons button:hover {
+    background-color: #e3f2fd;
 }
 
 input[type="text"],
