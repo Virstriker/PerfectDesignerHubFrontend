@@ -50,7 +50,9 @@ export class CustomerInfoComponent implements OnInit {
     this.orderService.getAllOrderByCustomerId(this.customerId).subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
-          this.customerOrders = response.responseObject;
+          this.customerOrders = response.responseObject.sort((a: { orderdate: string | number | Date; }, b: { orderdate: string | number | Date; }) => 
+            new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime()
+          );
         }
       }
     });

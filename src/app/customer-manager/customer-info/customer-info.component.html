@@ -35,8 +35,8 @@
       <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of customerOrders">
         <div class="order-card-header">
           <h4>Order #{{order.id}}</h4>
-          <div class="order-status" [ngClass]="order.orderstatus ? 'complete' : 'active'">
-            {{ order.orderstatus ? 'Complete' : 'Active' }}
+          <div class="order-status" [ngClass]="order.orderstatus == 1 ? 'active' : order.orderstatus == 2 ? 'complete' : 'delivered'">
+            {{ order.orderstatus == 1 ? 'Active' : order.orderstatus == 2 ? 'Complete' : 'Delivered' }}
           </div>
         </div>
         

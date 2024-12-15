@@ -30,7 +30,7 @@ export class OrderServiceService {
   }
 
   getAllOrderByCustomerId(customerId:number): Observable<ResponseDto> {
-    const url = this.baseOrderUrl + "/GetOrderByCustomerId/"+customerId;
+    const url = this.baseOrderUrl + "/customer/"+customerId;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
 

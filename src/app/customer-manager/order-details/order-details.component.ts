@@ -260,7 +260,7 @@ export class OrderDetailsComponent implements OnInit {
                 color: black;
               }
                .customer-name {
-                  text-align: center;
+                  text-align: start;
                   font-size: 18px;
                   margin-bottom: 8px;
                 }

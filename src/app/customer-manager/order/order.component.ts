@@ -22,6 +22,7 @@ export class OrderComponent implements OnInit {
   selectedDateFilter: string = 'month';
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
+
   searchOrder(){
     console.log(this.searchTerm);
     this.orderService.searchOrder(this.searchTerm).subscribe({
@@ -35,6 +36,7 @@ export class OrderComponent implements OnInit {
       },
     })
   }
+
   ngOnInit(): void {
     this.applyFilters();
     // this.orderService.getAllOrders().subscribe({
@@ -84,7 +86,17 @@ export class OrderComponent implements OnInit {
     // });
     
   }
+
   lastFilter:string = 'today';
+
+  isOverdue(order: OrderCard): boolean {
+    console.log("ordercolor")
+    const today = new Date();
+    const deliveryDate = new Date(order.deliverydate);
+    const status = Number(order.orderstatus);
+    return (status === 1 || status === 2) && deliveryDate < today;
+  }
+
   applyFilters() {
     let filtered = this.orders;
     // Apply date filter
@@ -102,9 +114,9 @@ export class OrderComponent implements OnInit {
             next: (response: ResponseDto) => {
               if (response.isSuccess) {
                 this.orders = response.responseObject;
-                this.filteredOrders = this.orders.filter(order =>
-                  order.orderstatus === parseInt(this.selectedStatus)
-                );
+                this.filteredOrders = this.orders
+                  .filter(order => order.orderstatus === parseInt(this.selectedStatus))
+                  .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
               } else {
                 alert(response.message);
               }
@@ -119,9 +131,9 @@ export class OrderComponent implements OnInit {
             next: (response: ResponseDto) => {
               if (response.isSuccess) {
                 this.orders = response.responseObject;
-                this.filteredOrders = this.orders.filter(order =>
-                  order.orderstatus === parseInt(this.selectedStatus)
-                );
+                this.filteredOrders = this.orders
+                  .filter(order => order.orderstatus === parseInt(this.selectedStatus))
+                  .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
               } else {
                 alert(response.message);
               }
@@ -136,9 +148,9 @@ export class OrderComponent implements OnInit {
             next: (response: ResponseDto) => {
               if (response.isSuccess) {
                 this.orders = response.responseObject;
-                this.filteredOrders = this.orders.filter(order =>
-                  order.orderstatus === parseInt(this.selectedStatus)
-                );
+                this.filteredOrders = this.orders
+                  .filter(order => order.orderstatus === parseInt(this.selectedStatus))
+                  .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
               } else {
                 alert(response.message);
               }
