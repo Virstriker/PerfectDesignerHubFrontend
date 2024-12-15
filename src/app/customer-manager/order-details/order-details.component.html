@@ -107,7 +107,10 @@
                     <span *ngIf="item.astar"><strong>Astar:</strong> {{ item.astar ? 'Yes' : 'No' }}</span>
                     <span *ngIf="item.dori"><strong>Dori:</strong> {{ item.dori ? 'Yes' : 'No' }}</span>
                   </div>
-                  <p class="detail-note" *ngIf="item.detail">{{ item.detail }}</p>
+                  <div class="detail-row">
+                    <span *ngIf="item.backofneck"><strong>Back of Neck:</strong> {{ item.backofneck }}</span>
+                    <span *ngIf="item.detail"><strong>Detail:</strong> {{ item.detail }}</span>
+                  </div>
                 </div>
                 <div class="item-actions">
                   <button *ngIf="isEditing" class="edit-btn" (click)="editItem('top', i)">

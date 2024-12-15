@@ -228,9 +228,9 @@ export class OrderDetailsComponent implements OnInit {
         Object.entries(item).forEach(([key, value]) => {
           if (value !== null && value !== 0 && value !== '' && key !== 'clothimage' && key !== 'designimage' && key !== 'price') {
             if (key === 'frontneckdesign') {
-              itemFields.push({ label: 'FNeckDesign', value });
+              itemFields.push({ label: 'FNeck', value });
             }else if (key === 'backneckdesign') {
-              itemFields.push({ label: 'BNeckDesign', value });
+              itemFields.push({ label: 'BNeck', value });
             }
              else {
               itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value });
