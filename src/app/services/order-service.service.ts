@@ -112,4 +112,30 @@ export class OrderServiceService {
     const url = `${this.baseOrderUrl}`;
     return this.http.put<ResponseDto>(url, updatedOrder, { headers: this.getAuthHeaders() });
   }
+
+  generatePdfForOrder(orderId: number): Observable<Blob> {
+    const url = `${this.baseOrderUrl}/${orderId}/generate-pdfs`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    return this.http.get<Blob>(url, { headers, responseType: 'blob' as 'json' });
+  }
+
+  downloadPdf(orderId: number): void {
+    this.generatePdfForOrder(orderId).subscribe(
+      (response: Blob) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `order_${orderId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error => {
+        console.error('Error downloading PDF:', error);
+      }
+    );
+  }
 }

@@ -31,14 +31,14 @@ export class OrderDetailsComponent implements OnInit {
     tops: [],
     bottoms: []
   };
-  
+
   orderId!: number;
   isEditing = false;
   originalOrder: addOrderDto | null = null;
   showItemDialog = false;
   showWhatsAppDialog = false;
   showQRDialog = false;
-  editingItemType: 'top' | 'bottom' | null = null; 
+  editingItemType: 'top' | 'bottom' | null = null;
   editingItemData: any = null;
   qrCodeUrl: string = '';
 
@@ -62,7 +62,7 @@ export class OrderDetailsComponent implements OnInit {
           this.order = response.responseObject;
         }
       },
-      error: (error: any) => { 
+      error: (error: any) => {
         console.error('Error loading order details:', error);
       }
     });
@@ -83,22 +83,22 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   openItemPopup() {
-    this.editingItemType = null; 
+    this.editingItemType = null;
     this.editingItemData = null;
     this.showItemDialog = true;
   }
 
   closeItemDialog() {
     this.showItemDialog = false;
-    this.editingItemType = null; 
+    this.editingItemType = null;
     this.editingItemData = null;
   }
 
-  editItem(type: 'top' | 'bottom', index: number) { 
+  editItem(type: 'top' | 'bottom', index: number) {
     this.editingItemType = type;
     // Create a deep copy of the item
-    this.editingItemData = type === 'top' ? 
-      { ...this.order.tops[index] } : 
+    this.editingItemData = type === 'top' ?
+      { ...this.order.tops[index] } :
       { ...this.order.bottoms[index] };
     this.editingItemData._index = index; // Store the index for reference
     this.showItemDialog = true;
@@ -116,7 +116,7 @@ export class OrderDetailsComponent implements OnInit {
 
   onItemSaved(event: any) {
     const index = this.editingItemData?._index;
-    
+
     if (this.editingItemType === 'top') {
       if (index !== undefined) {
         // Update existing item
@@ -142,7 +142,7 @@ export class OrderDetailsComponent implements OnInit {
         this.order.bottoms.push(newItem);
       }
     }
-    
+
     // Recalculate total price
     this.order.order.totalprice = this.calculateTotalPrice();
     this.closeItemDialog();
@@ -161,7 +161,7 @@ export class OrderDetailsComponent implements OnInit {
           this.loadOrderDetails();
         }
       },
-      error: (error: any) => { 
+      error: (error: any) => {
         console.error('Error completing order:', error);
       }
     });
@@ -186,7 +186,7 @@ export class OrderDetailsComponent implements OnInit {
           alert('Error updating order. Please try again.');
         }
       },
-      error: (error: any) => { 
+      error: (error: any) => {
         console.error('Error updating order:', error);
         alert('An unexpected error occurred. Please try again later.');
       }
@@ -229,10 +229,9 @@ export class OrderDetailsComponent implements OnInit {
           if (value !== null && value !== 0 && value !== '' && key !== 'clothimage' && key !== 'designimage' && key !== 'price') {
             if (key === 'frontneckdesign') {
               itemFields.push({ label: 'FNeck', value });
-            }else if (key === 'backneckdesign') {
+            } else if (key === 'backneckdesign') {
               itemFields.push({ label: 'BNeck', value });
-            }
-             else {
+            } else {
               itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value });
             }
           }
@@ -295,35 +294,35 @@ export class OrderDetailsComponent implements OnInit {
       alert('Please allow popups for this website to print items.');
     }
   }
-  
+
   async sendWhatsAppMessage() {
     const phoneNumber = this.order.order.phonenumber.toString().replace(/[^0-9]/g, '');
-    
+
     // Create a table-like structure using monospace font and proper spacing
     let message = ' *PERFECT DESIGNER HUB* \n\n';
     message += '*Order Details*\n';
     message += '----------------------------\n\n';
-    
+
     // Add header for items table
     message += '```Item Name         Price```\n';
     message += '```-----------------------```\n';
-    
+
     // Add top items
     this.order.tops.forEach(item => {
       const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
       message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
     });
-    
+
     // Add bottom items
     this.order.bottoms.forEach(item => {
       const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
       message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
     });
-    
+
     // Add separator and total
     message += '```-----------------------```\n';
     message += '```Total           ₹' + this.order.order.totalprice.toString().padStart(6, ' ') + '```\n\n';
-    var upi = 
+    var upi =
     await this.orderService.getTinyUrl(this.order.order.totalprice.toString()).toPromise().then((response: ResponseDto) => {
         if (response.isSuccess) {
           message += '```Pay Here: ' + response.responseObject + '```\n\n';
@@ -333,15 +332,18 @@ export class OrderDetailsComponent implements OnInit {
     message += '_Thank you for shopping at_\n';
     message += '*PERFECT DESIGNER HUB*\n';
     message += 'Visit us again soon! ';
-    
+
     // Format phone number (remove any non-numeric characters and add country code if needed)
     const formattedPhone = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
-    
+
     // Open in web WhatsApp
     const webWhatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
     window.open(webWhatsappUrl, '_blank');
   }
 
+  downloadPdf(orderId: number): void {
+    this.orderService.downloadPdf(orderId);
+  }
 }
 
 function isTopItem(item: TopItem | BottomItem): item is TopItem {

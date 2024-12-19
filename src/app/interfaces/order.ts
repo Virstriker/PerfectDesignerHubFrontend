@@ -45,7 +45,7 @@ export interface addOrderDto {
     bottoms: BottomItem[];
 }
 export interface getOrderDto {
-    order: getOrder;
+    order: getOrder | any;
     tops: TopItem[];
     bottoms: BottomItem[];
 }

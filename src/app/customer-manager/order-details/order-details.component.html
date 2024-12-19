@@ -179,6 +179,9 @@
     <button class="qr-code-btn" *ngIf="!isEditing" (click)="showQRCode()">
       <i class="fas fa-qrcode"></i> Generate Payment QR
     </button>
+    <button class="download-pdf-btn" (click)="downloadPdf(order.order.id)">
+      <i class="fas fa-file-pdf"></i> Download PDF
+    </button>
   </div>
 
   <app-add-item-dialog 
