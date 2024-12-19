@@ -29,9 +29,9 @@
             'completed': order.order.orderstatus === 2,
             'delivered': order.order.orderstatus === 3
           }">
-            {{ order.order.orderstatus === 1 ? 'Active' : 
-               order.order.orderstatus === 2 ? 'Completed' : 
-               order.order.orderstatus === 3 ? 'Delivered' : 'Unknown' }}
+            {{ order.order.orderstatus === 1 ? 'Active' :
+            order.order.orderstatus === 2 ? 'Completed' :
+            order.order.orderstatus === 3 ? 'Delivered' : 'Unknown' }}
           </span>
         </div>
         <div class="summary-body">
@@ -53,7 +53,8 @@
             </div>
             <div class="info-item">
               <label>Delivery Date:</label>
-              <input *ngIf="isEditing" type="date" [ngModel]="order.order.deliverydate | date:'yyyy-MM-dd'" (ngModelChange)="order.order.deliverydate = $event" name="deliveryDate">
+              <input *ngIf="isEditing" type="date" [ngModel]="order.order.deliverydate | date:'yyyy-MM-dd'"
+                (ngModelChange)="order.order.deliverydate = $event" name="deliveryDate">
               <span *ngIf="!isEditing">{{ order.order.deliverydate | date:'mediumDate' }}</span>
             </div>
           </div>
@@ -82,8 +83,10 @@
           <div class="items-container">
             <div *ngFor="let item of order.tops; let i = index" class="item-card">
               <div class="item-images" *ngIf="item.clothimage || item.designimage">
-                <img *ngIf="item.clothimage" [src]="item.clothimage" alt="Cloth" class="item-image">
-                <img *ngIf="item.designimage" [src]="item.designimage" alt="Design" class="item-image">
+                <img *ngIf="item.clothimage" [src]="item.clothimage" alt="Cloth" class="item-image"
+                  (click)="openImagePopup(item.clothimage)">
+                <img *ngIf="item.designimage" [src]="item.designimage" alt="Design" class="item-image"
+                  (click)="openImagePopup(item.designimage)">
               </div>
               <div class="item-content">
                 <div class="item-header">
@@ -132,7 +135,8 @@
           <div class="items-container">
             <div *ngFor="let item of order.bottoms; let i = index" class="item-card">
               <div class="item-images" *ngIf="item.designimage">
-                <img [src]="item.designimage" alt="Design" class="item-image">
+                <img [src]="item.designimage" alt="Design" class="item-image"
+                  (click)="openImagePopup(item.designimage)">
               </div>
               <div class="item-content">
                 <div class="item-header">
@@ -173,7 +177,8 @@
     <button class="complete-btn" *ngIf="order.order.orderstatus === 2" (click)="askForWhatsAppAndUpdateStatus()">
       <i class="fas fa-check-circle"></i> Deliver Order
     </button>
-    <button class="whatsapp-btn" *ngIf="(order.order.orderstatus === 2 || order.order.orderstatus === 3) && !isEditing" (click)="sendWhatsAppMessage()">
+    <button class="whatsapp-btn" *ngIf="(order.order.orderstatus === 2 || order.order.orderstatus === 3) && !isEditing"
+      (click)="sendWhatsAppMessage()">
       <i class="fab fa-whatsapp"></i> Send WhatsApp Message
     </button>
     <button class="qr-code-btn" *ngIf="!isEditing" (click)="showQRCode()">
@@ -184,12 +189,8 @@
     </button>
   </div>
 
-  <app-add-item-dialog 
-    *ngIf="showItemDialog"
-    [itemType]="editingItemType"
-    [itemData]="editingItemData"
-    (closeDialog)="closeItemDialog()"
-    (saveItem)="onItemSaved($event)">
+  <app-add-item-dialog *ngIf="showItemDialog" [itemType]="editingItemType" [itemData]="editingItemData"
+    (closeDialog)="closeItemDialog()" (saveItem)="onItemSaved($event)">
   </app-add-item-dialog>
 
   <!-- QR Code Dialog -->
@@ -219,6 +220,14 @@
         <button class="btn-secondary" (click)="closeWhatsAppDialog(false)">No</button>
         <button class="btn-primary" (click)="closeWhatsAppDialog(true)">Yes</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Image Popup -->
+  <div class="image-popup-overlay" *ngIf="showImagePopup">
+    <div class="image-popup-content">
+      <button class="image-popup-close-btn" (click)="closeImagePopup()">&times;</button>
+      <img [src]="popupImageUrl" alt="Preview" class="popup-image">
     </div>
   </div>
 </div>

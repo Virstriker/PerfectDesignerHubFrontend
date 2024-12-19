@@ -41,6 +41,8 @@ export class OrderDetailsComponent implements OnInit {
   editingItemType: 'top' | 'bottom' | null = null;
   editingItemData: any = null;
   qrCodeUrl: string = '';
+  popupImageUrl: string = '';
+  showImagePopup = false;
 
   constructor(
     private orderService: OrderServiceService,
@@ -343,6 +345,16 @@ export class OrderDetailsComponent implements OnInit {
 
   downloadPdf(orderId: number): void {
     this.orderService.downloadPdf(orderId);
+  }
+
+  openImagePopup(imageUrl: string): void {
+    this.popupImageUrl = imageUrl;
+    this.showImagePopup = true;
+  }
+
+  closeImagePopup(): void {
+    this.showImagePopup = false;
+    this.popupImageUrl = '';
   }
 }
 
