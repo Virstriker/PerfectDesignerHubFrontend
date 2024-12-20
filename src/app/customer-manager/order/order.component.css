@@ -188,10 +188,13 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
+  max-height: calc(100vh - 300px); /* Adjust the height as needed */
+  display: block;
 }
 
 .order-detail-table th, .order-detail-table td {
+  width: 18%;
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #e0e0ff;

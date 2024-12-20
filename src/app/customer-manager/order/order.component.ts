@@ -20,6 +20,7 @@ export class OrderComponent implements OnInit {
   searchTerm: string = '';
   selectedStatus: string = '1';
   selectedDateFilter: string = 'month';
+  totalPrice: number = 0;
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
 
@@ -117,6 +118,7 @@ export class OrderComponent implements OnInit {
                 this.filteredOrders = this.orders
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
+                this.calculateTotalPrice();
               } else {
                 alert(response.message);
               }
@@ -134,6 +136,7 @@ export class OrderComponent implements OnInit {
                 this.filteredOrders = this.orders
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
+                this.calculateTotalPrice();
               } else {
                 alert(response.message);
               }
@@ -151,6 +154,7 @@ export class OrderComponent implements OnInit {
                 this.filteredOrders = this.orders
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
+                this.calculateTotalPrice();
               } else {
                 alert(response.message);
               }
@@ -163,7 +167,7 @@ export class OrderComponent implements OnInit {
       //   return orderDate >= startDate && orderDate <= today;
       // });
     }
-    
+
     console.log(filtered,this.orders);
     // Apply status filter
     if (this.selectedStatus !== 'all') {
@@ -172,6 +176,11 @@ export class OrderComponent implements OnInit {
       );
     }
     this.filteredOrders = filtered;
+    this.calculateTotalPrice();
+  }
+
+  calculateTotalPrice() {
+    this.totalPrice = this.filteredOrders.reduce((sum, order) => sum + order.totalprice, 0);
   }
 
   goToOrder(id: number) {

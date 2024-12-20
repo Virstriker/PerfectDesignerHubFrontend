@@ -23,9 +23,9 @@ export class AddItemDialogComponent implements OnChanges {
   topOptions: string[] = ['Blouse', 'Kurti', 'OnePiece', 'ShortTop', 'Frok', 'Dress', 'Kfatan', 'SimpleSalvar' , 'Shrug', 'Blazer', 'peplem','CropTop'];
   frontNeckDesignOptions: string[] = ['Boat', 'Stand', 'Round', 'A.Work', 'A.Whatsapp', 'A.Measurment', 'Image'];
   backNeckDesignOptions: string[] = ['Boat', 'Stand', 'Round', 'A.Work', 'A.Whatsapp', 'A.Measurment', 'Image'];
-  styleOptions: string[] = ['PrincessCut', 'Katori', '4Gents', 'Pad'];
+  styleOptions: string[] = ['PrincessCut','PrincessCut(Pad)' ,'Katori', '4Gents', 'SabiyaSachi'];
   openingsideOptions: string[] = ['Front', 'Back', 'Side', 'Chain'];
-  inneckOptions: string[] = ['Piping', 'UrepPatti', 'Canvas', 'Hemming', 'Dori'];
+  inneckOptions: string[] = ['Piping', 'UrepPatti', 'Canvas', 'Hemming', 'Supplimentry'];
   backofneckOptions: string[] = ['Deep' ,'Pack'];
   sleeveOptions: string[] = ['SleeveLess', 'Cape', 'Elbow', '3/4th', 'Full'];
 
