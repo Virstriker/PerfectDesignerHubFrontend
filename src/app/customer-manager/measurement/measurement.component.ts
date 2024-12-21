@@ -5,12 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CustomerServiceService } from '../../services/customer-service.service';
 import { Customer, CustomerAdd, ResponseDto } from '../../interfaces/customer';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 
 @Component({
   selector: 'app-measurement',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers: [CustomerServiceService],
+  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule,LoaderComponentComponent],
+  providers: [CustomerServiceService,LoaderComponentComponent],
   templateUrl: './measurement.component.html',
   styleUrl: './measurement.component.css'
 })
@@ -19,7 +20,7 @@ export class MeasurementComponent implements OnInit {
   filteredCustomers: Customer[] = [];
 
   searchTerm: string = '';
-
+  loading: boolean = true;
   constructor(private router: Router,private customerService:CustomerServiceService) {}
 
   ngOnInit() {
@@ -32,6 +33,7 @@ export class MeasurementComponent implements OnInit {
         this.customers = response.responseObject;
         this.filteredCustomers = this.customers;
         console.log('Customers loaded:', this.customers);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching customers:', error);

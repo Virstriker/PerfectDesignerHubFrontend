@@ -5,12 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { OrderCard, ResponseDto } from '../../interfaces/customer';
 import { OrderServiceService } from '../../services/order-service.service';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule],
-  providers: [OrderServiceService],
+  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule,LoaderComponentComponent],
+  providers: [OrderServiceService,LoaderComponentComponent],
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.css']
 })
@@ -19,8 +20,9 @@ export class OrderComponent implements OnInit {
   filteredOrders: OrderCard[] = [];
   searchTerm: string = '';
   selectedStatus: string = '1';
-  selectedDateFilter: string = 'month';
+  selectedDateFilter: string = 'week';
   totalPrice: number = 0;
+  loading: boolean = true;
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
 
@@ -105,7 +107,7 @@ export class OrderComponent implements OnInit {
       this.lastFilter = this.selectedDateFilter;
       const today = new Date();
       const startDate = new Date();
-
+      this.loading = true;
       switch (this.selectedDateFilter) {
         case 'today':
           this.orderService.getFilterOrders({
@@ -119,6 +121,7 @@ export class OrderComponent implements OnInit {
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
                 this.calculateTotalPrice();
+                this.loading = false;
               } else {
                 alert(response.message);
               }
@@ -137,6 +140,7 @@ export class OrderComponent implements OnInit {
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
                 this.calculateTotalPrice();
+                this.loading = false;
               } else {
                 alert(response.message);
               }
@@ -155,6 +159,7 @@ export class OrderComponent implements OnInit {
                   .filter(order => order.orderstatus === parseInt(this.selectedStatus))
                   .sort((a, b) => new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime());
                 this.calculateTotalPrice();
+                this.loading = false;
               } else {
                 alert(response.message);
               }

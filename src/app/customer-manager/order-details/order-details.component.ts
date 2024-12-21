@@ -7,12 +7,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { AddItemDialogComponent } from '../add-order/add-item-dialog/add-item-dialog.component';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [NgFor, NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule, AddItemDialogComponent],
-  providers: [OrderServiceService],
+  imports: [NgFor, NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule, AddItemDialogComponent,LoaderComponentComponent],
+  providers: [OrderServiceService,LoaderComponentComponent],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css']
 })
@@ -31,7 +32,7 @@ export class OrderDetailsComponent implements OnInit {
     tops: [],
     bottoms: []
   };
-
+  loading: boolean = true;
   orderId!: number;
   isEditing = false;
   originalOrder: addOrderDto | null = null;
@@ -62,6 +63,7 @@ export class OrderDetailsComponent implements OnInit {
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.order = response.responseObject;
+          this.loading = false;
         }
       },
       error: (error: any) => {

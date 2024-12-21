@@ -6,12 +6,13 @@ import { CommonModule, NgClass, NgFor } from '@angular/common';
 import { CustomerServiceService } from '../../services/customer-service.service';
 import { HttpClientModule } from '@angular/common/http';
 import { OrderServiceService } from '../../services/order-service.service';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 
 @Component({
   selector: 'app-customer-info',
   standalone: true,
-  imports: [FormsModule, NgClass, NgFor, CommonModule, HttpClientModule],
-  providers: [CustomerServiceService, OrderServiceService],
+  imports: [FormsModule, NgClass, NgFor, CommonModule, HttpClientModule,LoaderComponentComponent],
+  providers: [CustomerServiceService, OrderServiceService,LoaderComponentComponent],
   templateUrl: './customer-info.component.html',
   styleUrl: './customer-info.component.css'
 })
@@ -25,7 +26,7 @@ export class CustomerInfoComponent implements OnInit {
     phonenumber: '',
     address: ''
   };
-
+  loading: boolean = true;
   customerOrders: OrderCard[] = [];
 
   constructor(private route: ActivatedRoute,
@@ -54,6 +55,7 @@ export class CustomerInfoComponent implements OnInit {
             new Date(b.orderdate).getTime() - new Date(a.orderdate).getTime()
           );
         }
+        this.loading = false;
       }
     });
   }

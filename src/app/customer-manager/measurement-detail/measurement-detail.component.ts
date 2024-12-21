@@ -6,6 +6,7 @@ import { MeasurementServiceService } from '../../services/measurement-service.se
 import { ResponseDto } from '../../interfaces/customer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderServiceService } from '../../services/order-service.service';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 export interface Measurements {
   id: number;
   customerId: number;
@@ -46,13 +47,13 @@ export interface Measurements {
 @Component({
   selector: 'app-measurement-detail',
   standalone: true,
-  imports: [CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers:[MeasurementServiceService,OrderServiceService],
+  imports: [CommonModule,FormsModule,RouterModule,HttpClientModule,LoaderComponentComponent],
+  providers:[MeasurementServiceService,OrderServiceService,LoaderComponentComponent],
   templateUrl: './measurement-detail.component.html',
   styleUrl: './measurement-detail.component.css'
 })
 export class MeasurementDetailComponent implements OnInit {
-
+  loading: boolean = true;
   customerName!:string;
   measurements: Measurements = {
     id: 0,
@@ -115,8 +116,10 @@ export class MeasurementDetailComponent implements OnInit {
           this.recordExists = true;
           this.customerName = data.responseObject.customerName;
           this.measurements = data.responseObject; 
+          this.loading = false;
         } else {
           alert("no data")
+          this.loading = false;
         }
       },
     })

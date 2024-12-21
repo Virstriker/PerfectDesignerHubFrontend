@@ -5,13 +5,14 @@ import { Customer, CustomerAdd, ResponseDto} from "../../interfaces/customer";
 import { Router, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { CustomerServiceService } from '../../services/customer-service.service';
+import { LoaderComponentComponent } from '../../loader-component/loader-component.component';
 
 
 @Component({
   selector: 'app-customer',
   standalone: true,
-  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule],
-  providers: [CustomerServiceService],
+  imports: [NgFor,CommonModule,FormsModule,RouterModule,HttpClientModule,LoaderComponentComponent],
+  providers: [CustomerServiceService,LoaderComponentComponent],
   templateUrl: './customer.component.html',
   styleUrl: './customer.component.css'
 })
@@ -26,7 +27,7 @@ export class CustomerComponent implements OnInit {
     Address:''
   }
   
-
+  loading: boolean = true;
   errors: any = {};
   showModal = false;
   searchTerm: string = '';
@@ -43,6 +44,7 @@ export class CustomerComponent implements OnInit {
         this.customers = response.responseObject.sort((a: Customer, b: Customer) => a.name.localeCompare(b.name));
         this.filteredCustomers = this.customers;
         console.log('Customers loaded:', this.customers);
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching customers:', error);
