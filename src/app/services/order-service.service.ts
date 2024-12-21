@@ -57,9 +57,13 @@ export class OrderServiceService {
     const url = this.baseOrderUrl;
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
-  getFilterOrders(order:any):Observable<ResponseDto>{
+  getFilterOrders(order: any): Observable<ResponseDto> {
     const url = this.baseOrderUrl + "/date-range";
-    return this.http.post<ResponseDto>(url,order,{ headers: this.getAuthHeaders() });
+    const options = {
+      headers: this.getAuthHeaders(),
+      timeout: 20000  // Timeout set to 20 seconds
+    };
+    return this.http.post<ResponseDto>(url, order, options);
   }
   
   getTinyUrl(url:any): Observable<any>{

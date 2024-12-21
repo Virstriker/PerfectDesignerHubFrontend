@@ -192,6 +192,10 @@
   max-height: calc(100vh - 300px); /* Adjust the height as needed */
   display: block;
 }
+ 
+.order-detail-table th:nth-child(1), .order-detail-table td:nth-child(1) {
+  width: 7%;
+}
 
 .order-detail-table th, .order-detail-table td {
   width: 18%;
