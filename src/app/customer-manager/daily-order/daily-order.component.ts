@@ -6,6 +6,8 @@ import { CustomerServiceService } from '../../services/customer-service.service'
 import { Router } from '@angular/router';
 import { ResponseDto } from '../../interfaces/customer';
 import { DailyOrderServiceService } from '../../services/daily-order-service.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Define the Order interface
 interface Order {
@@ -292,5 +294,71 @@ export class DailyOrderComponent implements OnInit {
     this.isDropdownOpen = false;
     this.customerSearchTerm = '';
     this.filterCustomers();
+  }
+
+  downloadPDF() {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text('Daily Orders Report', 20, 20);
+    
+    // Add filters info
+    doc.setFontSize(10);
+    let filterText = `Status: ${this.getStatusText(this.selectedStatus)}`;
+    if (this.selectedDateFilter !== 'all') {
+      filterText += ` | Date Filter: ${this.selectedDateFilter}`;
+    }
+    doc.text(filterText, 20, 30);
+    
+    // Prepare table data
+    const tableData = this.filteredOrders.map(order => [
+      order.id.toString(),
+      order.customerName,
+      order.orderDetail,
+      this.datePipe.transform(order.orderDate, 'shortDate') || '',
+      this.datePipe.transform(order.deliveryDate, 'shortDate') || '',
+      `₹${order.orderAmount}`,
+      this.getStatusText(order.orderState)
+    ]);
+    
+    // Add total row
+    tableData.push([
+      '', '', '', '', 'Total:', `₹${this.totalAmount}`, ''
+    ]);
+    
+    // Generate table
+    autoTable(doc, {
+      head: [['ID', 'Customer', 'Detail', 'Order Date', 'Delivery Date', 'Amount', 'Status']],
+      body: tableData,
+      startY: 40,
+      styles: {
+        fontSize: 8,
+        cellPadding: 2
+      },
+      headStyles: {
+        fillColor: [66, 139, 202],
+        textColor: [255, 255, 255]
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      columnStyles: {
+        0: { cellWidth: 15 }, // ID
+        1: { cellWidth: 30 }, // Customer
+        2: { cellWidth: 40 }, // Detail
+        3: { cellWidth: 25 }, // Order Date
+        4: { cellWidth: 25 }, // Delivery Date
+        5: { cellWidth: 20 }, // Amount
+        6: { cellWidth: 20 }  // Status
+      }
+    });
+    
+    // Generate filename with current date and status
+    const currentDate = new Date().toISOString().split('T')[0];
+    const filename = `daily_orders_${this.getStatusText(this.selectedStatus).toLowerCase()}_${currentDate}.pdf`;
+    
+    // Save the PDF
+    doc.save(filename);
   }
 }
