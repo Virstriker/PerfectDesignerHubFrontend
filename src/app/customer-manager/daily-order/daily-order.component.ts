@@ -299,42 +299,42 @@ export class DailyOrderComponent implements OnInit {
   downloadPDF() {
     const doc = new jsPDF();
     
-    // Add title
-    doc.setFontSize(16);
+    // Add title (slightly larger)
+    doc.setFontSize(18);
     doc.text('Daily Orders Report', 20, 20);
     
-    // Add filters info
-    doc.setFontSize(10);
+    // Add filters info (slightly larger)
+    doc.setFontSize(12);
     let filterText = `Status: ${this.getStatusText(this.selectedStatus)}`;
     if (this.selectedDateFilter !== 'all') {
       filterText += ` | Date Filter: ${this.selectedDateFilter}`;
     }
     doc.text(filterText, 20, 30);
     
-    // Prepare table data
-    const tableData = this.filteredOrders.map(order => [
-      order.id.toString(),
-      order.customerName,
-      order.orderDetail,
-      this.datePipe.transform(order.orderDate, 'shortDate') || '',
-      this.datePipe.transform(order.deliveryDate, 'shortDate') || '',
-      `₹${order.orderAmount}`,
-      this.getStatusText(order.orderState)
-    ]);
+    // Prepare table data (remove ID, Order Date, Status; add phone next to name)
+    const tableData = this.filteredOrders.map(order => {
+      const customer = this.customerIds.find(c => c.id === order.customerId);
+      const phone = customer?.phonenumber || customer?.phoneNumber || '';
+      const nameWithPhone = phone ? `${order.customerName} (${phone})` : order.customerName;
+      return [
+        nameWithPhone,
+        order.orderDetail,
+        this.datePipe.transform(order.deliveryDate, 'shortDate') || '',
+        `₹${order.orderAmount}`
+      ];
+    });
     
-    // Add total row
-    tableData.push([
-      '', '', '', '', 'Total:', `₹${this.totalAmount}`, ''
-    ]);
+    // Add total row aligned to Amount column
+    tableData.push(['', '', 'Total:', `₹${this.totalAmount}`]);
     
-    // Generate table
+    // Generate table with updated columns
     autoTable(doc, {
-      head: [['ID', 'Customer', 'Detail', 'Order Date', 'Delivery Date', 'Amount', 'Status']],
+      head: [['Customer', 'Detail', 'Delivery Date', 'Amount']],
       body: tableData,
       startY: 40,
       styles: {
-        fontSize: 8,
-        cellPadding: 2
+        fontSize: 10, // slightly bigger than before
+        cellPadding: 3
       },
       headStyles: {
         fillColor: [66, 139, 202],
@@ -344,13 +344,10 @@ export class DailyOrderComponent implements OnInit {
         fillColor: [245, 245, 245]
       },
       columnStyles: {
-        0: { cellWidth: 15 }, // ID
-        1: { cellWidth: 30 }, // Customer
-        2: { cellWidth: 40 }, // Detail
-        3: { cellWidth: 25 }, // Order Date
-        4: { cellWidth: 25 }, // Delivery Date
-        5: { cellWidth: 20 }, // Amount
-        6: { cellWidth: 20 }  // Status
+        0: { cellWidth: 60 }, // Customer (with phone)
+        1: { cellWidth: 60 }, // Detail
+        2: { cellWidth: 35 }, // Delivery Date
+        3: { cellWidth: 25 }  // Amount
       }
     });
     
