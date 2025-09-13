@@ -2,37 +2,204 @@
   padding: 20px;
   position: relative;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.selector-container {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 25px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.selector-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.selector-container::after {
+  content: 'Filter Options';
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,0.8);
+  padding: 4px 8px;
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
 }
 
 .employee-selector {
-  margin-bottom: 20px;
   position: relative;
 }
 
-.employee-selector select {
-  padding: 10px 15px;
-  font-size: 16px;
+.date-selector {
+  display: flex;
+  gap: 15px;
+  align-items: end;
+}
+
+.employee-selector label,
+.date-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.employee-selector label::after,
+.date-selector label::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 1px;
+}
+
+.employee-selector select,
+.date-selector select {
   width: 100%;
-  max-width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: #2c3e50;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
-.employee-selector select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.employee-selector select:hover,
+.date-selector select:hover {
+  border-color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.employee-selector select:focus,
+.date-selector select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.15);
   outline: none;
+  background: white;
+  transform: translateY(-1px);
 }
 
-.employee-selector option {
-  padding: 10px;
+.employee-selector option,
+.date-selector option {
+  padding: 12px;
+  background: white;
+  color: #2c3e50;
 }
 
-.employee-selector select option[value=""] {
+.employee-selector select option[value=""],
+.date-selector select option[value=""] {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.employee-selector select:focus,
+.date-selector select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.15);
+  outline: none;
+  background: white;
+  transform: translateY(-1px);
+}
+
+.employee-selector option,
+.date-selector option {
+  padding: 12px;
+  background: white;
+  color: #2c3e50;
+}
+
+.employee-selector select option[value=""],
+.date-selector select option[value=""] {
   color: #999;
+}
+
+/* Enhanced hover effects */
+.employee-selector:hover label::after,
+.date-selector:hover label::after {
+  width: 50px;
+  transition: width 0.3s ease;
+}
+
+/* Smooth entrance animation */
+.selector-container {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading state for filters */
+.selector-container.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.selector-container.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #667eea;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .table-container {
@@ -105,6 +272,36 @@ tr:hover {
 
 .add-button:hover {
   background-color: #0056b3;
+}
+
+.download-pdf-button {
+  position: fixed;
+  bottom: 30px;
+  right: 90px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-pdf-button:hover {
+  background: linear-gradient(135deg, #218838 0%, #1aa085 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+}
+
+.download-pdf-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
 }
 
 /* Modal styles */
@@ -190,6 +387,78 @@ tr:hover {
   
   th, td {
     padding: 8px;
+  }
+}
+
+/* Filter Layout - Desktop (PC) View */
+@media (min-width: 769px) {
+  .selector-container {
+    flex-direction: row;
+    align-items: end;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .employee-selector {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+  }
+
+  .date-selector {
+    flex: 2;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+
+  .date-selector select {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* Filter Layout - Mobile View */
+@media (max-width: 768px) {
+  .selector-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .employee-selector {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .date-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .date-selector select {
+    width: 100%;
+    min-width: 100%;
+    flex: none;
+  }
+
+  .selector-container::after {
+    display: none;
+  }
+
+  .download-pdf-button {
+    right: 20px;
+    bottom: 90px;
+  }
+
+  .add-button {
+    bottom: 20px;
+    right: 20px;
   }
 }
 

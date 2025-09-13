@@ -1,12 +1,35 @@
 <div class="container">
-  <!-- Employee selector dropdown -->
-  <div class="employee-selector">
-    <select [(ngModel)]="selectedEmployee" (change)="getDailyWorkOfEmployee(selectedEmployee)">
-      <option value="">Select Employee</option>
-      <option *ngFor="let emp of employees" [value]="emp.id">
-        {{emp.employeeName}}
-      </option>
-    </select>
+  <!-- Employee and Date selector dropdowns -->
+  <div class="selector-container">
+    <div class="employee-selector">
+      <label for="employee-select">Employee:</label>
+      <select id="employee-select" [(ngModel)]="selectedEmployee" (change)="getDailyWorkOfEmployee()">
+        <option value="">Select Employee</option>
+        <option *ngFor="let emp of employees" [value]="emp.id">
+          {{emp.employeeName}}
+        </option>
+      </select>
+    </div>
+
+    <div class="date-selector">
+      <div class="employee-selector">
+      <label for="year-select">Year:</label>
+      <select id="year-select" [(ngModel)]="selectedYear" (change)="getDailyWorkOfEmployee()">
+        <option *ngFor="let year of availableYears" [value]="year">
+          {{year}}
+        </option>
+      </select>
+      </div>
+
+      <div class="employee-selector">
+      <label for="month-select">Month:</label>
+      <select id="month-select" [(ngModel)]="selectedMonth" (change)="getDailyWorkOfEmployee()">
+        <option *ngFor="let month of months; let i = index" [value]="i + 1">
+          {{month}}
+        </option>
+      </select>
+      </div>
+    </div>
   </div>
 
   <!-- Work tables grouped by week -->
@@ -42,6 +65,11 @@
 
   <!-- Add button -->
   <button class="add-button" (click)="openDialog()">+</button>
+
+  <!-- Download PDF button -->
+  <button class="download-pdf-button" (click)="downloadPDF()" title="Download PDF">
+    <i class="fas fa-download"></i>
+  </button>
 
   <!-- Modal dialog -->
   <div class="modal" *ngIf="showDialog">
