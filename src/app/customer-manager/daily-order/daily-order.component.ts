@@ -108,7 +108,7 @@ export class DailyOrderComponent implements OnInit {
     });
     this.dailyOrderService.getDailyOrders().subscribe({
       next: (respons: ResponseDto) => {
-        this.orders = respons.responseObject;
+        this.orders = respons.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
       }
     });
   }
@@ -222,7 +222,7 @@ export class DailyOrderComponent implements OnInit {
   private loadOrders(): void {
     this.dailyOrderService.getDailyOrders().subscribe({
       next: (response: ResponseDto) => {
-        this.orders = response.responseObject;
+        this.orders = response.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
       },
       error: (error) => {
         console.error('Error loading orders:', error);
@@ -251,7 +251,7 @@ export class DailyOrderComponent implements OnInit {
   filterByDate(){
     this.dailyOrderService.getDailyOrdersByDate(this.filter).subscribe({
       next: (response: ResponseDto) => {
-        this.orders = response.responseObject;
+        this.orders = response.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
       },
       error: (error) => {
         console.error('Error loading orders:', error);
