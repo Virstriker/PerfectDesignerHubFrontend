@@ -1,191 +1,281 @@
-<div class="daily-order-container">
-  
-  <!-- Date Filter Section -->
-  <h3 class="filter-heading">Date Filter</h3>
-  <div class="date-filter-buttons">
-    <button class="filter-btn" [class.active]="selectedDateFilter === 'today'" (click)="filterToday()">Today</button>
-    <button class="filter-btn" [class.active]="selectedDateFilter === 'thisMonth'" (click)="filterThisMonth()">This Month</button>
-    <button class="filter-btn" [class.active]="selectedDateFilter === 'all'" (click)="filterAll()">All</button>
+<div class="page-wrapper">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <h1 class="page-title">Daily Orders</h1>
+    <div class="top-actions">
+      <button class="btn btn-primary" (click)="addNewOrder()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Order
+      </button>
+      <button class="btn btn-outline" (click)="downloadPDF()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PDF
+      </button>
+    </div>
   </div>
 
-  <!-- Status Filter Section -->
-  <h3 class="filter-heading">Order Status</h3>
-  <div class="status-tabs">
-    <button class="tab-btn" [class.active]="selectedStatus === 1" (click)="filterByStatus(1)">
-      Active
-    </button>
-    <button class="tab-btn" [class.active]="selectedStatus === 2" (click)="filterByStatus(2)">
-      Complete
-    </button>
-    <button class="tab-btn" [class.active]="selectedStatus === 3" (click)="filterByStatus(3)">
-      Delivered
-    </button>
+  <!-- Filter Panel -->
+  <div class="filter-panel">
+
+    <!-- Status Tabs -->
+    <div class="status-tabs">
+      <button class="status-tab" [class.active]="selectedStatus === 1" (click)="filterByStatus(1)">
+        <span class="dot dot-active"></span> Active
+      </button>
+      <button class="status-tab" [class.active]="selectedStatus === 2" (click)="filterByStatus(2)">
+        <span class="dot dot-complete"></span> Complete
+      </button>
+      <button class="status-tab" [class.active]="selectedStatus === 3" (click)="filterByStatus(3)">
+        <span class="dot dot-delivered"></span> Delivered
+      </button>
+    </div>
+
+    <!-- Date Filters -->
+    <div class="date-filters">
+      <button class="date-chip" [class.active]="selectedDateFilter === 'today'" (click)="filterToday()">Today</button>
+      <button class="date-chip" [class.active]="selectedDateFilter === 'thisMonth'" (click)="filterThisMonth()">This Month</button>
+      <button class="date-chip" [class.active]="selectedDateFilter === 'all'" (click)="filterAll()">All</button>
+      <button class="date-chip" [class.active]="selectedDateFilter === 'custom' || showCustomRange" (click)="showCustomRange = !showCustomRange">
+        Custom Range
+      </button>
+    </div>
+
+    <!-- Custom Date Range -->
+    <div class="custom-range-row" *ngIf="showCustomRange">
+      <div class="range-inputs">
+        <label>From</label>
+        <input type="date" [(ngModel)]="customFrom" class="date-input">
+        <label>To</label>
+        <input type="date" [(ngModel)]="customTo" class="date-input">
+        <button class="btn btn-primary btn-sm" (click)="applyCustomRange()">Apply</button>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Add Order Button -->
-  <div class="action-bar">
-    <button class="add-order-btn" (click)="addNewOrder()">
-      <i class="fas fa-plus"></i> Add New Order
-    </button>
-    <button class="download-pdf-btn" (click)="downloadPDF()">
-      <i class="fas fa-download"></i> Download PDF
-    </button>
+  <!-- Summary Strip -->
+  <div class="summary-strip">
+    <div class="summary-item">
+      <span class="summary-label">Showing</span>
+      <span class="summary-value">{{filteredOrders.length}} orders</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">Total</span>
+      <span class="summary-value highlight">₹{{totalAmount}}</span>
+    </div>
+    <div class="col-search-toggle" (click)="clearColSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      Clear filters
+    </div>
   </div>
 
-  <!-- Orders Table -->
-  <div class="table-container">
+  <!-- Desktop Table -->
+  <div class="table-wrapper">
     <table class="orders-table">
       <thead>
-        <tr>
-          <th>ID</th>
-          <th>Customer</th>
-          <th>Detail</th>
-          <th>Order</th>
-          <th>Delivery</th>
-          <th>Amount</th>
+        <tr class="header-row">
+          <th class="th-sort" (click)="sortBy('id')">
+            ID
+            <span class="sort-icon" [class.asc]="sortColumn==='id' && sortDirection==='asc'" [class.desc]="sortColumn==='id' && sortDirection==='desc'">↕</span>
+          </th>
+          <th class="th-sort" (click)="sortBy('customerName')">
+            Customer
+            <span class="sort-icon" [class.asc]="sortColumn==='customerName' && sortDirection==='asc'" [class.desc]="sortColumn==='customerName' && sortDirection==='desc'">↕</span>
+          </th>
+          <th class="th-sort" (click)="sortBy('orderDetail')">
+            Detail
+            <span class="sort-icon" [class.asc]="sortColumn==='orderDetail' && sortDirection==='asc'" [class.desc]="sortColumn==='orderDetail' && sortDirection==='desc'">↕</span>
+          </th>
+          <th class="th-sort" (click)="sortBy('orderDate')">
+            Order Date
+            <span class="sort-icon" [class.asc]="sortColumn==='orderDate' && sortDirection==='asc'" [class.desc]="sortColumn==='orderDate' && sortDirection==='desc'">↕</span>
+          </th>
+          <th class="th-sort" (click)="sortBy('deliveryDate')">
+            Delivery
+            <span class="sort-icon" [class.asc]="sortColumn==='deliveryDate' && sortDirection==='asc'" [class.desc]="sortColumn==='deliveryDate' && sortDirection==='desc'">↕</span>
+          </th>
+          <th class="th-sort" (click)="sortBy('orderAmount')">
+            Amount
+            <span class="sort-icon" [class.asc]="sortColumn==='orderAmount' && sortDirection==='asc'" [class.desc]="sortColumn==='orderAmount' && sortDirection==='desc'">↕</span>
+          </th>
           <th>Status</th>
+        </tr>
+        <!-- Column search row -->
+        <tr class="filter-row">
+          <td></td>
+          <td><input class="col-filter-input" [(ngModel)]="colSearch.customer" placeholder="Filter..." /></td>
+          <td><input class="col-filter-input" [(ngModel)]="colSearch.detail" placeholder="Filter..." /></td>
+          <td></td>
+          <td><input type="date" class="col-filter-input" [(ngModel)]="colSearch.deliveryDate" /></td>
+          <td><input class="col-filter-input" type="number" [(ngModel)]="colSearch.amount" placeholder="≥ amount" /></td>
+          <td></td>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let order of filteredOrders" class="order-row" [ngClass]="{'past-order': isPastOrder(order.deliveryDate)}">
-          <td>{{order.id}}</td>
-          <td title="{{order.customerName}}">{{order.customerName}}</td>
-          <td title="{{order.orderDetail}}">{{order.orderDetail}}</td>
-          <td>{{order.orderDate | date:'shortDate'}}</td>
-          <td>{{order.deliveryDate | date:'shortDate'}}</td>
-          <td>₹{{order.orderAmount}}</td>
+        <tr *ngFor="let order of filteredOrders"
+            class="order-row"
+            [class.past-order]="isPastOrder(order.deliveryDate)">
+          <td class="td-id">{{order.id}}</td>
+          <td class="td-name" [title]="order.customerName">{{order.customerName}}</td>
+          <td class="td-detail" [title]="order.orderDetail">{{order.orderDetail}}</td>
+          <td>{{order.orderDate | date:'d MMM yy'}}</td>
+          <td>{{order.deliveryDate | date:'d MMM yy'}}</td>
+          <td class="td-amount">₹{{order.orderAmount}}</td>
           <td>
-            <span (click)="updateDailyOrderState(order)" 
-                  class="status-badge"
-                  [class]="getStatusText(order.orderState).toLowerCase()">
+            <span class="status-badge status-{{getStatusText(order.orderState).toLowerCase()}}"
+                  (click)="updateDailyOrderState(order)"
+                  [class.clickable]="order.orderState !== 3">
               {{getStatusText(order.orderState)}}
             </span>
           </td>
         </tr>
-        <!-- Total amount row -->
-        <tr>
-          <td colspan="7">Total Amount: ₹{{totalAmount}}</td>
+        <tr *ngIf="filteredOrders.length === 0">
+          <td colspan="7" class="empty-state">No orders found</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="5" class="total-label">Total</td>
+          <td class="total-value">₹{{totalAmount}}</td>
+          <td></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Modal Overlay -->
-  <div class="modal-overlay" [class.show]="isModalOpen" (click)="closeModal()">
-    <div class="modal" [class.show]="isModalOpen" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Add New Order</h2>
-        <button class="close-btn" (click)="closeModal()">&times;</button>
+  <!-- Mobile Cards -->
+  <div class="mobile-cards">
+    <div *ngFor="let order of filteredOrders"
+         class="order-card"
+         [class.past-card]="isPastOrder(order.deliveryDate)">
+      <div class="card-header">
+        <div class="card-customer">{{order.customerName}}</div>
+        <span class="status-badge status-{{getStatusText(order.orderState).toLowerCase()}}"
+              (click)="updateDailyOrderState(order)"
+              [class.clickable]="order.orderState !== 3">
+          {{getStatusText(order.orderState)}}
+        </span>
       </div>
+      <div class="card-detail">{{order.orderDetail}}</div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-label">Order</span>
+          <span>{{order.orderDate | date:'d MMM yy'}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Delivery</span>
+          <span [class.overdue]="isPastOrder(order.deliveryDate)">{{order.deliveryDate | date:'d MMM yy'}}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Amount</span>
+          <span class="card-amount">₹{{order.orderAmount}}</span>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="filteredOrders.length === 0" class="empty-cards">No orders found</div>
+    <div class="mobile-total">Total: <strong>₹{{totalAmount}}</strong></div>
+  </div>
 
-      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-        <div class="form-group">
-          <label for="customer">Customer</label>
-          <div class="search-select-container">
-            
-            <div class="custom-select">
-              <select 
-                id="customer" 
-                [(ngModel)]="newOrder.customerId" 
-                required
-                (click)="toggleDropdown($event)"
-                [class.active]="isDropdownOpen"
-              >
-                <option value="">Select Customer</option>
-                <option *ngFor="let customer of customerIds" [value]="customer.id" [hidden]="true">
-                  {{customer.name + " " + customer.surname}}
-                </option>
-              </select>
-              
-              <div class="dropdown-menu" *ngIf="isDropdownOpen">
-                <input
-                  type="text"
-                  [(ngModel)]="customerSearchTerm"
-                  (input)="filterCustomers()"
-                  placeholder="Search customer..."
-                  class="search-input"
-                  #searchInput
-                >
-                <div class="options-container">
-                  <div 
-                    *ngFor="let customer of filteredCustomerIds" 
-                    class="option"
-                    (click)="selectCustomer(customer)"
-                  >
-                    {{customer.name + " " + customer.surname}}
-                  </div>
-                </div>
+</div>
+
+<!-- Add Order Modal -->
+<div class="modal-overlay" [class.show]="isModalOpen" (click)="closeModal()">
+  <div class="modal" [class.show]="isModalOpen" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>New Order</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Customer</label>
+        <div class="custom-select-wrap">
+          <div class="custom-select-trigger" (click)="toggleDropdown($event)">
+            <span>{{ customerSearchTerm || 'Select customer...' }}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dropdown-panel" *ngIf="isDropdownOpen">
+            <input type="text" [(ngModel)]="customerSearchTerm" (input)="filterCustomers()"
+                   placeholder="Search..." class="dropdown-search" #searchInput>
+            <div class="dropdown-options">
+              <div *ngFor="let c of filteredCustomerIds" class="dropdown-option" (click)="selectCustomer(c)">
+                {{c.name}} {{c.surname}}
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="detail">Items</label>
-          <div class="items-list">
-            <div class="item-row" *ngFor="let item of orderItems; let i = index">
-              <select [(ngModel)]="item.name" required>
-                <option value="">Select Item</option>
-                <option value="Dress">Dress</option>
-                <option value="Kurti">Kurti</option>
-                <option value="Pant">Pant</option>
-                <option value="Plazo">Plazo</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Chaniyacholi">Chaniyacholi</option>
-                <option value="Chaniyo">Chaniyo</option>
-                <option value="One Piece">One Piece</option>
-                <option value="Dhoti">Dhoti</option>
-                <option value="Altration">Altration</option>
-                <option value="Fabric">Fabric</option>
-                <option value="Shrug">Shrug</option>
-                <option value="Chunni">Chunni</option>
-                <option value="Sarara">Sarara</option>
-                <option value="Blazer">Blazer</option>
-              </select>
-              <input type="number" [(ngModel)]="item.quantity" placeholder="Quantity">
-              <button type="button" class="remove-item" (click)="removeItem(i)">&times;</button>
-            </div>
-            <button type="button" class="add-item-btn" (click)="addItem()">+ Add Item</button>
+      <div class="form-group">
+        <label>Items</label>
+        <div class="items-list">
+          <div class="item-row" *ngFor="let item of orderItems; let i = index">
+            <select [(ngModel)]="item.name" class="item-select">
+              <option value="">Select Item</option>
+              <option value="Dress">Dress</option>
+              <option value="Kurti">Kurti</option>
+              <option value="Pant">Pant</option>
+              <option value="Plazo">Plazo</option>
+              <option value="Blouse">Blouse</option>
+              <option value="Chaniyacholi">Chaniyacholi</option>
+              <option value="Chaniyo">Chaniyo</option>
+              <option value="One Piece">One Piece</option>
+              <option value="Dhoti">Dhoti</option>
+              <option value="Altration">Altration</option>
+              <option value="Fabric">Fabric</option>
+              <option value="Shrug">Shrug</option>
+              <option value="Chunni">Chunni</option>
+              <option value="Sarara">Sarara</option>
+              <option value="Blazer">Blazer</option>
+            </select>
+            <input type="number" [(ngModel)]="item.quantity" placeholder="Qty" class="qty-input">
+            <button type="button" class="remove-btn" (click)="removeItem(i)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="deliveryDate">Delivery Date</label>
-          <input type="date" id="deliveryDate" [(ngModel)]="newOrder.deliveryDate" required>
-        </div>
-
-        <div class="form-group">
-          <label for="amount">Amount</label>
-          <input type="number" id="amount" [(ngModel)]="newOrder.orderAmount" required>
+          <button type="button" class="add-item-btn" (click)="addItem()">+ Add Item</button>
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="cancel-btn" (click)="closeModal()">Cancel</button>
-        <button class="submit-btn" (click)="submitOrder()">Add Order</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Delivery Date</label>
+          <input type="date" [(ngModel)]="newOrder.deliveryDate" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <input type="number" [(ngModel)]="newOrder.orderAmount" placeholder="0" class="form-input">
+        </div>
       </div>
     </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="submitOrder()">Add Order</button>
+    </div>
   </div>
+</div>
 
-  <!-- Add this new modal for amount update -->
-  <div class="modal-overlay" [class.show]="isAmountModalOpen" (click)="closeAmountModal()">
-    <div class="modal" [class.show]="isAmountModalOpen" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Update Order Amount</h2>
-        <button class="close-btn" (click)="closeAmountModal()">&times;</button>
+<!-- Update Amount Modal -->
+<div class="modal-overlay" [class.show]="isAmountModalOpen" (click)="closeAmountModal()">
+  <div class="modal modal-sm" [class.show]="isAmountModalOpen" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Update Order</h2>
+      <button class="close-btn" (click)="closeAmountModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="update-hint">Confirm amount and move to next status</p>
+      <div class="form-group">
+        <label>Final Amount (₹)</label>
+        <input type="number" [(ngModel)]="updateAmount" class="form-input" autofocus>
       </div>
-
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="updateAmount">Amount</label>
-          <input type="number" id="updateAmount" [(ngModel)]="updateAmount" required>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="cancel-btn" (click)="closeAmountModal()">Cancel</button>
-        <button class="submit-btn" (click)="confirmAmountUpdate()">Update</button>
-      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="closeAmountModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="confirmAmountUpdate()">Confirm</button>
     </div>
   </div>
 </div>

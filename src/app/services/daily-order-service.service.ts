@@ -11,7 +11,7 @@ export class DailyOrderServiceService {
 
   constructor(private http: HttpClient, private constant: constant) { }
 
-  baseDailyOrderUrl: string = this.constant.Url + "DailyOrder/";
+  baseDailyOrderUrl: string = this.constant.pdfUrl + "daily-orders/";
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');

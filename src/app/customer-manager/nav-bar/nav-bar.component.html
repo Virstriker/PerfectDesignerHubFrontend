@@ -1,39 +1,47 @@
+<!-- Desktop Navbar (unchanged look) -->
 <nav class="navbar">
-    <div class="container">
-      <div class="logo">Perfect</div>
-  
-      <!-- Desktop Menu -->
-      <div class="menu desktop-menu">
-        <a routerLink="/customer-manager">Customers</a>
-        <a routerLink="/customer-manager/order">Order</a>
-        <a routerLink="/customer-manager/measurement">Measurement</a>
-        <a routerLink="/customer-manager/daily-order">DailyOrder</a>
-        <a routerLink="/customer-manager/daily-work">DailyWork</a>
-        <a (click)="logout()" style="border-radius: 20px; background-color: red; box-shadow: inset 2px 2px 5px #2d3748;  cursor: pointer;">Logout</a>
-        <button aria-label="Notifications" class="notification-btn">
-          <img src="../../../assets/notification.png" routerLink="/customer-manager/notification" alt="Notifications" class="icon" />
-        </button>
-      </div>
-  
-      <!-- Mobile Menu -->
-      <div class="mobile-controls">
-        <button aria-label="Notifications" class="notification-btn">
-          <img src="../../../assets/notification.png" routerLink="/customer-manager/notification" alt="Notifications" class="icon" />
-        </button>
-        <button (click)="toggleMenu()" class="menu-btn" aria-label="Toggle menu">
-          <img [src]="isOpen ? '../../../assets/close.png' : '../../../assets/Hamburger_icon.svg.png'" alt="Menu" class="icon" />
-        </button>
-      </div>
+  <div class="container">
+    <div class="logo">Perfect</div>
+
+    <div class="menu desktop-menu">
+      <a routerLink="/customer-manager">Customers</a>
+      <a routerLink="/customer-manager/order">Order</a>
+      <a routerLink="/customer-manager/measurement">Measurement</a>
+      <a routerLink="/customer-manager/daily-order">DailyOrder</a>
+      <a routerLink="/customer-manager/daily-work">DailyWork</a>
+      <a (click)="logout()" class="logout-link">Logout</a>
     </div>
-  
-    <!-- Mobile Menu Items -->
-    <div *ngIf="isOpen" class="mobile-menu">
-      <a routerLink="/customer-manager" (click)="toggleMenu()">Customers</a>
-      <a routerLink="/customer-manager/order" (click)="toggleMenu()">Order</a>
-      <a routerLink="/customer-manager/measurement" (click)="toggleMenu()">Measurement</a>
-      <a routerLink="/customer-manager/daily-order" (click)="toggleMenu()">DailyOrder</a>
-      <a routerLink="/customer-manager/daily-work" (click)="toggleMenu()">DailyWork</a>
-      <a (click)="logout()">Logout</a>
-    </div>
-  </nav>
-  
+  </div>
+</nav>
+
+<!-- Mobile Top Bar -->
+<div class="mobile-topbar">
+  <span class="mobile-logo">Perfect</span>
+  <button (click)="logout()" class="mobile-logout-btn">
+    <i class="bi bi-box-arrow-right"></i> Logout
+  </button>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<nav class="bottom-nav">
+  <a routerLink="/customer-manager" routerLinkActive="active-tab" [routerLinkActiveOptions]="{exact:true}" class="bottom-tab">
+    <i class="bi bi-people-fill"></i>
+    <span>Customers</span>
+  </a>
+  <a routerLink="/customer-manager/order" routerLinkActive="active-tab" class="bottom-tab">
+    <i class="bi bi-bag-fill"></i>
+    <span>Orders</span>
+  </a>
+  <a routerLink="/customer-manager/measurement" routerLinkActive="active-tab" class="bottom-tab">
+    <i class="bi bi-rulers"></i>
+    <span>Measure</span>
+  </a>
+  <a routerLink="/customer-manager/daily-order" routerLinkActive="active-tab" class="bottom-tab">
+    <i class="bi bi-clipboard2-check-fill"></i>
+    <span>Daily</span>
+  </a>
+  <a routerLink="/customer-manager/daily-work" routerLinkActive="active-tab" class="bottom-tab">
+    <i class="bi bi-calendar2-week-fill"></i>
+    <span>Work</span>
+  </a>
+</nav>

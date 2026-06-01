@@ -1,23 +1,18 @@
-import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { routes } from '../../app.routes';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [NgIf,RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
 export class NavBarComponent {
-  isOpen = false;
-  constructor(private route:Router){}
-  toggleMenu() {
-    this.isOpen = !this.isOpen;
-  }
-  logout(){
-    localStorage.removeItem("token");
-    this.route.navigateByUrl("/login");
+  constructor(private route: Router) {}
+
+  logout() {
+    localStorage.removeItem('token');
+    this.route.navigateByUrl('/login');
   }
 }

@@ -9,7 +9,6 @@ import { DailyOrderServiceService } from '../../services/daily-order-service.ser
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// Define the Order interface
 interface Order {
   id: number;
   customerName: string;
@@ -21,7 +20,6 @@ interface Order {
   orderState: number;
 }
 
-// Add Customer interface
 interface Customer {
   id: number;
   name: string;
@@ -47,8 +45,7 @@ interface OrderItem {
   styleUrl: './daily-order.component.css'
 })
 export class DailyOrderComponent implements OnInit {
-  // Class properties/constants
-  orders: Array<Order> = new Array<Order>();
+  orders: Array<Order> = [];
   customerIds: any[] = [];
   totalAmount: number = 0;
   selectedStatus = 1;
@@ -65,28 +62,40 @@ export class DailyOrderComponent implements OnInit {
   updateAmount: number = 0;
   selectedOrder: any = null;
   currentDate: Date = new Date();
-  filter = {
-    fromDate: '',
-    toDate: ''
-  };
-  selectedDateFilter: string = 'all'; // Default to 'all'
+  filter = { fromDate: '', toDate: '' };
+  selectedDateFilter: string = 'all';
   customerSearchTerm: string = '';
   filteredCustomerIds: any[] = [];
 
-  @ViewChild('searchInput') searchInput!: ElementRef;
+  // Sorting
+  sortColumn: string = 'deliveryDate';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
+  // Column search filters
+  colSearch = {
+    customer: '',
+    detail: '',
+    amount: '',
+    deliveryDate: ''
+  };
+
+  // Custom date range
+  customFrom: string = '';
+  customTo: string = '';
+  showCustomRange: boolean = false;
+
+  @ViewChild('searchInput') searchInput!: ElementRef;
   isDropdownOpen = false;
 
   @HostListener('document:click', ['$event'])
   clickOutside(event: Event) {
-    if (!this.searchInput.nativeElement.contains(event.target)) {
+    if (!this.searchInput?.nativeElement.contains(event.target)) {
       this.isDropdownOpen = false;
       this.customerSearchTerm = '';
       this.filterCustomers();
     }
   }
 
-  // Constructor
   constructor(
     private customerService: CustomerServiceService,
     private rout: Router,
@@ -95,7 +104,6 @@ export class DailyOrderComponent implements OnInit {
     private elementRef: ElementRef
   ) { }
 
-  // Lifecycle methods
   ngOnInit() {
     this.currentDate = new Date();
     this.customerService.getAllCustomer().subscribe({
@@ -106,27 +114,63 @@ export class DailyOrderComponent implements OnInit {
         this.filteredCustomerIds = this.customerIds;
       }
     });
-    this.dailyOrderService.getDailyOrders().subscribe({
-      next: (respons: ResponseDto) => {
-        this.orders = respons.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
-      }
-    });
+    this.loadOrders();
   }
 
-  // Getters
   get filteredOrders(): Order[] {
-    var filter = this.orders.filter(order => order.orderState === this.selectedStatus);
-    if(this.selectedDateFilter === 'today' && this.selectedStatus===3){
-      filter = this.orders.filter(order => 
-        order.orderState === this.selectedStatus && 
-        new Date(order.deliveryDate).toDateString() === this.currentDate.toDateString()
+    let result = this.orders.filter(o => o.orderState === this.selectedStatus);
+
+    if (this.selectedDateFilter === 'today' && this.selectedStatus === 3) {
+      result = result.filter(o =>
+        new Date(o.deliveryDate).toDateString() === this.currentDate.toDateString()
       );
     }
-    this.totalAmount = filter.reduce((sum, order) => sum + order.orderAmount, 0);
-    return filter;
+
+    // Column filters
+    if (this.colSearch.customer) {
+      const term = this.colSearch.customer.toLowerCase();
+      result = result.filter(o => o.customerName?.toLowerCase().includes(term));
+    }
+    if (this.colSearch.detail) {
+      const term = this.colSearch.detail.toLowerCase();
+      result = result.filter(o => o.orderDetail?.toLowerCase().includes(term));
+    }
+    if (this.colSearch.amount) {
+      const amt = Number(this.colSearch.amount);
+      if (!isNaN(amt)) result = result.filter(o => o.orderAmount >= amt);
+    }
+    if (this.colSearch.deliveryDate) {
+      result = result.filter(o =>
+        this.datePipe.transform(o.deliveryDate, 'yyyy-MM-dd') === this.colSearch.deliveryDate
+      );
+    }
+
+    // Sorting
+    result = [...result].sort((a: any, b: any) => {
+      const valA = a[this.sortColumn];
+      const valB = b[this.sortColumn];
+      if (valA === undefined || valB === undefined) return 0;
+      let cmp = 0;
+      if (typeof valA === 'string') cmp = valA.localeCompare(valB);
+      else if (valA instanceof Date || this.sortColumn.toLowerCase().includes('date'))
+        cmp = new Date(valA).getTime() - new Date(valB).getTime();
+      else cmp = valA - valB;
+      return this.sortDirection === 'asc' ? cmp : -cmp;
+    });
+
+    this.totalAmount = result.reduce((sum, o) => sum + o.orderAmount, 0);
+    return result;
   }
 
-  // Public methods
+  sortBy(col: string) {
+    if (this.sortColumn === col) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = col;
+      this.sortDirection = 'asc';
+    }
+  }
+
   filterByStatus(status: any): void {
     this.selectedStatus = status;
   }
@@ -140,15 +184,16 @@ export class DailyOrderComponent implements OnInit {
     this.isModalOpen = false;
     this.resetForm();
   }
+
   isPastOrder(orderDate: Date): boolean {
     return new Date(orderDate) < this.currentDate;
   }
+
   submitOrder(): void {
     if (!this.newOrder.customerId || !this.newOrder.orderAmount) {
       alert('Please fill in all required fields');
       return;
     }
-
     this.newOrder.orderDetail = this.orderItems
       .map(item => `${item.name}:${item.quantity}`)
       .join('|');
@@ -158,9 +203,7 @@ export class DailyOrderComponent implements OnInit {
         alert(response.message);
         this.loadOrders();
       },
-      error: (error) => {
-        alert('Error adding order: ' + error.message);
-      }
+      error: (error) => alert('Error adding order: ' + error.message)
     });
     this.closeModal();
   }
@@ -182,56 +225,24 @@ export class DailyOrderComponent implements OnInit {
     }
   }
 
-  addItem() {
-    this.orderItems.push({ name: '', quantity: 1 });
-  }
-
-  removeItem(index: number) {
-    this.orderItems.splice(index, 1);
-  }
-
-  closeAmountModal() {
-    this.isAmountModalOpen = false;
-    this.selectedOrder = null;
-  }
+  addItem() { this.orderItems.push({ name: '', quantity: 1 }); }
+  removeItem(index: number) { this.orderItems.splice(index, 1); }
+  closeAmountModal() { this.isAmountModalOpen = false; this.selectedOrder = null; }
 
   confirmAmountUpdate() {
     if (this.selectedOrder) {
       this.selectedOrder.orderAmount = this.updateAmount;
       this.selectedOrder.orderState = this.selectedOrder.orderState + 1;
       this.dailyOrderService.updateDailyOrder(this.selectedOrder).subscribe({
-        next: (response: ResponseDto) => {
-          this.loadOrders();
-        }
+        next: () => this.loadOrders()
       });
       this.closeAmountModal();
     }
   }
 
-  // Private methods
-  private resetForm(): void {
-    this.newOrder = {
-      customerId: 0,
-      orderDetail: '',
-      deliveryDate: new Date(),
-      orderAmount: 0,
-      orderState: 1
-    };
-  }
-
-  private loadOrders(): void {
-    this.dailyOrderService.getDailyOrders().subscribe({
-      next: (response: ResponseDto) => {
-        this.orders = response.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
-      },
-      error: (error) => {
-        console.error('Error loading orders:', error);
-      }
-    });
-  }
-
   filterToday() {
     this.selectedDateFilter = 'today';
+    this.showCustomRange = false;
     const today = new Date();
     this.filter.fromDate = this.datePipe.transform(today, 'yyyy-MM-dd') || '';
     this.filter.toDate = this.filter.fromDate;
@@ -240,29 +251,43 @@ export class DailyOrderComponent implements OnInit {
 
   filterThisMonth() {
     this.selectedDateFilter = 'thisMonth';
+    this.showCustomRange = false;
     const date = new Date();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    
     this.filter.fromDate = this.datePipe.transform(firstDay, 'yyyy-MM-dd') || '';
     this.filter.toDate = this.datePipe.transform(lastDay, 'yyyy-MM-dd') || '';
     this.filterByDate();
   }
-  filterByDate(){
-    this.dailyOrderService.getDailyOrdersByDate(this.filter).subscribe({
-      next: (response: ResponseDto) => {
-        this.orders = response.responseObject.sort((a: Order, b: Order) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
-      },
-      error: (error) => {
-        console.error('Error loading orders:', error);
-      }
-    });
-  }
+
   filterAll() {
     this.selectedDateFilter = 'all';
+    this.showCustomRange = false;
     this.filter.fromDate = '';
     this.filter.toDate = '';
     this.loadOrders();
+  }
+
+  applyCustomRange() {
+    if (!this.customFrom || !this.customTo) {
+      alert('Please select both From and To dates');
+      return;
+    }
+    this.selectedDateFilter = 'custom';
+    this.filter.fromDate = this.customFrom;
+    this.filter.toDate = this.customTo;
+    this.filterByDate();
+  }
+
+  filterByDate() {
+    this.dailyOrderService.getDailyOrdersByDate(this.filter).subscribe({
+      next: (response: ResponseDto) => {
+        this.orders = response.responseObject.sort((a: Order, b: Order) =>
+          new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime()
+        );
+      },
+      error: (error) => console.error('Error loading orders:', error)
+    });
   }
 
   filterCustomers() {
@@ -270,12 +295,10 @@ export class DailyOrderComponent implements OnInit {
       this.filteredCustomerIds = this.customerIds;
       return;
     }
-    
     const searchTerm = this.customerSearchTerm.toLowerCase();
-    this.filteredCustomerIds = this.customerIds.filter(customer => {
-      const fullName = `${customer.name} ${customer.surname}`.toLowerCase();
-      return fullName.includes(searchTerm);
-    });
+    this.filteredCustomerIds = this.customerIds.filter(c =>
+      `${c.name} ${c.surname}`.toLowerCase().includes(searchTerm)
+    );
   }
 
   toggleDropdown(event: Event) {
@@ -283,35 +306,52 @@ export class DailyOrderComponent implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
     if (this.isDropdownOpen) {
       this.filteredCustomerIds = this.customerIds;
-      setTimeout(() => {
-        this.searchInput?.nativeElement?.focus();
-      });
+      setTimeout(() => this.searchInput?.nativeElement?.focus());
     }
   }
 
   selectCustomer(customer: any) {
     this.newOrder.customerId = customer.id;
     this.isDropdownOpen = false;
-    this.customerSearchTerm = '';
+    this.customerSearchTerm = `${customer.name} ${customer.surname}`;
     this.filterCustomers();
+  }
+
+  clearColSearch() {
+    this.colSearch = { customer: '', detail: '', amount: '', deliveryDate: '' };
+  }
+
+  private resetForm(): void {
+    this.newOrder = {
+      customerId: 0,
+      orderDetail: '',
+      deliveryDate: new Date(),
+      orderAmount: 0,
+      orderState: 1
+    };
+    this.customerSearchTerm = '';
+  }
+
+  private loadOrders(): void {
+    this.dailyOrderService.getDailyOrders().subscribe({
+      next: (response: ResponseDto) => {
+        this.orders = response.responseObject.sort((a: Order, b: Order) =>
+          new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime()
+        );
+      },
+      error: (error) => console.error('Error loading orders:', error)
+    });
   }
 
   downloadPDF() {
     const doc = new jsPDF();
-    
-    // Add title (slightly larger)
     doc.setFontSize(18);
     doc.text('Daily Orders Report', 20, 20);
-    
-    // Add filters info (slightly larger)
     doc.setFontSize(12);
     let filterText = `Status: ${this.getStatusText(this.selectedStatus)}`;
-    if (this.selectedDateFilter !== 'all') {
-      filterText += ` | Date Filter: ${this.selectedDateFilter}`;
-    }
+    if (this.selectedDateFilter !== 'all') filterText += ` | Filter: ${this.selectedDateFilter}`;
     doc.text(filterText, 20, 30);
-    
-    // Prepare table data (remove ID, Order Date, Status; add phone next to name)
+
     const tableData = this.filteredOrders.map(order => {
       const customer = this.customerIds.find(c => c.id === order.customerId);
       const phone = customer?.phonenumber || customer?.phoneNumber || '';
@@ -323,39 +363,24 @@ export class DailyOrderComponent implements OnInit {
         `₹${order.orderAmount}`
       ];
     });
-    
-    // Add total row aligned to Amount column
     tableData.push(['', '', 'Total:', `₹${this.totalAmount}`]);
-    
-    // Generate table with updated columns
+
     autoTable(doc, {
       head: [['Customer', 'Detail', 'Delivery Date', 'Amount']],
       body: tableData,
       startY: 40,
-      styles: {
-        fontSize: 10, // slightly bigger than before
-        cellPadding: 3
-      },
-      headStyles: {
-        fillColor: [66, 139, 202],
-        textColor: [255, 255, 255]
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245]
-      },
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [45, 55, 72], textColor: [255, 255, 255] },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
       columnStyles: {
-        0: { cellWidth: 60 }, // Customer (with phone)
-        1: { cellWidth: 60 }, // Detail
-        2: { cellWidth: 35 }, // Delivery Date
-        3: { cellWidth: 25 }  // Amount
+        0: { cellWidth: 60 },
+        1: { cellWidth: 60 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 25 }
       }
     });
-    
-    // Generate filename with current date and status
+
     const currentDate = new Date().toISOString().split('T')[0];
-    const filename = `daily_orders_${this.getStatusText(this.selectedStatus).toLowerCase()}_${currentDate}.pdf`;
-    
-    // Save the PDF
-    doc.save(filename);
+    doc.save(`daily_orders_${this.getStatusText(this.selectedStatus).toLowerCase()}_${currentDate}.pdf`);
   }
 }
