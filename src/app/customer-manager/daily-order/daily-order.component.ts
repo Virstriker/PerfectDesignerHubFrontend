@@ -231,12 +231,27 @@ export class DailyOrderComponent implements OnInit {
 
   confirmAmountUpdate() {
     if (this.selectedOrder) {
-      this.selectedOrder.orderAmount = this.updateAmount;
-      this.selectedOrder.orderState = this.selectedOrder.orderState + 1;
-      this.dailyOrderService.updateDailyOrder(this.selectedOrder).subscribe({
-        next: () => this.loadOrders()
+      const updatedOrder = {
+        ...this.selectedOrder,
+        orderAmount: this.updateAmount,
+        orderState: this.selectedOrder.orderState + 1
+      };
+      this.dailyOrderService.updateDailyOrder(updatedOrder).subscribe({
+        next: (response: ResponseDto) => {
+          if (response?.isSuccess) {
+            this.selectedOrder.orderAmount = updatedOrder.orderAmount;
+            this.selectedOrder.orderState = updatedOrder.orderState;
+            this.loadOrders();
+            this.closeAmountModal();
+          } else {
+            alert(response?.message || 'Failed to update order.');
+          }
+        },
+        error: (error) => {
+          const backendMessage = error?.error?.message || error?.message;
+          alert(`Error updating order: ${backendMessage || 'Please try again.'}`);
+        }
       });
-      this.closeAmountModal();
     }
   }
 
