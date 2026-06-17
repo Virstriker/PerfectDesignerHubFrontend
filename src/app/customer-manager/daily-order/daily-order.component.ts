@@ -368,7 +368,7 @@ export class DailyOrderComponent implements OnInit {
     doc.text(filterText, 20, 30);
 
     const tableData = this.filteredOrders.map(order => {
-      const customer = this.customerIds.find(c => c.id === order.customerId);
+      const customer = this.customerIds.find(c => c.id == order.customerId);
       const phone = customer?.phonenumber || customer?.phoneNumber || '';
       const nameWithPhone = phone ? `${order.customerName} (${phone})` : order.customerName;
       return [
