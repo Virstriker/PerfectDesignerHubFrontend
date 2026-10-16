@@ -1,220 +1,948 @@
-<div class="dialog-overlay" *ngIf="showDialog">
-    <div class="dialog-content">
-        <div class="dialog-header">
-            <h2>Add Item</h2>
-            <button class="close-btn" (click)="close()">&times;</button>
+<div class="dialog-overlay" *ngIf="showDialog" (click)="close()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <!-- Dialog Header -->
+    <div class="dialog-header">
+      <div class="header-left">
+        <div class="dialog-badge" *ngIf="selectedType">
+          <i class="fa-solid" [ngClass]="selectedType === 'top' ? 'fa-shirt' : 'fa-person'"></i>
+          <span>{{ selectedType === 'top' ? 'Top Garment' : 'Bottom Garment' }}</span>
         </div>
+        <h2 class="dialog-title">
+          {{ itemData ? 'Edit Item' : 'Add Item' }}
+        </h2>
+      </div>
 
-        <div class="type-selection" *ngIf="!selectedType">
-            <button (click)="selectType('top')" class="type-btn">Top</button>
-            <button (click)="selectType('bottom')" class="type-btn">Bottom</button>
-        </div>
-
-        <div *ngIf="selectedType === 'top'" class="form-container">
-            <div class="form-group">
-                <label>Item:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.item" readonly [value]="topForm.item" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of topOptions" [class.active]="topForm.item === option"
-                            (click)="selectTopItem(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Style:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.style" [value]="topForm.style" readonly />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of styleOptions" [class.active]="topForm.style === option"
-                            (click)="selectTopStyle(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Front Neck Design:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.frontneckdesign" readonly
-                        [value]="topForm.frontneckdesign" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of frontNeckDesignOptions"
-                            [class.active]="topForm.frontneckdesign === option"
-                            (click)="selectFrontNeck(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Back Neck Design:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.backneckdesign" readonly [value]="topForm.backneckdesign" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of backNeckDesignOptions"
-                            [class.active]="topForm.backneckdesign === option"
-                            (click)="selectBackNeck(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Opening Side:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.openingside" readonly />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of openingsideOptions"
-                            [class.active]="topForm.openingside === option"
-                            (click)="topForm.openingside = option">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>In Neck:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.inneck" readonly />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of inneckOptions" [class.active]="topForm.inneck === option"
-                            (click)="topForm.inneck = option">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Back of Neck:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.backofneck" readonly />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of backofneckOptions" [class.active]="topForm.backofneck === option"
-                            (click)="topForm.backofneck = option">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Sleeve:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.sleeve" readonly />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of sleeveOptions" [class.active]="topForm.sleeve === option"
-                            (click)="topForm.sleeve = option">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Detail:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="topForm.detail" />
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <label>Options:</label>
-                <div class="form-content">
-                    <div class="checkbox-group">
-                        <input type="checkbox" [(ngModel)]="topForm.astar" id="astar">
-                        <label for="astar">Astar</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" [(ngModel)]="topForm.dori" id="dori">
-                        <label for="dori">Dori</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Cloth Image:</label>
-                <div class="form-content">
-                    <input type="file" (change)="onClothImageUpload($event)" accept="image/*">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Design Image:</label>
-                <div class="form-content">
-                    <input type="file" (change)="onDesignImageUpload($event)" accept="image/*">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Price:</label>
-                <div class="form-content">
-                    <input type="number" [(ngModel)]="topForm.price" />
-                </div>
-            </div>
-        </div>
-
-        <div *ngIf="selectedType === 'bottom'" class="form-container">
-            <div class="form-group">
-                <label>Item:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="bottomForm.item" readonly [value]="bottomForm.item" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of bottomItemOptions" [class.active]="bottomForm.item === option"
-                            (click)="selectBottomItem(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Style:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="bottomForm.style" readonly [value]="bottomForm.style" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of styleOptionsBottom" [class.active]="bottomForm.style === option"
-                            (click)="selectBottomStyle(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Rubber:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="bottomForm.rubber" readonly [value]="bottomForm.rubber" />
-                    <div class="option-buttons">
-                        <button *ngFor="let option of rubberOptions" [class.active]="bottomForm.rubber === option"
-                            (click)="selectRubber(option)">{{option}}</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Pocket:</label>
-                <div class="form-content">
-                    <div class="checkbox-group">
-                        <input type="checkbox" [(ngModel)]="bottomForm.pocket" id="pocket">
-                        <label for="pocket">Pocket</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Detail:</label>
-                <div class="form-content">
-                    <input type="text" [(ngModel)]="bottomForm.detail" />
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Design Image:</label>
-                <div class="form-content">
-                    <input type="file" (change)="onDesignImageUpload($event)" accept="image/*">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Price:</label>
-                <div class="form-content">
-                    <input type="number" [(ngModel)]="bottomForm.price" />
-                </div>
-            </div>
-        </div>
-
-        <div class="dialog-footer">
-            <button class="cancel-btn" (click)="close()">Cancel</button>
-            <button class="save-btn" (click)="onSave()">Save</button>
-        </div>
+      <div class="header-right">
+        <button class="close-btn" (click)="close()" title="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
+
+    <!-- Clean Sleek Step Progress Banner (Mobile & PC Responsive, Never Overflows) -->
+    <div class="step-progress-banner" *ngIf="currentStep > 0">
+      <div class="step-progress-row">
+        <div class="step-progress-left">
+          <span class="step-counter-pill">Step {{ currentStep }} of {{ totalSteps }}</span>
+          <span class="step-current-title">{{ currentStepMeta?.title }}</span>
+        </div>
+        <div class="step-progress-right">
+          <button type="button" class="quick-prev-btn" (click)="prevStep()" title="Go back to previous step">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Previous</span>
+          </button>
+          <span class="step-percent-badge">{{ progressPercent }}%</span>
+        </div>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" [style.width.%]="progressPercent"></div>
+      </div>
+    </div>
+
+    <!-- Main Wizard Question Body -->
+    <div class="dialog-body">
+
+      <!-- ================= STEP 0: Category Selection ================= -->
+      <div *ngIf="currentStep === 0" class="step-view category-view">
+        <div class="step-header">
+          <h3 class="step-question">What type of garment are you adding?</h3>
+          <p class="step-subtext">Choose between Top or Bottom garment to configure tailoring options</p>
+        </div>
+
+        <div class="category-cards">
+          <button type="button" class="category-card" [class.selected]="selectedType === 'top'" (click)="selectType('top')">
+            <div class="category-icon-wrapper top-icon">
+              <i class="fa-solid fa-shirt"></i>
+            </div>
+            <div class="category-info">
+              <span class="category-name">Top Garment</span>
+              <span class="category-desc">Blouse, Kurti, OnePiece, Dress, Frock, Blazer, Shrug & more</span>
+            </div>
+            <i class="fa-solid fa-chevron-right category-arrow"></i>
+          </button>
+
+          <button type="button" class="category-card" [class.selected]="selectedType === 'bottom'" (click)="selectType('bottom')">
+            <div class="category-icon-wrapper bottom-icon">
+              <i class="fa-solid fa-person"></i>
+            </div>
+            <div class="category-info">
+              <span class="category-name">Bottom Garment</span>
+              <span class="category-desc">ChanyaCholi, Pant, Plazo, Dhoti, Salvar, Sarara & more</span>
+            </div>
+            <i class="fa-solid fa-chevron-right category-arrow"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= TOP ITEM STEPS ================= -->
+      <ng-container *ngIf="selectedType === 'top'">
+
+        <!-- Step 1: Garment Item -->
+        <div *ngIf="currentStep === 1" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Select Top Garment Type</h3>
+            <p class="step-subtext">Choose the kind of top garment to tailor</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.item">
+            <span>Selected:</span> <strong>{{ topForm.item }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of topOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.item === opt"
+              (click)="selectTopItem(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.item === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customTopItem"><i class="fa-solid fa-pen"></i> Or enter custom item name:</label>
+            <input
+              id="customTopItem"
+              type="text"
+              [(ngModel)]="topForm.item"
+              placeholder="e.g. Designer Kurta"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 2: Style & Cut -->
+        <div *ngIf="currentStep === 2" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Select Style / Pattern</h3>
+            <p class="step-subtext">Choose the blouse cut or style pattern</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.style">
+            <span>Selected:</span> <strong>{{ topForm.style }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of styleOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.style === opt"
+              (click)="selectTopStyle(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.style === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customTopStyle"><i class="fa-solid fa-pen"></i> Or enter custom style:</label>
+            <input
+              id="customTopStyle"
+              type="text"
+              [(ngModel)]="topForm.style"
+              placeholder="e.g. Prince Cut with Padding"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 3: Front Neck Design -->
+        <div *ngIf="currentStep === 3" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Front Neck Design</h3>
+            <p class="step-subtext">Select neckline design for the front</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.frontneckdesign">
+            <span>Selected:</span> <strong>{{ topForm.frontneckdesign }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of frontNeckDesignOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.frontneckdesign === opt"
+              (click)="selectFrontNeck(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.frontneckdesign === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customFrontNeck"><i class="fa-solid fa-pen"></i> Or enter custom front neck:</label>
+            <input
+              id="customFrontNeck"
+              type="text"
+              [(ngModel)]="topForm.frontneckdesign"
+              placeholder="e.g. Sweetheart Neck"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 4: Back Neck Design -->
+        <div *ngIf="currentStep === 4" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Back Neck Design</h3>
+            <p class="step-subtext">Select neckline design for the back</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.backneckdesign">
+            <span>Selected:</span> <strong>{{ topForm.backneckdesign }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of backNeckDesignOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.backneckdesign === opt"
+              (click)="selectBackNeck(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.backneckdesign === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customBackNeck"><i class="fa-solid fa-pen"></i> Or enter custom back neck:</label>
+            <input
+              id="customBackNeck"
+              type="text"
+              [(ngModel)]="topForm.backneckdesign"
+              placeholder="e.g. V-Shape with Knot"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 5: Opening Side -->
+        <div *ngIf="currentStep === 5" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Opening Placement</h3>
+            <p class="step-subtext">Where should hooks, zipper, or closure be placed?</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.openingside">
+            <span>Selected:</span> <strong>{{ topForm.openingside }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of openingsideOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.openingside === opt"
+              (click)="selectOpeningSide(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.openingside === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customOpening"><i class="fa-solid fa-pen"></i> Or enter custom opening:</label>
+            <input
+              id="customOpening"
+              type="text"
+              [(ngModel)]="topForm.openingside"
+              placeholder="e.g. Side invisible zip"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 6: In-Neck Finishing -->
+        <div *ngIf="currentStep === 6" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">In-Neck Finishing</h3>
+            <p class="step-subtext">Select inner neck finishing technique</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.inneck">
+            <span>Selected:</span> <strong>{{ topForm.inneck }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of inneckOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.inneck === opt"
+              (click)="selectInNeck(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.inneck === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customInNeck"><i class="fa-solid fa-pen"></i> Or enter custom finishing:</label>
+            <input
+              id="customInNeck"
+              type="text"
+              [(ngModel)]="topForm.inneck"
+              placeholder="e.g. Contrast piping"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 7: Back Neck Depth -->
+        <div *ngIf="currentStep === 7" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Back Neck Depth</h3>
+            <p class="step-subtext">Choose neck depth preference</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.backofneck">
+            <span>Selected:</span> <strong>{{ topForm.backofneck }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of backofneckOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.backofneck === opt"
+              (click)="selectBackOfNeck(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.backofneck === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customBackOfNeck"><i class="fa-solid fa-pen"></i> Or enter custom depth:</label>
+            <input
+              id="customBackOfNeck"
+              type="text"
+              [(ngModel)]="topForm.backofneck"
+              placeholder="e.g. Medium Deep (9 inches)"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 8: Sleeve -->
+        <div *ngIf="currentStep === 8" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Sleeve Type & Length</h3>
+            <p class="step-subtext">Choose sleeve style</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="topForm.sleeve">
+            <span>Selected:</span> <strong>{{ topForm.sleeve }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of sleeveOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="topForm.sleeve === opt"
+              (click)="selectSleeve(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="topForm.sleeve === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customSleeve"><i class="fa-solid fa-pen"></i> Or enter custom sleeve:</label>
+            <input
+              id="customSleeve"
+              type="text"
+              [(ngModel)]="topForm.sleeve"
+              placeholder="e.g. Puff Sleeves (11 inch)"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 9: Extra Options & Notes -->
+        <div *ngIf="currentStep === 9" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Options & Custom Notes</h3>
+            <p class="step-subtext">Configure lining, dori and special tailoring instructions</p>
+          </div>
+
+          <div class="checkbox-cards-grid">
+            <label class="toggle-card" [class.checked]="topForm.astar">
+              <input type="checkbox" [(ngModel)]="topForm.astar" />
+              <div class="toggle-card-content">
+                <i class="fa-solid fa-layer-group toggle-icon"></i>
+                <div class="toggle-text">
+                  <span class="toggle-title">Astar (Lining)</span>
+                  <span class="toggle-subtitle">{{ topForm.astar ? 'Included (+lining)' : 'Without lining' }}</span>
+                </div>
+              </div>
+              <div class="toggle-indicator">
+                <i class="fa-solid" [ngClass]="topForm.astar ? 'fa-check' : ''"></i>
+              </div>
+            </label>
+
+            <label class="toggle-card" [class.checked]="topForm.dori">
+              <input type="checkbox" [(ngModel)]="topForm.dori" />
+              <div class="toggle-card-content">
+                <i class="fa-solid fa-ribbon toggle-icon"></i>
+                <div class="toggle-text">
+                  <span class="toggle-title">Dori (Back Strings)</span>
+                  <span class="toggle-subtitle">{{ topForm.dori ? 'Included (+dori & latkan)' : 'No dori' }}</span>
+                </div>
+              </div>
+              <div class="toggle-indicator">
+                <i class="fa-solid" [ngClass]="topForm.dori ? 'fa-check' : ''"></i>
+              </div>
+            </label>
+          </div>
+
+          <div class="detail-textarea-box">
+            <label for="topDetail"><i class="fa-solid fa-clipboard-list"></i> Special Instructions / Tailoring Notes:</label>
+            <textarea
+              id="topDetail"
+              rows="3"
+              [(ngModel)]="topForm.detail"
+              placeholder="e.g. Needs extra margin at sides, attach potli buttons on back..."
+              class="form-control"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Step 10: Price & Photos -->
+        <div *ngIf="currentStep === 10" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Price & Reference Photos</h3>
+            <p class="step-subtext">Enter stitching price and upload cloth/design photos</p>
+          </div>
+
+          <!-- Price Input Box -->
+          <div class="price-section">
+            <label class="section-label"><i class="fa-solid fa-indian-rupee-sign"></i> Item Price (₹)</label>
+            <div class="price-input-wrapper">
+              <span class="currency-tag">₹</span>
+              <input
+                type="number"
+                [(ngModel)]="topForm.price"
+                placeholder="0"
+                min="0"
+                class="price-input-field"
+              />
+            </div>
+
+            <!-- Quick price chips -->
+            <div class="quick-price-chips">
+              <button type="button" class="price-chip" (click)="setPrice(350)">₹350</button>
+              <button type="button" class="price-chip" (click)="setPrice(500)">₹500</button>
+              <button type="button" class="price-chip" (click)="setPrice(650)">₹650</button>
+              <button type="button" class="price-chip" (click)="setPrice(800)">₹800</button>
+              <button type="button" class="price-chip" (click)="setPrice(1000)">₹1000</button>
+              <button type="button" class="price-chip" (click)="setPrice(1500)">₹1500</button>
+              <button type="button" class="price-chip adder-chip" (click)="addPrice(50)">+₹50</button>
+              <button type="button" class="price-chip adder-chip" (click)="addPrice(100)">+₹100</button>
+            </div>
+          </div>
+
+          <!-- Photos Section -->
+          <div class="photos-section">
+            <!-- Cloth Photo -->
+            <div class="photo-card">
+              <div class="photo-card-header">
+                <span class="photo-title"><i class="fa-solid fa-camera"></i> Cloth Image</span>
+                <button
+                  type="button"
+                  class="remove-photo-btn"
+                  *ngIf="topForm.clothimage"
+                  (click)="removeClothImage()"
+                  title="Remove image"
+                >
+                  <i class="fa-solid fa-trash"></i> Remove
+                </button>
+              </div>
+
+              <div class="photo-preview-box" *ngIf="topForm.clothimage">
+                <img [src]="topForm.clothimage" alt="Cloth Reference" class="preview-img" />
+              </div>
+
+              <div class="upload-dropzone" *ngIf="!topForm.clothimage">
+                <label class="upload-label">
+                  <input type="file" (change)="onClothImageUpload($event)" accept="image/*" class="file-hidden" />
+                  <div class="upload-content" *ngIf="!isUploadingCloth">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <span>Upload Cloth Photo</span>
+                  </div>
+                  <div class="upload-content uploading" *ngIf="isUploadingCloth">
+                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
+                    <span>Uploading...</span>
+                  </div>
+                </label>
+              </div>
+              <p class="upload-error" *ngIf="uploadClothError">{{ uploadClothError }}</p>
+            </div>
+
+            <!-- Design Photo -->
+            <div class="photo-card">
+              <div class="photo-card-header">
+                <span class="photo-title"><i class="fa-solid fa-palette"></i> Design Image</span>
+                <button
+                  type="button"
+                  class="remove-photo-btn"
+                  *ngIf="topForm.designimage"
+                  (click)="removeDesignImage()"
+                  title="Remove image"
+                >
+                  <i class="fa-solid fa-trash"></i> Remove
+                </button>
+              </div>
+
+              <div class="photo-preview-box" *ngIf="topForm.designimage">
+                <img [src]="topForm.designimage" alt="Design Reference" class="preview-img" />
+              </div>
+
+              <div class="upload-dropzone" *ngIf="!topForm.designimage">
+                <label class="upload-label">
+                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" />
+                  <div class="upload-content" *ngIf="!isUploadingDesign">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <span>Upload Design Photo</span>
+                  </div>
+                  <div class="upload-content uploading" *ngIf="isUploadingDesign">
+                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
+                    <span>Uploading...</span>
+                  </div>
+                </label>
+              </div>
+              <p class="upload-error" *ngIf="uploadDesignError">{{ uploadDesignError }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 11: Review & Confirm -->
+        <div *ngIf="currentStep === 11" class="step-view review-view">
+          <div class="step-header">
+            <h3 class="step-question">Review & Confirm Top Item</h3>
+            <p class="step-subtext">Check the item specifications. Click any attribute to change it before saving.</p>
+          </div>
+
+          <div class="review-grid">
+            <div class="review-item" (click)="goToStep(1)">
+              <span class="review-label">Garment Item:</span>
+              <span class="review-val">{{ topForm.item || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(2)">
+              <span class="review-label">Style / Cut:</span>
+              <span class="review-val">{{ topForm.style || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(3)">
+              <span class="review-label">Front Neck:</span>
+              <span class="review-val">{{ topForm.frontneckdesign || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(4)">
+              <span class="review-label">Back Neck:</span>
+              <span class="review-val">{{ topForm.backneckdesign || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(5)">
+              <span class="review-label">Opening Side:</span>
+              <span class="review-val">{{ topForm.openingside || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(6)">
+              <span class="review-label">In Neck:</span>
+              <span class="review-val">{{ topForm.inneck || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(7)">
+              <span class="review-label">Back Neck Depth:</span>
+              <span class="review-val">{{ topForm.backofneck || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(8)">
+              <span class="review-label">Sleeve:</span>
+              <span class="review-val">{{ topForm.sleeve || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(9)">
+              <span class="review-label">Lining (Astar):</span>
+              <span class="review-val">{{ topForm.astar ? 'Yes' : 'No' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(9)">
+              <span class="review-label">Dori:</span>
+              <span class="review-val">{{ topForm.dori ? 'Yes' : 'No' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item full-width" (click)="goToStep(9)" *ngIf="topForm.detail">
+              <span class="review-label">Notes:</span>
+              <span class="review-val">{{ topForm.detail }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item full-width price-highlight" (click)="goToStep(10)">
+              <span class="review-label">Total Item Price:</span>
+              <span class="review-val price-val">₹{{ topForm.price || 0 }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+          </div>
+
+          <!-- Preview Photos in Review -->
+          <div class="review-photos" *ngIf="topForm.clothimage || topForm.designimage">
+            <div class="review-photo" *ngIf="topForm.clothimage" (click)="goToStep(10)">
+              <span class="review-photo-title">Cloth Photo</span>
+              <img [src]="topForm.clothimage" alt="Cloth" />
+            </div>
+            <div class="review-photo" *ngIf="topForm.designimage" (click)="goToStep(10)">
+              <span class="review-photo-title">Design Photo</span>
+              <img [src]="topForm.designimage" alt="Design" />
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- ================= BOTTOM ITEM STEPS ================= -->
+      <ng-container *ngIf="selectedType === 'bottom'">
+
+        <!-- Step 1: Garment Item -->
+        <div *ngIf="currentStep === 1" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Select Bottom Garment Type</h3>
+            <p class="step-subtext">Choose the kind of bottom garment to tailor</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="bottomForm.item">
+            <span>Selected:</span> <strong>{{ bottomForm.item }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of bottomItemOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="bottomForm.item === opt"
+              (click)="selectBottomItem(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="bottomForm.item === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customBottomItem"><i class="fa-solid fa-pen"></i> Or enter custom item name:</label>
+            <input
+              id="customBottomItem"
+              type="text"
+              [(ngModel)]="bottomForm.item"
+              placeholder="e.g. Tulip Pants"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 2: Style & Cut -->
+        <div *ngIf="currentStep === 2" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Select Style / Cut</h3>
+            <p class="step-subtext">Choose flare, pleats, or style pattern</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="bottomForm.style">
+            <span>Selected:</span> <strong>{{ bottomForm.style }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of styleOptionsBottom"
+              type="button"
+              class="option-pill"
+              [class.active]="bottomForm.style === opt"
+              (click)="selectBottomStyle(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="bottomForm.style === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customBottomStyle"><i class="fa-solid fa-pen"></i> Or enter custom style:</label>
+            <input
+              id="customBottomStyle"
+              type="text"
+              [(ngModel)]="bottomForm.style"
+              placeholder="e.g. Heavy Gher Umbrella"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 3: Waist & Rubber -->
+        <div *ngIf="currentStep === 3" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Waistband / Rubber Style</h3>
+            <p class="step-subtext">Select waistband elastic or belt preference</p>
+          </div>
+
+          <div class="selection-badge" *ngIf="bottomForm.rubber">
+            <span>Selected:</span> <strong>{{ bottomForm.rubber }}</strong>
+          </div>
+
+          <div class="options-grid">
+            <button
+              *ngFor="let opt of rubberOptions"
+              type="button"
+              class="option-pill"
+              [class.active]="bottomForm.rubber === opt"
+              (click)="selectRubber(opt)"
+            >
+              <span>{{ opt }}</span>
+              <i class="fa-solid fa-check option-check" *ngIf="bottomForm.rubber === opt"></i>
+            </button>
+          </div>
+
+          <div class="custom-input-box">
+            <label for="customRubber"><i class="fa-solid fa-pen"></i> Or enter custom waistband:</label>
+            <input
+              id="customRubber"
+              type="text"
+              [(ngModel)]="bottomForm.rubber"
+              placeholder="e.g. Front Belt Back Rubber"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <!-- Step 4: Options & Notes -->
+        <div *ngIf="currentStep === 4" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Options & Custom Notes</h3>
+            <p class="step-subtext">Configure pockets and tailoring instructions</p>
+          </div>
+
+          <div class="checkbox-cards-grid">
+            <label class="toggle-card" [class.checked]="bottomForm.pocket">
+              <input type="checkbox" [(ngModel)]="bottomForm.pocket" />
+              <div class="toggle-card-content">
+                <i class="fa-solid fa-bag-shopping toggle-icon"></i>
+                <div class="toggle-text">
+                  <span class="toggle-title">Side Pocket</span>
+                  <span class="toggle-subtitle">{{ bottomForm.pocket ? 'Included (Right pocket)' : 'No pocket' }}</span>
+                </div>
+              </div>
+              <div class="toggle-indicator">
+                <i class="fa-solid" [ngClass]="bottomForm.pocket ? 'fa-check' : ''"></i>
+              </div>
+            </label>
+          </div>
+
+          <div class="detail-textarea-box">
+            <label for="bottomDetail"><i class="fa-solid fa-clipboard-list"></i> Special Instructions / Tailoring Notes:</label>
+            <textarea
+              id="bottomDetail"
+              rows="3"
+              [(ngModel)]="bottomForm.detail"
+              placeholder="e.g. Keep extra bottom fold, length 38 inches..."
+              class="form-control"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Step 5: Price & Design Photo -->
+        <div *ngIf="currentStep === 5" class="step-view">
+          <div class="step-header">
+            <h3 class="step-question">Price & Reference Photo</h3>
+            <p class="step-subtext">Enter stitching price and upload design reference photo</p>
+          </div>
+
+          <!-- Price Input Box -->
+          <div class="price-section">
+            <label class="section-label"><i class="fa-solid fa-indian-rupee-sign"></i> Item Price (₹)</label>
+            <div class="price-input-wrapper">
+              <span class="currency-tag">₹</span>
+              <input
+                type="number"
+                [(ngModel)]="bottomForm.price"
+                placeholder="0"
+                min="0"
+                class="price-input-field"
+              />
+            </div>
+
+            <!-- Quick price chips -->
+            <div class="quick-price-chips">
+              <button type="button" class="price-chip" (click)="setPrice(250)">₹250</button>
+              <button type="button" class="price-chip" (click)="setPrice(350)">₹350</button>
+              <button type="button" class="price-chip" (click)="setPrice(500)">₹500</button>
+              <button type="button" class="price-chip" (click)="setPrice(700)">₹700</button>
+              <button type="button" class="price-chip" (click)="setPrice(900)">₹900</button>
+              <button type="button" class="price-chip" (click)="setPrice(1200)">₹1200</button>
+              <button type="button" class="price-chip adder-chip" (click)="addPrice(50)">+₹50</button>
+              <button type="button" class="price-chip adder-chip" (click)="addPrice(100)">+₹100</button>
+            </div>
+          </div>
+
+          <!-- Photo Section -->
+          <div class="photos-section single-photo">
+            <div class="photo-card">
+              <div class="photo-card-header">
+                <span class="photo-title"><i class="fa-solid fa-palette"></i> Design Image</span>
+                <button
+                  type="button"
+                  class="remove-photo-btn"
+                  *ngIf="bottomForm.designimage"
+                  (click)="removeDesignImage()"
+                  title="Remove image"
+                >
+                  <i class="fa-solid fa-trash"></i> Remove
+                </button>
+              </div>
+
+              <div class="photo-preview-box" *ngIf="bottomForm.designimage">
+                <img [src]="bottomForm.designimage" alt="Design Reference" class="preview-img" />
+              </div>
+
+              <div class="upload-dropzone" *ngIf="!bottomForm.designimage">
+                <label class="upload-label">
+                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" />
+                  <div class="upload-content" *ngIf="!isUploadingDesign">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <span>Upload Design Photo</span>
+                  </div>
+                  <div class="upload-content uploading" *ngIf="isUploadingDesign">
+                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
+                    <span>Uploading...</span>
+                  </div>
+                </label>
+              </div>
+              <p class="upload-error" *ngIf="uploadDesignError">{{ uploadDesignError }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Review & Confirm -->
+        <div *ngIf="currentStep === 6" class="step-view review-view">
+          <div class="step-header">
+            <h3 class="step-question">Review & Confirm Bottom Item</h3>
+            <p class="step-subtext">Check the item specifications. Click any attribute to change it before saving.</p>
+          </div>
+
+          <div class="review-grid">
+            <div class="review-item" (click)="goToStep(1)">
+              <span class="review-label">Garment Item:</span>
+              <span class="review-val">{{ bottomForm.item || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(2)">
+              <span class="review-label">Style / Cut:</span>
+              <span class="review-val">{{ bottomForm.style || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(3)">
+              <span class="review-label">Waist / Rubber:</span>
+              <span class="review-val">{{ bottomForm.rubber || 'Not set' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item" (click)="goToStep(4)">
+              <span class="review-label">Pocket:</span>
+              <span class="review-val">{{ bottomForm.pocket ? 'Yes' : 'No' }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item full-width" (click)="goToStep(4)" *ngIf="bottomForm.detail">
+              <span class="review-label">Notes:</span>
+              <span class="review-val">{{ bottomForm.detail }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+
+            <div class="review-item full-width price-highlight" (click)="goToStep(5)">
+              <span class="review-label">Total Item Price:</span>
+              <span class="review-val price-val">₹{{ bottomForm.price || 0 }}</span>
+              <i class="fa-solid fa-pen review-edit"></i>
+            </div>
+          </div>
+
+          <!-- Preview Photos in Review -->
+          <div class="review-photos" *ngIf="bottomForm.designimage">
+            <div class="review-photo" (click)="goToStep(5)">
+              <span class="review-photo-title">Design Photo</span>
+              <img [src]="bottomForm.designimage" alt="Design" />
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </div>
+
+    <!-- Dialog Sticky Footer -->
+    <div class="dialog-footer">
+      <div class="footer-left">
+        <button
+          type="button"
+          class="btn-nav btn-back"
+          (click)="prevStep()"
+          [title]="currentStep === 0 ? 'Cancel' : 'Previous Step'"
+        >
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>{{ currentStep === 0 ? 'Cancel' : 'Previous' }}</span>
+        </button>
+      </div>
+
+      <div class="footer-right">
+        <!-- Shortcut to Review if item is filled and not yet on review step -->
+        <button
+          type="button"
+          class="btn-nav btn-shortcut"
+          *ngIf="currentStep >= 1 && !isReviewStep && ((selectedType === 'top' && topForm.item) || (selectedType === 'bottom' && bottomForm.item))"
+          (click)="jumpToReview()"
+          title="Jump directly to Review summary"
+        >
+          <i class="fa-solid fa-list-check"></i>
+          <span>Review</span>
+        </button>
+
+        <!-- Next button (for steps before review) -->
+        <button
+          type="button"
+          class="btn-nav btn-next"
+          *ngIf="currentStep > 0 && !isReviewStep"
+          (click)="nextStep()"
+        >
+          <span>Next</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <!-- Save Item button on Review step -->
+        <button
+          type="button"
+          class="btn-nav btn-save"
+          *ngIf="isReviewStep"
+          (click)="onSave()"
+        >
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Save Item</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

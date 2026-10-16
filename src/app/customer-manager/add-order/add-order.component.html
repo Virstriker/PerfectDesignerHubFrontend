@@ -1,81 +1,171 @@
-<div class="order-form">
-    <h2>Add Order</h2>
-    <form>
-        <div class="form-group">
-            <label>Customer:</label>
-            <div class="search-select-container">
-                <div class="custom-select">
-                    <select 
-                        id="customer" 
-                        [(ngModel)]="order.order.customerid" 
-                        name="customerId"
-                        required
-                        (click)="toggleDropdown($event)"
-                        [class.active]="isDropdownOpen"
-                    >
-                        <option *ngFor="let customer of customerIds" [value]="customer.id" [hidden]="true">
-                            {{customer.name + " " + customer.surname}}
-                        </option>
-                    </select>
-                    
-                    <div class="dropdown-menu" *ngIf="isDropdownOpen">
-                        <input
-                            type="text"
-                            [(ngModel)]="customerSearchTerm"
-                            name="customerSearch"
-                            (input)="filterCustomers()"
-                            placeholder="Search customer..."
-                            class="search-input"
-                            #searchInput
-                        >
-                        <div class="options-container">
-                            <div 
-                                *ngFor="let customer of filteredCustomerIds" 
-                                class="option"
-                                (click)="selectCustomer(customer)"
-                            >
-                                {{customer.name + " " + customer.surname}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="add-order-app">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="icon-btn" type="button" aria-label="Go back" (click)="goBack()" title="Back to orders">
+      <svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Add order</h1>
+  </header>
+
+  <!-- Main Content (2-column on desktop, 1-column on mobile) -->
+  <main class="form-view">
+    <!-- Column 1: Order Details -->
+    <div class="col col-details">
+      <!-- Customer Field -->
+      <div class="field" id="customerField">
+        <label id="customerLabel">Customer</label>
+        <button
+          type="button"
+          class="control customer-btn"
+          id="customerBtn"
+          (click)="toggleDropdown($event)"
+          [attr.aria-expanded]="isDropdownOpen"
+        >
+          <span [class.ph]="!selectedCustomerName">
+            {{ selectedCustomerName || 'Select customer' }}
+          </span>
+          <svg class="i chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+
+        <!-- Dropdown / Mobile Sheet -->
+        <div class="dropdown" *ngIf="isDropdownOpen" (click)="$event.stopPropagation()">
+          <div class="search">
+            <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input
+              type="search"
+              #searchInput
+              [(ngModel)]="customerSearchTerm"
+              (input)="filterCustomers()"
+              placeholder="Search by name or phone..."
+              autocomplete="off"
+            />
+          </div>
+          <ul class="options" role="listbox">
+            <li
+              *ngFor="let customer of filteredCustomerIds"
+              (click)="selectCustomer(customer)"
+              [class.active]="order.order.customerid === customer.id"
+            >
+              <div class="cust-info">
+                <span class="cust-name">{{ customer.name }} {{ customer.surname }}</span>
+                <small class="cust-phone" *ngIf="customer.phonenumber">{{ customer.phonenumber }}</small>
+              </div>
+              <span class="check-mark" *ngIf="order.order.customerid === customer.id">✓</span>
+            </li>
+            <li class="empty" *ngIf="filteredCustomerIds.length === 0">
+              No customer found
+            </li>
+          </ul>
         </div>
+      </div>
 
-        <label>Branch Name:</label>
-        <input type="text" [(ngModel)]="order.order.branchname" name="branchName" disabled required />
+      <!-- Branch Field -->
+      <div class="field">
+        <label for="branch">Branch name</label>
+        <input class="control" id="branch" type="text" [(ngModel)]="order.order.branchname" disabled />
+      </div>
 
-        <label>Delivery Date:</label>
-        <input type="date" [(ngModel)]="order.order.deliverydate" name="deliveryDate" required />
-
-        <button type="button" (click)="openItemPopup()" class="add-item-btn">Add Item</button>
-    </form>
-
-    <!-- Display added items -->
-    <div class="items-container">
-        <div *ngFor="let item of order.tops; let i = index" class="order-card">
-            <h3>Top</h3>
-            <p>Item: {{item.item}}</p>
-            <p>Style: {{item.style}}</p>
-            <p>Price: {{item.price | currency}}</p>
-            <button (click)="editItem('top', i)" class="edit-btn">Edit</button>
-        </div>
-        <div *ngFor="let item of order.bottoms; let i = index" class="order-card">
-            <h3>Bottom</h3>
-            <p>Item: {{item.item}}</p>
-            <p>Style: {{item.style}}</p>
-            <p>Price: {{item.price | currency}}</p>
-            <button (click)="editItem('bottom', i)" class="edit-btn">Edit</button>
-        </div>
+      <!-- Delivery Date Field -->
+      <div class="field">
+        <label for="deliveryDate">Delivery date</label>
+        <input
+          class="control"
+          id="deliveryDate"
+          type="date"
+          [min]="minDate"
+          [(ngModel)]="order.order.deliverydate"
+          required
+        />
+      </div>
     </div>
 
-    <button (click)="onSubmit()" class="submit-btn">Submit Order</button>
+    <!-- Column 2: Order Items -->
+    <div class="col col-items">
+      <section class="field" id="itemsField">
+        <div class="items-head">
+          <span class="label">Items</span>
+          <span class="count">{{ totalItemCount }} {{ totalItemCount === 1 ? 'item' : 'items' }} added</span>
+        </div>
 
-    <app-add-item-dialog 
-        *ngIf="showItemDialog"
-        [itemType]="editingItemType"
-        [itemData]="editingItemData"
-        (closeDialog)="closeItemDialog()"
-        (saveItem)="onItemSaved($event)">
-    </app-add-item-dialog>
+        <ul class="items" *ngIf="totalItemCount > 0">
+          <!-- Top Items -->
+          <li class="item" *ngFor="let item of order.tops; let i = index">
+            <div class="item-main" (click)="editItem('top', i)" title="Click to edit item">
+              <div class="top">
+                <span class="tag top-tag">Top</span>
+                <span class="name">{{ item.item }}</span>
+              </div>
+              <div class="meta">Style: {{ item.style }}<span *ngIf="item.sleeve"> · {{ item.sleeve }}</span></div>
+            </div>
+            <div class="price">${{ item.price }}</div>
+            <div class="item-actions">
+              <button type="button" class="icon-btn edit-icon" (click)="editItem('top', i)" title="Edit item">
+                <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button type="button" class="icon-btn rm" (click)="removeItem('top', i)" title="Remove item">
+                <svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>
+              </button>
+            </div>
+          </li>
+
+          <!-- Bottom Items -->
+          <li class="item" *ngFor="let item of order.bottoms; let i = index">
+            <div class="item-main" (click)="editItem('bottom', i)" title="Click to edit item">
+              <div class="top">
+                <span class="tag bottom-tag">Bottom</span>
+                <span class="name">{{ item.item }}</span>
+              </div>
+              <div class="meta">Style: {{ item.style }}<span *ngIf="item.rubber"> · {{ item.rubber }}</span></div>
+            </div>
+            <div class="price">${{ item.price }}</div>
+            <div class="item-actions">
+              <button type="button" class="icon-btn edit-icon" (click)="editItem('bottom', i)" title="Edit item">
+                <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button type="button" class="icon-btn rm" (click)="removeItem('bottom', i)" title="Remove item">
+                <svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>
+              </button>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Empty Items State -->
+        <div class="empty-items" *ngIf="totalItemCount === 0">
+          No items yet. Add a top or bottom to this order.
+        </div>
+
+        <!-- Add Item Button -->
+        <button type="button" class="btn ghost block" (click)="openItemPopup()">
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span>Add item</span>
+        </button>
+
+        <!-- Total Price Row -->
+        <div class="total" *ngIf="totalItemCount > 0">
+          <span>Total</span>
+          <span class="total-amount">${{ order.order.totalprice }}</span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Action Bar -->
+  <div class="actionbar">
+    <button type="button" class="btn primary block" (click)="onSubmit()" [disabled]="submitting">
+      <span *ngIf="!submitting">Submit order</span>
+      <span *ngIf="submitting">Submitting order...</span>
+    </button>
+  </div>
+
+  <!-- Backdrop for mobile/desktop customer dropdown -->
+  <div class="backdrop" *ngIf="isDropdownOpen" (click)="isDropdownOpen = false"></div>
+
+  <!-- Add Item Dialog Popup (Kept as is per user instruction) -->
+  <app-add-item-dialog 
+      *ngIf="showItemDialog"
+      [itemType]="editingItemType"
+      [itemData]="editingItemData"
+      (closeDialog)="closeItemDialog()"
+      (saveItem)="onItemSaved($event)">
+  </app-add-item-dialog>
 </div>

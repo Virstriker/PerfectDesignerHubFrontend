@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { OrderServiceService } from '../../services/order-service.service';
 import { CustomerServiceService } from '../../services/customer-service.service';
 import { addOrderDto, TopItem, BottomItem } from '../../interfaces/order';
@@ -33,6 +32,7 @@ export class AddOrderComponent implements OnInit {
     bottoms: []
   };
 
+  minDate: string = new Date().toISOString().split('T')[0];
   showItemDialog = false;
   editingItemType: 'top' | 'bottom' | null = null;
   editingItemData: TopItem | BottomItem | null = null;
@@ -41,6 +41,7 @@ export class AddOrderComponent implements OnInit {
   customerSearchTerm: string = '';
   filteredCustomerIds: any[] = [];
   isDropdownOpen = false;
+  submitting = false;
 
   constructor(
     private orderService: OrderServiceService,
@@ -53,12 +54,25 @@ export class AddOrderComponent implements OnInit {
     this.loadCustomers();
   }
 
+  get selectedCustomer(): any {
+    return this.customerIds.find(c => c.id === this.order.order.customerid) || null;
+  }
+
+  get selectedCustomerName(): string {
+    const c = this.selectedCustomer;
+    return c ? `${c.name} ${c.surname || ''}`.trim() : '';
+  }
+
+  get totalItemCount(): number {
+    return (this.order.tops?.length || 0) + (this.order.bottoms?.length || 0);
+  }
+
   loadCustomers() {
     this.customerService.getAllCustomer().subscribe({
       next: (response: any) => {
         if (response.responseObject) {
           this.customerIds = response.responseObject.sort((a: any, b: any) =>
-            (a.name + ' ' + a.surname).localeCompare(b.name + ' ' + b.surname)
+            (a.name + ' ' + (a.surname || '')).localeCompare(b.name + ' ' + (b.surname || ''))
           );
           this.filteredCustomerIds = this.customerIds;
         }
@@ -84,8 +98,17 @@ export class AddOrderComponent implements OnInit {
     this.editingItemType = type;
     this.editingItemIndex = index;
     const item = type === 'top' ? this.order.tops[index] : this.order.bottoms[index];
-    this.editingItemData = JSON.parse(JSON.stringify(item)); // Deep copy to preserve all fields
+    this.editingItemData = JSON.parse(JSON.stringify(item));
     this.showItemDialog = true;
+  }
+
+  removeItem(type: 'top' | 'bottom', index: number) {
+    if (type === 'top') {
+      this.order.tops.splice(index, 1);
+    } else {
+      this.order.bottoms.splice(index, 1);
+    }
+    this.calculateTotalPrice();
   }
 
   onItemSaved(event: { type: string; item: TopItem | BottomItem }) {
@@ -108,9 +131,46 @@ export class AddOrderComponent implements OnInit {
 
   calculateTotalPrice() {
     let total = 0;
-    this.order.tops.forEach(item => total += item.price);
-    this.order.bottoms.forEach(item => total += item.price);
+    this.order.tops.forEach(item => total += (item.price || 0));
+    this.order.bottoms.forEach(item => total += (item.price || 0));
     this.order.order.totalprice = total;
+  }
+
+  toggleDropdown(event: Event) {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+    if (this.isDropdownOpen) {
+      this.filterCustomers();
+      setTimeout(() => {
+        if (this.searchInput?.nativeElement) {
+          this.searchInput.nativeElement.focus();
+        }
+      }, 50);
+    }
+  }
+
+  filterCustomers() {
+    if (!this.customerSearchTerm.trim()) {
+      this.filteredCustomerIds = this.customerIds;
+    } else {
+      const term = this.customerSearchTerm.toLowerCase().trim();
+      this.filteredCustomerIds = this.customerIds.filter(customer => {
+        const fullName = `${customer.name || ''} ${customer.surname || ''}`.toLowerCase();
+        const phone = (customer.phonenumber || '').toString();
+        return fullName.includes(term) || phone.includes(term);
+      });
+    }
+  }
+
+  selectCustomer(customer: any) {
+    this.order.order.customerid = customer.id;
+    this.isDropdownOpen = false;
+    this.customerSearchTerm = '';
+    this.filterCustomers();
+  }
+
+  goBack() {
+    this.router.navigateByUrl('/customer-manager/order');
   }
 
   onSubmit() {
@@ -124,6 +184,11 @@ export class AddOrderComponent implements OnInit {
       return;
     }
 
+    if (this.totalItemCount === 0) {
+      alert('Please add at least one item to the order');
+      return;
+    }
+
     const formattedDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     if (formattedDate) {
       this.order.order.orderdate = formattedDate;
@@ -132,8 +197,10 @@ export class AddOrderComponent implements OnInit {
       return;
     }
 
+    this.submitting = true;
     this.orderService.addOrder(this.order).subscribe({
       next: (response: any) => {
+        this.submitting = false;
         if (response.isSuccess) {
           alert('Order Added Successfully');
           this.router.navigateByUrl('/customer-manager/order');
@@ -142,44 +209,10 @@ export class AddOrderComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.submitting = false;
         console.error('Error adding order:', error);
         alert('Failed to add order');
       }
     });
-  }
-
-  @HostListener('document:click', ['$event'])
-  clickOutside(event: Event) {
-    if (this.searchInput && !this.searchInput.nativeElement.contains(event.target)) {
-      this.isDropdownOpen = false;
-      this.customerSearchTerm = '';
-      this.filterCustomers();
-    }
-  }
-
-  toggleDropdown(event: Event) {
-    event.stopPropagation();
-    this.isDropdownOpen = !this.isDropdownOpen;
-    if (this.isDropdownOpen) {
-      this.filterCustomers();
-    }
-  }
-
-  filterCustomers() {
-    if (!this.customerSearchTerm) {
-      this.filteredCustomerIds = this.customerIds;
-    } else {
-      const searchTerm = this.customerSearchTerm.toLowerCase();
-      this.filteredCustomerIds = this.customerIds.filter(customer => 
-        customer.phonenumber.toString().includes(searchTerm)
-      );
-    }
-  }
-
-  selectCustomer(customer: any) {
-    this.order.order.customerid = customer.id;
-    this.isDropdownOpen = false;
-    this.customerSearchTerm = '';
-    this.filterCustomers();
   }
 }

@@ -10,8 +10,8 @@ import { LoaderComponentComponent } from '../../loader-component/loader-componen
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule,LoaderComponentComponent],
-  providers: [OrderServiceService,LoaderComponentComponent],
+  imports: [NgFor, CommonModule, FormsModule, RouterModule, HttpClientModule, LoaderComponentComponent],
+  providers: [OrderServiceService, LoaderComponentComponent],
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.css']
 })
@@ -23,77 +23,51 @@ export class OrderComponent implements OnInit {
   selectedDateFilter: string = 'week';
   totalPrice: number = 0;
   loading: boolean = true;
+  lastFilter: string = 'today';
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
 
-  searchOrder(){
+  ngOnInit(): void {
+    this.applyFilters();
+  }
+
+  searchOrder() {
     console.log(this.searchTerm);
+    if (!this.searchTerm.trim()) {
+      this.applyFilters();
+      return;
+    }
+    this.loading = true;
     this.orderService.searchOrder(this.searchTerm).subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.orders = response.responseObject;
           this.filteredOrders = this.orders;
+          this.calculateTotalPrice();
         } else {
           alert(response.message);
         }
+        this.loading = false;
       },
-    })
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+      }
+    });
   }
 
-  ngOnInit(): void {
+  onSearchInput() {
+    if (!this.searchTerm.trim()) {
+      this.applyFilters();
+    }
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
     this.applyFilters();
-    // this.orderService.getAllOrders().subscribe({
-    //   next: (response: ResponseDto) => {
-    //     if (response.isSuccess) {
-    //       this.orders = response.responseObject;
-    //       // this.orders = [
-    //       //   {
-    //       //     id: 1,
-    //       //     branchname: 'Main',
-    //       //     customer: 'John Doe',
-    //       //     orderdate: '2022-12-01',
-    //       //     deliverydate: '2022-12-20',
-    //       //     ordertables: '3',
-    //       //     totalPrice: 1000,
-    //       //     orderstatus: 1
-    //       //   },
-    //       //   {
-    //       //     id: 2,
-    //       //     branchname: 'Main',
-    //       //     customer: 'Jane Doe',
-    //       //     orderdate: '2022-11-25',
-    //       //     deliverydate: '2022-12-15',
-    //       //     ordertables: '2',
-    //       //     totalPrice: 500,
-    //       //     orderstatus: 2
-    //       //   },
-    //       //   {
-    //       //     id: 3,
-    //       //     branchname: 'Main',
-    //       //     customer: 'Bob Smith',
-    //       //     orderdate: '2022-11-15',
-    //       //     deliverydate: '2022-11-30',
-    //       //     ordertables: '1',
-    //       //     totalPrice: 100,
-    //       //     orderstatus: 3
-    //       //   }
-    //       // ];
-    //       this.applyFilters();
-    //     } else {
-    //       alert(response.message);
-    //     }
-    //   },
-    //   error: (error) => {
-    //     console.error(error);
-    //   }
-    // });
-    
   }
-
-  lastFilter:string = 'today';
 
   isOverdue(order: OrderCard): boolean {
-    console.log("ordercolor")
     const today = new Date();
     const deliveryDate = new Date(order.deliverydate);
     const status = Number(order.orderstatus);
@@ -106,7 +80,6 @@ export class OrderComponent implements OnInit {
     if (this.selectedDateFilter !== this.lastFilter) {
       this.lastFilter = this.selectedDateFilter;
       const today = new Date();
-      const startDate = new Date();
       this.loading = true;
       switch (this.selectedDateFilter) {
         case 'today':
@@ -124,9 +97,11 @@ export class OrderComponent implements OnInit {
                 this.loading = false;
               } else {
                 alert(response.message);
+                this.loading = false;
               }
-            }
-          })
+            },
+            error: () => { this.loading = false; }
+          });
           break;
         case 'week':
           this.orderService.getFilterOrders({
@@ -143,9 +118,11 @@ export class OrderComponent implements OnInit {
                 this.loading = false;
               } else {
                 alert(response.message);
+                this.loading = false;
               }
-            }
-          })
+            },
+            error: () => { this.loading = false; }
+          });
           break;
         case 'month':
           this.orderService.getFilterOrders({
@@ -162,18 +139,15 @@ export class OrderComponent implements OnInit {
                 this.loading = false;
               } else {
                 alert(response.message);
+                this.loading = false;
               }
-            }
-          })
+            },
+            error: () => { this.loading = false; }
+          });
           break;
       }
-      // filtered = filtered.filter(order => {
-      //   const orderDate = new Date(order.orderdate);
-      //   return orderDate >= startDate && orderDate <= today;
-      // });
     }
 
-    console.log(filtered,this.orders);
     // Apply status filter
     if (this.selectedStatus !== 'all') {
       filtered = filtered.filter(order =>
@@ -185,7 +159,7 @@ export class OrderComponent implements OnInit {
   }
 
   calculateTotalPrice() {
-    this.totalPrice = this.filteredOrders.reduce((sum, order) => sum + order.totalprice, 0);
+    this.totalPrice = this.filteredOrders.reduce((sum, order) => sum + (order.totalprice || 0), 0);
   }
 
   goToOrder(id: number) {
@@ -203,6 +177,16 @@ export class OrderComponent implements OnInit {
       return 'Complete';
     } else {
       return 'Delivered';
+    }
+  }
+
+  getStatusClass(orderstatus: number): string {
+    if (orderstatus == 1) {
+      return 's-active';
+    } else if (orderstatus == 2) {
+      return 's-complete';
+    } else {
+      return 's-delivered';
     }
   }
 }

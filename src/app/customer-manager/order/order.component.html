@@ -1,66 +1,190 @@
 <app-loader-component [isLoading]="loading"></app-loader-component>
-<div class="order-management-container">
-  <div class="search-add-container">
-    <div class="search-bar">
-      <input type="text" placeholder="Search orders..." [(ngModel)]="searchTerm">
-      <img src="../../../assets/search.png" (click)="searchOrder()" alt="Search" class="search-icon">
+
+<div class="orders-page-container">
+  <main class="main-content">
+    <!-- Toolbar: Search & Add Order -->
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input
+          id="q"
+          type="search"
+          placeholder="Search order ID, customer or branch"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="searchOrder()"
+          (input)="onSearchInput()"
+          aria-label="Search orders"
+          autocomplete="off"
+        />
+        <button
+          type="button"
+          class="clear-search-btn"
+          *ngIf="searchTerm"
+          (click)="clearSearch()"
+          title="Clear search"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <button class="btn-order" (click)="addOrder()" type="button" title="Add a new order">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>Add Order</span>
+      </button>
     </div>
-    <button class="add-order-btn" (click)="addOrder()">
-      Add Order
-    </button>
-  </div>
-  
-  <div class="filters-container">
-    <div class="filter-group">
-      <label>Status:</label>
-      <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
-        <option value="1">Active</option>
-        <option value="2">Complete</option>
-        <option value="3">Delivered</option>
-      </select>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="select">
+        <select [(ngModel)]="selectedStatus" (change)="applyFilters()" aria-label="Filter by status">
+          <option value="1">Active</option>
+          <option value="2">Complete</option>
+          <option value="3">Delivered</option>
+        </select>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </div>
+
+      <div class="select">
+        <select [(ngModel)]="selectedDateFilter" (change)="applyFilters()" aria-label="Filter by order date">
+          <option value="today">Today</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+        </select>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </div>
     </div>
-    <div class="filter-group">
-      <label>Order Date:</label>
-      <select [(ngModel)]="selectedDateFilter" (change)="applyFilters()">
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-      </select>
-    </div>
-  </div>
-  
-  <table class="order-detail-table">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Customer Name</th>
-        <th>Branch Name</th>
-        <th>Order Date</th>
-        <th>Delivery Date</th>
-        <th>Total Price</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of filteredOrders"
+
+    <!-- Panel (Desktop Table & Mobile Cards) -->
+    <section class="panel">
+      <!-- Desktop Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer Name</th>
+              <th>Branch Name</th>
+              <th>Order Date</th>
+              <th>Delivery Date</th>
+              <th class="num">Total Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let order of filteredOrders"
+              (click)="goToOrder(order.id)"
+              [class.is-overdue]="isOverdue(order)"
+            >
+              <td class="oid">#{{ order.id }}</td>
+              <td class="cust-cell">{{ order.customer }}</td>
+              <td>
+                <span class="branch-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/>
+                    <circle cx="12" cy="9.5" r="2.5"/>
+                  </svg>
+                  <span>{{ order.branchname }}</span>
+                </span>
+              </td>
+              <td>{{ order.orderdate.split('T')[0] }}</td>
+              <td>
+                <span [class.overdue-date]="isOverdue(order)">
+                  {{ order.deliverydate.split('T')[0] }}
+                </span>
+              </td>
+              <td class="num price-cell">${{ order.totalprice }}</td>
+              <td>
+                <div class="status-group">
+                  <span class="pill" [ngClass]="getStatusClass(order.orderstatus)">
+                    {{ getStatusText(order.orderstatus) }}
+                  </span>
+                  <span class="pill s-overdue" *ngIf="isOverdue(order)">
+                    Overdue
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards -->
+      <div class="cards">
+        <article
+          class="card"
+          *ngFor="let order of filteredOrders"
           (click)="goToOrder(order.id)"
-          [ngStyle]="{'background-color': isOverdue(order) ? '#ffebee' : 'inherit',
-                     'color': isOverdue(order) ? '#d32f2f' : 'inherit'}">
-        <td>{{order.id}}</td>
-        <td>{{order.customer}}</td>
-        <td>{{order.branchname}}</td>
-        <td>{{order.orderdate.split('T')[0]}}</td>
-        <td>{{order.deliverydate.split('T')[0]}}</td>
-        <td>${{order.totalprice}}</td>
-        <td>
-          <span class="order-status" [ngClass]="order.orderstatus == 1 ? 'active' : order.orderstatus == 2 ? 'complete' : 'Delivered'">
-            {{ getStatusText(order.orderstatus) }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="total-price">
-    Total Price: ${{totalPrice}}
-  </div>
+          [class.is-overdue]="isOverdue(order)"
+        >
+          <div class="card-top">
+            <span class="cid">#{{ order.id }}</span>
+            <div class="status-group">
+              <span class="pill" [ngClass]="getStatusClass(order.orderstatus)">
+                {{ getStatusText(order.orderstatus) }}
+              </span>
+              <span class="pill s-overdue" *ngIf="isOverdue(order)">
+                Overdue
+              </span>
+            </div>
+          </div>
+
+          <h3 class="cust">{{ order.customer }}</h3>
+
+          <div class="branch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/>
+              <circle cx="12" cy="9.5" r="2.5"/>
+            </svg>
+            <span>{{ order.branchname }}</span>
+          </div>
+
+          <div class="card-bottom">
+            <div class="dates">
+              <div>
+                <small>Ordered</small>
+                <span>{{ order.orderdate.split('T')[0] }}</span>
+              </div>
+              <div>
+                <small>Delivery</small>
+                <span [class.overdue-date]="isOverdue(order)">
+                  {{ order.deliverydate.split('T')[0] }}
+                </span>
+              </div>
+            </div>
+            <div class="price">${{ order.totalprice }}</div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty" *ngIf="!loading && filteredOrders.length === 0">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="m9 9 6 6M15 9l-6 6"/>
+        </svg>
+        <strong>No orders found</strong>
+        <p>Try a different search, status or date range.</p>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary" *ngIf="filteredOrders.length > 0">
+        <span class="label">
+          Total price · {{ filteredOrders.length }} {{ filteredOrders.length === 1 ? 'order' : 'orders' }}
+        </span>
+        <span class="total">${{ totalPrice }}</span>
+      </div>
+    </section>
+  </main>
 </div>

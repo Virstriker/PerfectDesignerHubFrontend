@@ -6,7 +6,7 @@
       <select id="employee-select" [(ngModel)]="selectedEmployee" (change)="getDailyWorkOfEmployee()">
         <option value="">Select Employee</option>
         <option *ngFor="let emp of employees" [value]="emp.id">
-          {{emp.employeeName}}
+          {{emp.employeeName || emp.employeename}}
         </option>
       </select>
     </div>
@@ -80,7 +80,7 @@
         <select id="employee" [(ngModel)]="newWork.employeeId" required>
           <option value="">Select an employee</option>
           <option *ngFor="let employee of employees" [value]="employee.id">
-            {{employee.employeeName}}
+            {{employee.employeeName || employee.employeename}}
           </option>
         </select>
       </div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Order, TopItem, BottomItem, addOrderDto, getOrderDto } from '../../interfaces/order';
 import { ResponseDto } from '../../interfaces/customer';
 import { OrderServiceService } from '../../services/order-service.service';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf, DatePipe, CurrencyPipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
@@ -12,8 +12,8 @@ import { LoaderComponentComponent } from '../../loader-component/loader-componen
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [NgFor, NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule, AddItemDialogComponent,LoaderComponentComponent],
-  providers: [OrderServiceService,LoaderComponentComponent],
+  imports: [NgFor, NgIf, CommonModule, FormsModule, RouterModule, HttpClientModule, AddItemDialogComponent, LoaderComponentComponent],
+  providers: [OrderServiceService, LoaderComponentComponent, DatePipe, CurrencyPipe],
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css']
 })
@@ -21,8 +21,8 @@ export class OrderDetailsComponent implements OnInit {
   order: getOrderDto = {
     order: {
       customerid: 0,
-      customer: '1',
-      branchname: '',
+      customer: '',
+      branchname: 'Main',
       orderdate: '',
       deliverydate: '',
       totalprice: 0,
@@ -53,21 +53,61 @@ export class OrderDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.orderId = params['id'];
+      this.orderId = Number(params['id']);
       this.loadOrderDetails();
     });
   }
 
+  get totalItemCount(): number {
+    return (this.order.tops?.length || 0) + (this.order.bottoms?.length || 0);
+  }
+
+  isOverdue(): boolean {
+    if (!this.order?.order?.deliverydate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const delivery = new Date(this.order.order.deliverydate);
+    delivery.setHours(0, 0, 0, 0);
+    const status = Number(this.order.order.orderstatus);
+    return (status === 1 || status === 2) && delivery < today;
+  }
+
+  getStatusText(status: number): string {
+    if (status === 1) return 'Active';
+    if (status === 2) return 'Completed';
+    if (status === 3) return 'Delivered';
+    return 'Unknown';
+  }
+
+  getStatusClass(status: number): string {
+    if (status === 1) return 's-active';
+    if (status === 2) return 's-completed';
+    if (status === 3) return 's-delivered';
+    return '';
+  }
+
+  getCustomerInitials(): string {
+    const name = this.order?.order?.customer || '';
+    if (!name) return 'C';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
   loadOrderDetails() {
+    this.loading = true;
     this.orderService.getOrderDetailsById(this.orderId).subscribe({
       next: (response: ResponseDto) => {
         if (response.isSuccess) {
           this.order = response.responseObject;
-          this.loading = false;
         }
+        this.loading = false;
       },
       error: (error: any) => {
         console.error('Error loading order details:', error);
+        this.loading = false;
       }
     });
   }
@@ -100,11 +140,10 @@ export class OrderDetailsComponent implements OnInit {
 
   editItem(type: 'top' | 'bottom', index: number) {
     this.editingItemType = type;
-    // Create a deep copy of the item
     this.editingItemData = type === 'top' ?
       { ...this.order.tops[index] } :
       { ...this.order.bottoms[index] };
-    this.editingItemData._index = index; // Store the index for reference
+    this.editingItemData._index = index;
     this.showItemDialog = true;
   }
 
@@ -115,6 +154,7 @@ export class OrderDetailsComponent implements OnInit {
       } else {
         this.order.bottoms.splice(index, 1);
       }
+      this.order.order.totalprice = this.calculateTotalPrice();
     }
   }
 
@@ -123,31 +163,26 @@ export class OrderDetailsComponent implements OnInit {
 
     if (this.editingItemType === 'top') {
       if (index !== undefined) {
-        // Update existing item
         const itemToUpdate = { ...event.item };
-        delete itemToUpdate._index; // Remove _index before saving
+        delete itemToUpdate._index;
         this.order.tops[index] = itemToUpdate;
       } else {
-        // Add new item
         const newItem = { ...event.item };
-        delete newItem._index; // Remove _index before saving
+        delete newItem._index;
         this.order.tops.push(newItem);
       }
     } else {
       if (index !== undefined) {
-        // Update existing item
         const itemToUpdate = { ...event.item };
-        delete itemToUpdate._index; // Remove _index before saving
+        delete itemToUpdate._index;
         this.order.bottoms[index] = itemToUpdate;
       } else {
-        // Add new item
         const newItem = { ...event.item };
-        delete newItem._index; // Remove _index before saving
+        delete newItem._index;
         this.order.bottoms.push(newItem);
       }
     }
 
-    // Recalculate total price
     this.order.order.totalprice = this.calculateTotalPrice();
     this.closeItemDialog();
   }
@@ -171,12 +206,8 @@ export class OrderDetailsComponent implements OnInit {
     });
   }
 
-  generateBillPdf() {
-    // Implement PDF generation
-  }
-
   goBack() {
-    window.history.back();
+    this.router.navigateByUrl('/customer-manager/order');
   }
 
   saveChanges() {
@@ -300,53 +331,49 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   async sendWhatsAppMessage() {
-    const phoneNumber = this.order.order.phonenumber.toString().replace(/[^0-9]/g, '');
+    const phoneNumber = (this.order.order.phonenumber || '').toString().replace(/[^0-9]/g, '');
 
-    // Create a table-like structure using monospace font and proper spacing
     let message = ' *PERFECT DESIGNER HUB* \n\n';
     message += '*Order Details*\n';
     message += '----------------------------\n\n';
 
-    // Add header for items table
     message += '```Item Name         Price```\n';
     message += '```-----------------------```\n';
 
-    // Add top items
     this.order.tops.forEach(item => {
-      const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
-      message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
+      const itemName = `${item.item}`.padEnd(15, ' ');
+      message += '```' + itemName + ' ₹' + (item.price || 0).toString().padStart(6, ' ') + '```\n';
     });
 
-    // Add bottom items
     this.order.bottoms.forEach(item => {
-      const itemName = `${item.item}`.padEnd(15, ' '); // Make item name bold and pad to 15 characters
-      message += '```' + itemName + ' ₹' + item.price.toString().padStart(6, ' ') + '```\n';
+      const itemName = `${item.item}`.padEnd(15, ' ');
+      message += '```' + itemName + ' ₹' + (item.price || 0).toString().padStart(6, ' ') + '```\n';
     });
 
-    // Add separator and total
     message += '```-----------------------```\n';
-    message += '```Total           ₹' + this.order.order.totalprice.toString().padStart(6, ' ') + '```\n\n';
-    var upi =
-    await this.orderService.getTinyUrl(this.order.order.totalprice.toString()).toPromise().then((response: ResponseDto) => {
-        if (response.isSuccess) {
-          message += '```Pay Here: ' + response.responseObject + '```\n\n';
-        }
-    })
-    // Add footer
+    message += '```Total           ₹' + (this.order.order.totalprice || 0).toString().padStart(6, ' ') + '```\n\n';
+
+    try {
+      const response: any = await this.orderService.getTinyUrl(this.order.order.totalprice.toString()).toPromise();
+      if (response && response.isSuccess) {
+        message += '```Pay Here: ' + response.responseObject + '```\n\n';
+      }
+    } catch (e) {
+      console.warn('TinyURL fetch failed, proceeding without it', e);
+    }
+
     message += '_Thank you for shopping at_\n';
     message += '*PERFECT DESIGNER HUB*\n';
     message += 'Visit us again soon! ';
 
-    // Format phone number (remove any non-numeric characters and add country code if needed)
     const formattedPhone = phoneNumber.startsWith('91') ? phoneNumber : `91${phoneNumber}`;
-
-    // Open in web WhatsApp
     const webWhatsappUrl = `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
     window.open(webWhatsappUrl, '_blank');
   }
 
   downloadPdf(orderId: number): void {
-    this.orderService.downloadPdf(orderId);
+    const id = orderId || this.orderId;
+    this.orderService.downloadPdf(id);
   }
 
   openImagePopup(imageUrl: string): void {

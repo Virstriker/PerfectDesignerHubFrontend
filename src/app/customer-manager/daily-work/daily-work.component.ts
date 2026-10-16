@@ -19,6 +19,7 @@ interface WorkEntry {
 interface Employee {
   id: number;
   employeeName: string;
+  employeename?: string;
 }
 
 @Component({
@@ -74,10 +75,13 @@ export class DailyWorkComponent implements OnInit {
     }
   }
   ngOnInit() {
-    // Sample data - replace with actual data source
     this.dailyWorkService.getEmployee().subscribe({
       next:(response:ResponseDto)=>{
-        this.employees = response.responseObject;
+        this.employees = (response.responseObject || []).map((e: any) => ({
+          id: e.id,
+          employeeName: e.employeeName || e.employeename || '',
+          employeename: e.employeename || e.employeeName || ''
+        }));
       }
     })
   }
@@ -167,7 +171,8 @@ export class DailyWorkComponent implements OnInit {
 
     // Add employee and period info
     doc.setFontSize(12);
-    const selectedEmployeeName = this.employees.find(emp => emp.id.toString() === this.selectedEmployee.toString())?.employeeName || 'Unknown';
+    const emp = this.employees.find(e => e.id.toString() === this.selectedEmployee.toString());
+    const selectedEmployeeName = emp?.employeeName || emp?.employeename || 'Unknown';
     const monthName = this.months[this.selectedMonth - 1];
     doc.text(`Employee: ${selectedEmployeeName}`, 20, 35);
     doc.text(`Period: ${monthName} ${this.selectedYear}`, 20, 45);

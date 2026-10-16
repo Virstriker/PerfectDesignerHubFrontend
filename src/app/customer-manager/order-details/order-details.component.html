@@ -1,232 +1,425 @@
 <app-loader-component [isLoading]="loading"></app-loader-component>
-<div class="order-details-container">
-  <div class="order-header">
-    <div class="header-content">
-      <h2>Order Details </h2>
-      <div class="header-actions">
-        <button class="edit-btn" *ngIf="!isEditing" (click)="toggleEdit()">
-          <i class="fas fa-edit"></i> Edit Order
-        </button>
-        <button class="save-btn" *ngIf="isEditing" (click)="saveChanges()">
-          <i class="fas fa-save"></i> Save Changes
-        </button>
-        <button class="cancel-btn" *ngIf="isEditing" (click)="cancelEdit()">
-          <i class="fas fa-times"></i> Cancel
-        </button>
-        <button class="back-btn" (click)="goBack()">
-          <i class="fas fa-arrow-left"></i> Back
-        </button>
-      </div>
-    </div>
-  </div>
 
-  <div class="order-content">
-    <div class="order-summary">
-      <div class="summary-card">
-        <div class="summary-header">
-          <h3>Order Information</h3>
-          <span class="status-badge" [ngClass]="{
-            'active': order.order.orderstatus === 1,
-            'completed': order.order.orderstatus === 2,
-            'delivered': order.order.orderstatus === 3
-          }">
-            {{ order.order.orderstatus === 1 ? 'Active' :
-            order.order.orderstatus === 2 ? 'Completed' :
-            order.order.orderstatus === 3 ? 'Delivered' : 'Unknown' }}
-          </span>
+<div class="view-order-app" *ngIf="!loading">
+  <!-- Top App Bar -->
+  <header class="appbar">
+    <div class="appbar-inner">
+      <div class="appbar-left">
+        <button class="icon-btn back-btn" type="button" aria-label="Go back" (click)="goBack()" title="Back to orders">
+          <svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="order-title-group">
+          <h1>Order #{{ orderId }}</h1>
+          <div class="header-badges">
+            <span class="pill" [ngClass]="getStatusClass(order.order.orderstatus)">
+              {{ getStatusText(order.order.orderstatus) }}
+            </span>
+            <span class="pill s-overdue" *ngIf="isOverdue()">Overdue</span>
+          </div>
         </div>
-        <div class="summary-body">
-          <div class="info-row">
-            <div class="info-item">
-              <label>Customer Name:</label>
-              <span>{{ order.order.customer }}</span>
-            </div>
-            <div class="info-item">
-              <label>Branch:</label>
-              <input *ngIf="isEditing" type="text" [(ngModel)]="order.order.branchname" name="branchName">
-              <span *ngIf="!isEditing">{{ order.order.branchname }}</span>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-item">
-              <label>Order Date:</label>
-              <span>{{ order.order.orderdate | date:'yyyy-MM-dd' }}</span>
-            </div>
-            <div class="info-item">
-              <label>Delivery Date:</label>
-              <input *ngIf="isEditing" type="date" [ngModel]="order.order.deliverydate | date:'yyyy-MM-dd'"
-                (ngModelChange)="order.order.deliverydate = $event" name="deliveryDate">
-              <span *ngIf="!isEditing">{{ order.order.deliverydate | date:'mediumDate' }}</span>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-item">
-              <label>Total Price:</label>
-              <span class="total-price">{{ order.order.totalprice | currency }}</span>
-            </div>
-          </div>
+      </div>
+
+      <div class="appbar-right">
+        <!-- Not editing state -->
+        <button *ngIf="!isEditing" class="btn-topbar-edit" (click)="toggleEdit()" title="Edit Order Details">
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <span>Edit</span>
+        </button>
+
+        <!-- Editing state buttons -->
+        <div class="edit-actions" *ngIf="isEditing">
+          <button class="btn-topbar-cancel" (click)="cancelEdit()">Cancel</button>
+          <button class="btn-topbar-save" (click)="saveChanges()">Save</button>
         </div>
       </div>
     </div>
+  </header>
 
-    <div class="items-section">
-      <div class="section-header">
-        <h3>Order Items</h3>
-        <button *ngIf="isEditing" class="add-item-btn" (click)="openItemPopup()">
-          <i class="fas fa-plus"></i> Add Item
-        </button>
-      </div>
-
-      <div class="items-grid">
-        <!-- Top Items -->
-        <div class="category-section" *ngIf="order.tops.length > 0">
-          <h4>Top Items</h4>
-          <div class="items-container">
-            <div *ngFor="let item of order.tops; let i = index" class="item-card">
-              <div class="item-images" *ngIf="item.clothimage || item.designimage">
-                <img *ngIf="item.clothimage" [src]="item.clothimage" alt="Cloth" class="item-image"
-                  (click)="openImagePopup(item.clothimage)">
-                <img *ngIf="item.designimage" [src]="item.designimage" alt="Design" class="item-image"
-                  (click)="openImagePopup(item.designimage)">
-              </div>
-              <div class="item-content">
-                <div class="item-header">
-                  <h5>{{ item.item }}</h5>
-                  <span class="price">{{ item.price | currency }}</span>
-                </div>
-                <div class="item-details">
-                  <div class="detail-row">
-                    <span *ngIf="item.style"><strong>Style:</strong> {{ item.style }}</span>
-                    <span *ngIf="item.sleeve"><strong>Sleeve:</strong> {{ item.sleeve }}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span *ngIf="item.frontneckdesign"><strong>Front Neck:</strong> {{ item.frontneckdesign }}</span>
-                    <span *ngIf="item.backneckdesign"><strong>Back Neck:</strong> {{ item.backneckdesign }}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span *ngIf="item.openingside"><strong>Opening:</strong> {{ item.openingside }}</span>
-                    <span *ngIf="item.inneck"><strong>In Neck:</strong> {{ item.inneck }}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span *ngIf="item.astar"><strong>Astar:</strong> {{ item.astar ? 'Yes' : 'No' }}</span>
-                    <span *ngIf="item.dori"><strong>Dori:</strong> {{ item.dori ? 'Yes' : 'No' }}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span *ngIf="item.backofneck"><strong>Back of Neck:</strong> {{ item.backofneck }}</span>
-                    <span *ngIf="item.detail"><strong>Detail:</strong> {{ item.detail }}</span>
-                  </div>
-                </div>
-                <div class="item-actions">
-                  <button *ngIf="isEditing" class="edit-btn" (click)="editItem('top', i)">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <button *ngIf="isEditing" class="delete-btn" (click)="deleteItem('top', i)">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
-                </div>
-                <button id="print" *ngIf="!isEditing" (click)="printItem(item)">Print</button>
+  <!-- Main View Container -->
+  <main class="main-content">
+    <div class="details-grid">
+      
+      <!-- ================= LEFT COLUMN: Order Summary & Actions ================= -->
+      <aside class="col-summary">
+        <!-- Customer & Branch Card -->
+        <div class="card summary-card">
+          <div class="customer-profile">
+            <div class="avatar-circle">
+              {{ getCustomerInitials() }}
+            </div>
+            <div class="customer-info">
+              <span class="customer-label">Customer</span>
+              <h2 class="customer-name">{{ order.order.customer }}</h2>
+              <div class="customer-phone" *ngIf="order.order.phonenumber">
+                <a [href]="'tel:' + order.order.phonenumber" class="phone-link">
+                  <svg class="i mini" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <span>{{ order.order.phonenumber }}</span>
+                </a>
               </div>
             </div>
           </div>
+
+          <div class="card-divider"></div>
+
+          <!-- Metadata Rows -->
+          <div class="meta-rows">
+            <!-- Branch -->
+            <div class="meta-row">
+              <span class="meta-label">
+                <svg class="i mini" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+                <span>Branch:</span>
+              </span>
+              <div class="meta-val">
+                <input *ngIf="isEditing" type="text" [(ngModel)]="order.order.branchname" class="inline-edit-input" />
+                <span *ngIf="!isEditing" class="branch-tag">{{ order.order.branchname }}</span>
+              </div>
+            </div>
+
+            <!-- Order Date -->
+            <div class="meta-row">
+              <span class="meta-label">
+                <svg class="i mini" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Ordered:</span>
+              </span>
+              <span class="meta-val">{{ order.order.orderdate | date:'mediumDate' }}</span>
+            </div>
+
+            <!-- Delivery Date -->
+            <div class="meta-row">
+              <span class="meta-label">
+                <svg class="i mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Delivery:</span>
+              </span>
+              <div class="meta-val">
+                <input *ngIf="isEditing" type="date" [ngModel]="order.order.deliverydate | date:'yyyy-MM-dd'"
+                  (ngModelChange)="order.order.deliverydate = $event" class="inline-edit-input" />
+                <span *ngIf="!isEditing" [class.overdue-text]="isOverdue()">
+                  {{ order.order.deliverydate | date:'mediumDate' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Status selector if editing -->
+            <div class="meta-row" *ngIf="isEditing">
+              <span class="meta-label">
+                <svg class="i mini" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span>Status:</span>
+              </span>
+              <select [(ngModel)]="order.order.orderstatus" class="inline-edit-select">
+                <option [ngValue]="1">Active</option>
+                <option [ngValue]="2">Completed</option>
+                <option [ngValue]="3">Delivered</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Total Price Banner -->
+          <div class="total-price-banner">
+            <span class="total-title">Total Price</span>
+            <span class="total-figure">{{ order.order.totalprice | currency }}</span>
+          </div>
         </div>
 
-        <!-- Bottom Items -->
-        <div class="category-section" *ngIf="order.bottoms.length > 0">
-          <h4>Bottom Items</h4>
-          <div class="items-container">
-            <div *ngFor="let item of order.bottoms; let i = index" class="item-card">
-              <div class="item-images" *ngIf="item.designimage">
-                <img [src]="item.designimage" alt="Design" class="item-image"
-                  (click)="openImagePopup(item.designimage)">
-              </div>
-              <div class="item-content">
-                <div class="item-header">
-                  <h5>{{ item.item }}</h5>
-                  <span class="price">{{ item.price | currency }}</span>
-                </div>
-                <div class="item-details">
-                  <div class="detail-row">
-                    <span *ngIf="item.style"><strong>Style:</strong> {{ item.style }}</span>
-                    <span *ngIf="item.rubber"><strong>Rubber:</strong> {{ item.rubber }}</span>
-                  </div>
-                  <div class="detail-row">
-                    <span *ngIf="item.pocket"><strong>Pocket:</strong> {{ item.pocket ? 'Yes' : 'No' }}</span>
-                  </div>
-                  <p class="detail-note" *ngIf="item.detail">{{ item.detail }}</p>
-                </div>
-                <div class="item-actions">
-                  <button *ngIf="isEditing" class="edit-btn" (click)="editItem('bottom', i)">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <button *ngIf="isEditing" class="delete-btn" (click)="deleteItem('bottom', i)">
-                    <i class="fas fa-trash"></i> Delete
-                  </button>
-                </div>
-                <button id="print" *ngIf="!isEditing" (click)="printItem(item)">Print</button>
-              </div>
+        <!-- Order Actions Card (Always visible on mobile & desktop) -->
+        <div class="action-card card">
+          <span class="actions-card-title">Order Actions</span>
+          <div class="actions-stack">
+            <!-- Complete Order button -->
+            <button class="btn btn-action-status btn-complete" *ngIf="order.order.orderstatus === 1" (click)="updateOrderStatus(2)">
+              <svg class="i" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Complete Order</span>
+            </button>
+
+            <!-- Deliver Order button -->
+            <button class="btn btn-action-status btn-deliver" *ngIf="order.order.orderstatus === 2" (click)="askForWhatsAppAndUpdateStatus()">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 16 14"/></svg>
+              <span>Deliver Order</span>
+            </button>
+
+            <!-- Delivered notice if order is already delivered -->
+            <div class="delivered-notice" *ngIf="order.order.orderstatus === 3">
+              <svg class="i mini" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Order Delivered</span>
+            </div>
+
+            <div class="actions-grid">
+              <!-- WhatsApp Message Button -->
+              <button class="btn btn-whatsapp" *ngIf="!isEditing" (click)="sendWhatsAppMessage()" title="Send WhatsApp Bill">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp Bill</span>
+              </button>
+
+              <!-- QR Code Button -->
+              <button class="btn btn-qr" *ngIf="!isEditing" (click)="showQRCode()" title="Payment QR Code">
+                <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Payment QR</span>
+              </button>
+            </div>
+
+            <!-- Download PDF Button -->
+            <button class="btn btn-pdf" (click)="downloadPdf(orderId)" title="Download Invoice PDF">
+              <svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              <span>Download Invoice PDF</span>
+            </button>
+
+            <!-- Card actions when editing -->
+            <div class="card-edit-block" *ngIf="isEditing">
+              <button class="btn btn-add-item-card" (click)="openItemPopup()">
+                <svg class="i mini" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <span>Add Garment Item</span>
+              </button>
+              <button class="btn btn-save-card" (click)="saveChanges()">
+                <svg class="i mini" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Save Changes</span>
+              </button>
+              <button class="btn btn-cancel-card" (click)="cancelEdit()">
+                <span>Cancel</span>
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      </aside>
+
+      <!-- ================= RIGHT COLUMN: Items List ================= -->
+      <section class="col-items">
+        <div class="items-header-bar">
+          <div class="items-title-group">
+            <h2 class="items-heading">Order Items</h2>
+            <span class="items-badge">{{ totalItemCount }} {{ totalItemCount === 1 ? 'garment' : 'garments' }}</span>
+          </div>
+
+          <button *ngIf="isEditing" class="btn btn-add-item" (click)="openItemPopup()">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Add Item</span>
+          </button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-items-card" *ngIf="totalItemCount === 0">
+          <svg class="i empty-svg" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="empty-title">No items in this order</span>
+          <p>Click "Add Item" to add garment items to this order.</p>
+        </div>
+
+        <!-- Items Container -->
+        <div class="items-list">
+          
+          <!-- TOP ITEMS -->
+          <div class="garment-group" *ngIf="order.tops.length > 0">
+            <div class="group-title">
+              <span class="group-tag top-tag">Top Garments</span>
+              <span class="group-count">({{ order.tops.length }})</span>
+            </div>
+
+            <div class="garment-cards-grid">
+              <article class="garment-card" *ngFor="let item of order.tops; let i = index">
+                <!-- Card Header -->
+                <div class="garment-card-head">
+                  <div class="garment-title-area">
+                    <span class="tag top-pill">Top</span>
+                    <h3 class="garment-name">{{ item.item }}</h3>
+                  </div>
+                  <div class="garment-price">{{ item.price | currency }}</div>
+                </div>
+
+                <!-- Attached Photos (if any) -->
+                <div class="garment-photos-row" *ngIf="item.clothimage || item.designimage">
+                  <div class="photo-thumb-wrap" *ngIf="item.clothimage" (click)="openImagePopup(item.clothimage)" title="Click to view cloth photo">
+                    <img [src]="item.clothimage" alt="Cloth Reference" class="photo-thumb" />
+                    <span class="photo-label">Cloth</span>
+                  </div>
+                  <div class="photo-thumb-wrap" *ngIf="item.designimage" (click)="openImagePopup(item.designimage)" title="Click to view design photo">
+                    <img [src]="item.designimage" alt="Design Reference" class="photo-thumb" />
+                    <span class="photo-label">Design</span>
+                  </div>
+                </div>
+
+                <!-- Specifications Chips -->
+                <div class="spec-chips-wrap">
+                  <span class="spec-chip" *ngIf="item.style">
+                    <small>Style:</small> <strong>{{ item.style }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.sleeve">
+                    <small>Sleeve:</small> <strong>{{ item.sleeve }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.frontneckdesign">
+                    <small>Front Neck:</small> <strong>{{ item.frontneckdesign }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.backneckdesign">
+                    <small>Back Neck:</small> <strong>{{ item.backneckdesign }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.openingside">
+                    <small>Opening:</small> <strong>{{ item.openingside }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.inneck">
+                    <small>In Neck:</small> <strong>{{ item.inneck }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.backofneck">
+                    <small>Neck Depth:</small> <strong>{{ item.backofneck }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.astar !== undefined">
+                    <small>Lining:</small> <strong>{{ item.astar ? 'Yes' : 'No' }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.dori !== undefined">
+                    <small>Dori:</small> <strong>{{ item.dori ? 'Yes' : 'No' }}</strong>
+                  </span>
+                </div>
+
+                <!-- Detail notes if provided -->
+                <div class="detail-note-box" *ngIf="item.detail">
+                  <svg class="i mini note-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>{{ item.detail }}</span>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="garment-card-footer">
+                  <button type="button" class="btn-item-print" *ngIf="!isEditing" (click)="printItem(item)">
+                    <svg class="i mini" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    <span>Print Slip</span>
+                  </button>
+
+                  <div class="card-edit-actions" *ngIf="isEditing">
+                    <button type="button" class="btn-card-edit" (click)="editItem('top', i)">
+                      <svg class="i mini" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                      <span>Edit</span>
+                    </button>
+                    <button type="button" class="btn-card-delete" (click)="deleteItem('top', i)">
+                      <svg class="i mini" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- BOTTOM ITEMS -->
+          <div class="garment-group" *ngIf="order.bottoms.length > 0">
+            <div class="group-title">
+              <span class="group-tag bottom-tag">Bottom Garments</span>
+              <span class="group-count">({{ order.bottoms.length }})</span>
+            </div>
+
+            <div class="garment-cards-grid">
+              <article class="garment-card" *ngFor="let item of order.bottoms; let i = index">
+                <!-- Card Header -->
+                <div class="garment-card-head">
+                  <div class="garment-title-area">
+                    <span class="tag bottom-pill">Bottom</span>
+                    <h3 class="garment-name">{{ item.item }}</h3>
+                  </div>
+                  <div class="garment-price">{{ item.price | currency }}</div>
+                </div>
+
+                <!-- Attached Photos (if any) -->
+                <div class="garment-photos-row" *ngIf="item.designimage">
+                  <div class="photo-thumb-wrap" (click)="openImagePopup(item.designimage)" title="Click to view design photo">
+                    <img [src]="item.designimage" alt="Design Reference" class="photo-thumb" />
+                    <span class="photo-label">Design</span>
+                  </div>
+                </div>
+
+                <!-- Specifications Chips -->
+                <div class="spec-chips-wrap">
+                  <span class="spec-chip" *ngIf="item.style">
+                    <small>Style:</small> <strong>{{ item.style }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.rubber">
+                    <small>Waist:</small> <strong>{{ item.rubber }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.pocket !== undefined">
+                    <small>Pocket:</small> <strong>{{ item.pocket ? 'Yes' : 'No' }}</strong>
+                  </span>
+                </div>
+
+                <!-- Detail notes if provided -->
+                <div class="detail-note-box" *ngIf="item.detail">
+                  <svg class="i mini note-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>{{ item.detail }}</span>
+                </div>
+
+                <!-- Card Footer Actions -->
+                <div class="garment-card-footer">
+                  <button type="button" class="btn-item-print" *ngIf="!isEditing" (click)="printItem(item)">
+                    <svg class="i mini" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    <span>Print Slip</span>
+                  </button>
+
+                  <div class="card-edit-actions" *ngIf="isEditing">
+                    <button type="button" class="btn-card-edit" (click)="editItem('bottom', i)">
+                      <svg class="i mini" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                      <span>Edit</span>
+                    </button>
+                    <button type="button" class="btn-card-delete" (click)="deleteItem('bottom', i)">
+                      <svg class="i mini" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v5M14 11v5"/></svg>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </div>
-  </div>
+  </main>
 
-  <div class="order-actions">
-    <button class="complete-btn" *ngIf="order.order.orderstatus === 1" (click)="updateOrderStatus(2)">
-      <i class="fas fa-check-circle"></i> Complete Order
-    </button>
-    <button class="complete-btn" *ngIf="order.order.orderstatus === 2" (click)="askForWhatsAppAndUpdateStatus()">
-      <i class="fas fa-check-circle"></i> Deliver Order
-    </button>
-    <button class="whatsapp-btn" *ngIf="(order.order.orderstatus === 2 || order.order.orderstatus === 3) && !isEditing"
-      (click)="sendWhatsAppMessage()">
-      <i class="fab fa-whatsapp"></i> Send WhatsApp Message
-    </button>
-    <button class="qr-code-btn" *ngIf="!isEditing" (click)="showQRCode()">
-      <i class="fas fa-qrcode"></i> Generate Payment QR
-    </button>
-    <button class="download-pdf-btn" (click)="downloadPdf(order.order.id)">
-      <i class="fas fa-file-pdf"></i> Download PDF
-    </button>
-  </div>
-
+  <!-- Add Item Dialog Popup -->
   <app-add-item-dialog *ngIf="showItemDialog" [itemType]="editingItemType" [itemData]="editingItemData"
     (closeDialog)="closeItemDialog()" (saveItem)="onItemSaved($event)">
   </app-add-item-dialog>
 
-  <!-- QR Code Dialog -->
-  <div class="dialog-overlay qr-overlay" *ngIf="showQRDialog">
-    <div class="dialog-content qr-dialog">
-      <div class="dialog-header">
-        <h3>Payment QR Code</h3>
-        <button class="close-btn" (click)="closeQRDialog()">&times;</button>
+  <!-- Payment QR Code Modal -->
+  <div class="dialog-overlay" *ngIf="showQRDialog" (click)="closeQRDialog()">
+    <div class="dialog-content qr-modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <svg class="i modal-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <h3>UPI Payment QR</h3>
+        </div>
+        <button class="modal-close-btn" (click)="closeQRDialog()">&times;</button>
       </div>
-      <div class="dialog-body qr-body">
-        <img [src]="qrCodeUrl" alt="Payment QR Code" class="qr-image" *ngIf="qrCodeUrl">
+
+      <div class="qr-modal-body">
+        <div class="qr-image-frame" *ngIf="qrCodeUrl">
+          <img [src]="qrCodeUrl" alt="Payment QR Code" class="qr-image">
+        </div>
+        <div class="qr-info">
+          <span class="qr-amount">{{ order.order.totalprice | currency }}</span>
+          <span class="qr-hint">Scan with any UPI app (GPay, PhonePe, Paytm)</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- WhatsApp Confirmation Dialog -->
-  <div class="dialog-overlay" *ngIf="showWhatsAppDialog">
-    <div class="dialog-content whatsapp-dialog">
-      <div class="dialog-header">
-        <h3>Send WhatsApp Message</h3>
-        <button class="close-btn" (click)="closeWhatsAppDialog(false)">&times;</button>
+  <!-- WhatsApp Confirmation Modal -->
+  <div class="dialog-overlay" *ngIf="showWhatsAppDialog" (click)="closeWhatsAppDialog(false)">
+    <div class="dialog-content whatsapp-modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title-wrap">
+          <i class="fab fa-whatsapp modal-icon-wa"></i>
+          <h3>Send WhatsApp Update?</h3>
+        </div>
+        <button class="modal-close-btn" (click)="closeWhatsAppDialog(false)">&times;</button>
       </div>
-      <div class="dialog-body">
-        <p>Would you like to send a WhatsApp message to notify the customer?</p>
+      <div class="modal-body-text">
+        <p>The order is being marked as <strong>Delivered</strong>. Would you like to automatically send the delivery confirmation & bill to <strong>{{ order.order.customer }}</strong> on WhatsApp?</p>
       </div>
-      <div class="dialog-footer">
-        <button class="btn-secondary" (click)="closeWhatsAppDialog(false)">No</button>
-        <button class="btn-primary" (click)="closeWhatsAppDialog(true)">Yes</button>
+      <div class="modal-actions-row">
+        <button class="btn btn-ghost" (click)="closeWhatsAppDialog(false)">No, just update</button>
+        <button class="btn btn-wa-send" (click)="closeWhatsAppDialog(true)">
+          <i class="fab fa-whatsapp"></i>
+          <span>Yes, send bill</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Image Popup -->
-  <div class="image-popup-overlay" *ngIf="showImagePopup">
-    <div class="image-popup-content">
+  <!-- Fullscreen Image Popup -->
+  <div class="image-popup-overlay" *ngIf="showImagePopup" (click)="closeImagePopup()">
+    <div class="image-popup-content" (click)="$event.stopPropagation()">
       <button class="image-popup-close-btn" (click)="closeImagePopup()">&times;</button>
       <img [src]="popupImageUrl" alt="Preview" class="popup-image">
     </div>
