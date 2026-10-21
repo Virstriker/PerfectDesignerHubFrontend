@@ -89,7 +89,7 @@
   justify-content: center;
   align-items: center;
   position: fixed;
-  z-index: 1000;
+  z-index: 1200;
   left: 0;
   top: 0;
   width: 100%;
@@ -220,6 +220,10 @@ textarea.is-invalid {
 }
 
   @media (max-width: 768px) {
+    .customer-management-container {
+      padding-bottom: 24px;
+    }
+
     .search-add-container {
       flex-direction: column;
       align-items: stretch;
@@ -240,3 +244,22 @@ textarea.is-invalid {
     }
   }
   
+/* Customer ID badge */
+.cid-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #edf2f7;
+  color: #4a5568;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: #718096;
+  font-size: 15px;
+}

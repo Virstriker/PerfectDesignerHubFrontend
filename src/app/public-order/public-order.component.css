@@ -1,0 +1,114 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #2d3748;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 18px;
+  background: #f8fafc;
+}
+
+.gate-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(45, 55, 72, .06), 0 8px 28px rgba(45, 55, 72, .08);
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.brand {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #718096;
+}
+
+h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.sub { margin: 0 0 8px; color: #718096; font-size: 14px; line-height: 1.5; }
+
+label { font-size: 13px; font-weight: 600; margin-top: 6px; }
+
+.control {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 16px;
+  color: inherit;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+.control:focus { outline: none; border-color: #2d3748; box-shadow: 0 0 0 3px rgba(45, 55, 72, .14); }
+
+.err { font-size: 12.5px; color: #c53030; }
+
+.btn {
+  height: 50px;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1.5px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn.primary { background: #2d3748; color: #ffffff; }
+.btn.primary:disabled { opacity: .55; cursor: not-allowed; }
+.btn.ghost { background: #ffffff; color: #2d3748; border-color: #cbd5e0; }
+
+.greeting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13.5px;
+  color: #4a5568;
+}
+.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #2b6cb0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.done { text-align: center; align-items: center; }
+.tick {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #d1fae5;
+  display: grid;
+  place-items: center;
+  margin-bottom: 4px;
+}
+.tick svg {
+  width: 28px;
+  height: 28px;
+  stroke: #065f46;
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.done .btn { width: 100%; }

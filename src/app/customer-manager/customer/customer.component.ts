@@ -31,6 +31,7 @@ export class CustomerComponent implements OnInit {
   errors: any = {};
   showModal = false;
   searchTerm: string = '';
+  private searchDebounceTimer: any = null;
 
   constructor(private router: Router,private customerService:CustomerServiceService) {}
 
@@ -65,26 +66,50 @@ export class CustomerComponent implements OnInit {
     });
   }
 
-  onSearchEmpty(){
-    if(this.searchTerm === ''){
-      this.getAllCustomers();
+  onSearchInput() {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
     }
+    const term = this.searchTerm?.trim() || '';
+    if (!term) {
+      this.filteredCustomers = this.customers;
+      return;
+    }
+    // Delay search by 1 second after user stops typing
+    this.searchDebounceTimer = setTimeout(() => {
+      this.performSearch(term);
+    }, 1000);
   }
 
-  searchCustomer(){
-    if(this.searchTerm === ''){
-      alert("Enter name");
-    }else{
-      this.customerService.searchCustomer(this.searchTerm).subscribe({
-        next: (response:ResponseDto) =>{
-          if(response.isSuccess){
-            this.filteredCustomers = response.responseObject;
-          }else{
-            alert("No customer found");
-          }
-        }
-      });
+  onSearchEnter() {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
     }
+    const term = this.searchTerm?.trim() || '';
+    if (!term) {
+      this.filteredCustomers = this.customers;
+      return;
+    }
+    this.performSearch(term);
+  }
+
+  searchCustomer() {
+    this.onSearchEnter();
+  }
+
+  performSearch(term: string) {
+    this.customerService.searchCustomer(term).subscribe({
+      next: (response: ResponseDto) => {
+        if (response.isSuccess && Array.isArray(response.responseObject)) {
+          this.filteredCustomers = response.responseObject;
+        } else {
+          this.filteredCustomers = [];
+        }
+      },
+      error: () => {
+        this.filteredCustomers = [];
+      }
+    });
   }
 
   goToCustomerInfo(customerId:number){

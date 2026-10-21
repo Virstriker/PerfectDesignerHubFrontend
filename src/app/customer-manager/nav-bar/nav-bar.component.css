@@ -107,7 +107,7 @@
     background-color: #2d3748;
     border-top: 1px solid #4a5568;
     z-index: 1000;
-    padding: 6px 0 10px;
+    padding: 6px 0 calc(10px + env(safe-area-inset-bottom, 0px));
     justify-content: space-around;
     align-items: center;
   }

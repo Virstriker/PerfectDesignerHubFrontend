@@ -2,8 +2,8 @@
 <div class="customer-management-container">
     <div class="search-add-container">
       <div class="search-bar">
-        <input type="text" placeholder="Search customers..." [(ngModel)]="searchTerm" (keyup)="onSearchEmpty()">
-        <img src="../../../assets/search.png" alt="Search" class="search-icon" (click)="searchCustomer()">
+        <input type="text" placeholder="Search customers..." [(ngModel)]="searchTerm" (input)="onSearchInput()" (keyup.enter)="onSearchEnter()">
+        <img src="../../../assets/search.png" alt="Search" class="search-icon" (click)="onSearchEnter()">
       </div>
       <button class="add-customer-btn" (click)="toggleModal()">
         Add Customer
@@ -14,6 +14,10 @@
       <div *ngFor="let customer of filteredCustomers" class="customer-card" (click)="goToCustomerInfo(customer.id)">
         <h3>{{ customer.name +" "+customer.surname}}</h3>
         <p>{{ customer.phonenumber }}</p>
+        <span class="cid-badge">ID: {{ customer.id }}</span>
+      </div>
+      <div *ngIf="filteredCustomers.length === 0 && !loading" class="empty-state">
+        <p>No customers found</p>
       </div>
     </div>
   </div>

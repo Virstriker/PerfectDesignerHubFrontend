@@ -1,0 +1,48 @@
+:host { display: block; background: #f8fafc; min-height: 100vh; color: #2d3748;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+svg.i { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 18px;
+  background: #ffffff; border-bottom: 1px solid #e2e8f0;
+}
+.topbar h1 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.topbar .count { margin-left: auto; font-size: 13px; font-weight: 600; color: #718096; }
+.icon-btn { width: 38px; height: 38px; border: 0; background: transparent; border-radius: 10px;
+  display: grid; place-items: center; color: #2d3748; cursor: pointer; }
+.icon-btn:hover { background: #f1f5f9; }
+
+.list {
+  max-width: 760px; margin: 0 auto; padding: 18px 14px calc(80px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.card {
+  background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px;
+  padding: 14px 16px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .15s, box-shadow .15s, transform .12s;
+}
+.card:hover { border-color: #a0aec0; box-shadow: 0 4px 12px rgba(45, 55, 72, .07); transform: translateY(-1px); }
+.card:active { transform: scale(.99); }
+
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cid { font-weight: 800; font-size: 14px; }
+.pill {
+  padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
+  background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+}
+.cust { margin: 0; font-size: 17px; font-weight: 700; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: #718096; }
+.review { display: inline-flex; align-items: center; gap: 4px; align-self: flex-end;
+  font-size: 13px; font-weight: 600; color: #2b6cb0; }
+
+.empty {
+  text-align: center; padding: 48px 20px; background: #ffffff;
+  border: 1.5px dashed #e2e8f0; border-radius: 16px; color: #718096;
+}
+.empty strong { display: block; color: #2d3748; font-size: 16px; margin-bottom: 4px; }
+.empty p { margin: 0; font-size: 13.5px; }

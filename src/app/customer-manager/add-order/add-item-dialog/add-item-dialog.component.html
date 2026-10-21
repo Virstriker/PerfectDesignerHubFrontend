@@ -417,12 +417,12 @@
         <!-- Step 10: Price & Photos -->
         <div *ngIf="currentStep === 10" class="step-view">
           <div class="step-header">
-            <h3 class="step-question">Price & Reference Photos</h3>
-            <p class="step-subtext">Enter stitching price and upload cloth/design photos</p>
+            <h3 class="step-question">{{ showPrice ? 'Price & Reference Photos' : 'Reference Photos' }}</h3>
+            <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload cloth/design photos' : 'Photo upload is currently unavailable' }}</p>
           </div>
 
           <!-- Price Input Box -->
-          <div class="price-section">
+          <div class="price-section" *ngIf="showPrice">
             <label class="section-label"><i class="fa-solid fa-indian-rupee-sign"></i> Item Price (₹)</label>
             <div class="price-input-wrapper">
               <span class="currency-tag">₹</span>
@@ -470,8 +470,8 @@
               </div>
 
               <div class="upload-dropzone" *ngIf="!topForm.clothimage">
-                <label class="upload-label">
-                  <input type="file" (change)="onClothImageUpload($event)" accept="image/*" class="file-hidden" />
+                <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
+                  <input type="file" (change)="onClothImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingCloth">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Cloth Photo</span>
@@ -505,8 +505,8 @@
               </div>
 
               <div class="upload-dropzone" *ngIf="!topForm.designimage">
-                <label class="upload-label">
-                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" />
+                <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
+                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingDesign">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Design Photo</span>
@@ -596,7 +596,7 @@
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item full-width price-highlight" (click)="goToStep(10)">
+            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStep(10)">
               <span class="review-label">Total Item Price:</span>
               <span class="review-val price-val">₹{{ topForm.price || 0 }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
@@ -767,12 +767,12 @@
         <!-- Step 5: Price & Design Photo -->
         <div *ngIf="currentStep === 5" class="step-view">
           <div class="step-header">
-            <h3 class="step-question">Price & Reference Photo</h3>
-            <p class="step-subtext">Enter stitching price and upload design reference photo</p>
+            <h3 class="step-question">{{ showPrice ? 'Price & Reference Photo' : 'Reference Photo' }}</h3>
+            <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload design reference photo' : 'Photo upload is currently unavailable' }}</p>
           </div>
 
           <!-- Price Input Box -->
-          <div class="price-section">
+          <div class="price-section" *ngIf="showPrice">
             <label class="section-label"><i class="fa-solid fa-indian-rupee-sign"></i> Item Price (₹)</label>
             <div class="price-input-wrapper">
               <span class="currency-tag">₹</span>
@@ -819,8 +819,8 @@
               </div>
 
               <div class="upload-dropzone" *ngIf="!bottomForm.designimage">
-                <label class="upload-label">
-                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" />
+                <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
+                  <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingDesign">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Design Photo</span>
@@ -874,7 +874,7 @@
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item full-width price-highlight" (click)="goToStep(5)">
+            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStep(5)">
               <span class="review-label">Total Item Price:</span>
               <span class="review-val price-val">₹{{ bottomForm.price || 0 }}</span>
               <i class="fa-solid fa-pen review-edit"></i>

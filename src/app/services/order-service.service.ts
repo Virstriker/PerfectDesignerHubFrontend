@@ -57,6 +57,36 @@ export class OrderServiceService {
     const url = this.baseOrderUrl;
     return this.http.post<ResponseDto>(url, order,{ headers: this.getAuthHeaders() });
   }
+  // ---------- Public (no auth) ----------
+  verifyPublicCustomer(id: number): Observable<ResponseDto> {
+    return this.http.get<ResponseDto>(this.constant.pdfUrl + 'public/customers/' + id);
+  }
+
+  submitPublicOrder(payload: any): Observable<ResponseDto> {
+    return this.http.post<ResponseDto>(this.constant.pdfUrl + 'public/orders', payload);
+  }
+
+  // ---------- Approvals (admin) ----------
+  getPendingOrders(): Observable<ResponseDto> {
+    return this.http.get<ResponseDto>(this.constant.pdfUrl + 'pending-orders', { headers: this.getAuthHeaders() });
+  }
+
+  getPendingCount(): Observable<ResponseDto> {
+    return this.http.get<ResponseDto>(this.constant.pdfUrl + 'pending-orders/count', { headers: this.getAuthHeaders() });
+  }
+
+  getPendingOrder(id: number): Observable<ResponseDto> {
+    return this.http.get<ResponseDto>(this.constant.pdfUrl + 'pending-orders/' + id, { headers: this.getAuthHeaders() });
+  }
+
+  approvePendingOrder(id: number, order: any): Observable<ResponseDto> {
+    return this.http.post<ResponseDto>(this.constant.pdfUrl + 'pending-orders/' + id + '/approve', order, { headers: this.getAuthHeaders() });
+  }
+
+  rejectPendingOrder(id: number): Observable<ResponseDto> {
+    return this.http.post<ResponseDto>(this.constant.pdfUrl + 'pending-orders/' + id + '/reject', {}, { headers: this.getAuthHeaders() });
+  }
+
   getFilterOrders(order: any): Observable<ResponseDto> {
     const url = this.baseOrderUrl + "/date-range";
     const options = {

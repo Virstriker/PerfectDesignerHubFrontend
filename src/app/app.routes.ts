@@ -13,9 +13,13 @@ import { OrderNotificationComponent } from './customer-manager/order-notificatio
 import { DailyOrderComponent } from './customer-manager/daily-order/daily-order.component';
 import { DailyWorkComponent } from './customer-manager/daily-work/daily-work.component';
 import { CustomerAddComponent } from './customer-add/customer-add.component';
+import { PublicOrderComponent } from './public-order/public-order.component';
+import { ApprovalsComponent } from './customer-manager/approvals/approvals.component';
+import { ApprovalDetailComponent } from './customer-manager/approvals/approval-detail.component';
 
 export const routes: Routes = [
     {path: 'customer-add',component: CustomerAddComponent},
+    {path: 'place-order',component: PublicOrderComponent},
     {path:'',component:SiteHomePageComponent},
     {path:'login',component:LoginComponent},
     {path:'customer-manager',component:CustomerManagerComponent,children:[
@@ -24,6 +28,8 @@ export const routes: Routes = [
         {path:'order',component:OrderComponent},
         {path:'order-info/:id',component:OrderDetailsComponent},
         {path:'add-order',component:AddOrderComponent},
+        {path:'approvals',component:ApprovalsComponent},
+        {path:'approvals/:id',component:ApprovalDetailComponent},
         {path:'measurement',component:MeasurementComponent},
         {path:'measurement-detail/:id',component:MeasurementDetailComponent},
         {path:'notification',component:OrderNotificationComponent},

@@ -1,0 +1,59 @@
+<!-- Step 1: Customer ID -->
+<div class="gate" *ngIf="step === 'id'">
+  <div class="gate-card">
+    <div class="brand">Perfect</div>
+    <h1>Place your order</h1>
+    <p class="sub">Enter the Customer ID the shop gave you to get started.</p>
+
+    <label for="cid">Customer ID</label>
+    <input
+      id="cid"
+      class="control"
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      placeholder="e.g. 123"
+      [(ngModel)]="customerIdInput"
+      (keyup.enter)="verify()"
+      autocomplete="off"
+    />
+    <div class="err" *ngIf="idError">{{ idError }}</div>
+
+    <button type="button" class="btn primary" (click)="verify()" [disabled]="verifying || !customerIdInput">
+      {{ verifying ? 'Checking...' : 'Continue' }}
+    </button>
+  </div>
+</div>
+
+<!-- Step 2: Items (shared order form, customer mode) -->
+<ng-container *ngIf="step === 'form'">
+  <div class="greeting">
+    <span>Hi <strong>{{ customerName }}</strong>, add the items you want stitched.</span>
+    <button type="button" class="link" (click)="changeCustomer()">Not you?</button>
+  </div>
+  <app-order-form
+    title="Add order"
+    submitLabel="Send order"
+    busyLabel="Sending order..."
+    [showBack]="false"
+    [showCustomerSelect]="false"
+    [showBranch]="false"
+    [showDeliveryDate]="false"
+    [showPrice]="false"
+    [customerId]="customerId"
+    [busy]="submitting"
+    (submitted)="onSubmitted($event)">
+  </app-order-form>
+</ng-container>
+
+<!-- Step 3: Done -->
+<div class="gate" *ngIf="step === 'done'">
+  <div class="gate-card done">
+    <div class="tick">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1>Order sent</h1>
+    <p class="sub">Thank you! The shop will review your order and get in touch with the delivery date and amount.</p>
+    <button type="button" class="btn ghost" (click)="addAnother()">Add another order</button>
+  </div>
+</div>

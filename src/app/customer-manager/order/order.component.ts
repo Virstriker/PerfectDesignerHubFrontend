@@ -24,11 +24,26 @@ export class OrderComponent implements OnInit {
   totalPrice: number = 0;
   loading: boolean = true;
   lastFilter: string = 'today';
+  pendingCount: number = 0;
 
   constructor(private orderService: OrderServiceService, private route: Router) { }
 
   ngOnInit(): void {
+    this.loadPendingCount();
     this.applyFilters();
+  }
+
+  loadPendingCount() {
+    this.orderService.getPendingCount().subscribe({
+      next: (response: ResponseDto) => {
+        this.pendingCount = response.isSuccess ? Number(response.responseObject) || 0 : 0;
+      },
+      error: () => { this.pendingCount = 0; }
+    });
+  }
+
+  goToApprovals() {
+    this.route.navigateByUrl("/customer-manager/approvals");
   }
 
   searchOrder() {

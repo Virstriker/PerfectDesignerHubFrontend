@@ -1,0 +1,32 @@
+<app-loader-component [isLoading]="loading"></app-loader-component>
+
+<div class="approvals-page">
+  <header class="topbar">
+    <button class="icon-btn" type="button" aria-label="Go back" (click)="goBack()">
+      <svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Approvals</h1>
+    <span class="count" *ngIf="!loading">{{ pending.length }} pending</span>
+  </header>
+
+  <main class="list">
+    <article class="card" *ngFor="let p of pending" (click)="open(p.id)">
+      <div class="card-top">
+        <span class="cid">Request #{{ p.id }}</span>
+        <span class="pill">Awaiting approval</span>
+      </div>
+      <h3 class="cust">{{ p.customer }}</h3>
+      <div class="meta">
+        <span *ngIf="p.phonenumber">{{ p.phonenumber }}</span>
+        <span>{{ p.itemcount }} {{ p.itemcount === 1 ? 'item' : 'items' }}</span>
+        <span>{{ p.createdat | date:'medium' }}</span>
+      </div>
+      <div class="review">Review <svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+    </article>
+
+    <div class="empty" *ngIf="!loading && pending.length === 0">
+      <strong>No orders waiting</strong>
+      <p>Orders added by customers will show up here for approval.</p>
+    </div>
+  </main>
+</div>

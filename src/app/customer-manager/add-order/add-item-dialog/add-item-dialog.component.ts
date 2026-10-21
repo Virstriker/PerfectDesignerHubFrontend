@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TopItem, BottomItem } from '../../../interfaces/order';
 import { OrderServiceService } from '../../../services/order-service.service';
+import { FEATURES } from '../../../constants/feature-flags';
 
 export interface StepMeta {
   index: number;
@@ -22,6 +23,10 @@ export interface StepMeta {
 export class AddItemDialogComponent implements OnChanges {
   @Input() itemType: 'top' | 'bottom' | null = null;
   @Input() itemData: TopItem | BottomItem | null = null;
+  /** Hide the amount/price field (e.g. on the public customer page). */
+  @Input() showPrice = true;
+  /** Controlled globally from constants/feature-flags.ts */
+  readonly photoUploadEnabled = FEATURES.photoUpload;
   @Output() closeDialog = new EventEmitter<void>();
   @Output() saveItem = new EventEmitter<{ type: string; item: TopItem | BottomItem }>();
 
@@ -148,7 +153,11 @@ export class AddItemDialogComponent implements OnChanges {
         icon: 'fa-tags'
       };
     }
-    return this.currentSteps.find(s => s.index === this.currentStep) || null;
+    const meta = this.currentSteps.find(s => s.index === this.currentStep) || null;
+    if (meta && !this.showPrice && meta.title.startsWith('Price')) {
+      return { ...meta, title: 'Reference Photos', subtitle: 'Photo upload is currently unavailable', shortLabel: 'Photos', icon: 'fa-camera' };
+    }
+    return meta;
   }
 
   get progressPercent(): number {

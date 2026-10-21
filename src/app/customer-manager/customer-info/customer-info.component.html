@@ -1,51 +1,147 @@
-  <app-loader-component [isLoading]="loading"></app-loader-component>
-<div class="customer-details-container">
-  <div class="header-container">
-    <h2>Customer Details</h2>
-    <a class="back-link" (click)="goBack()">Back</a>
-  </div>
-  <div class="customer-info">
-    <div class="info-item">
-      <label>Name:</label>
-      <input type="text" class="customer-input" [(ngModel)]="customer.name" [disabled]="edit"/>
-    </div>
-    <div class="info-item">
-      <label>Surname:</label>
-      <input type="text" class="customer-input" [(ngModel)]="customer.surname" [disabled]="edit"/>
-    </div>
-    <div class="info-item">
-      <label>Phone Number:</label>
-      <div class="phone-input-container">
-        <input type="text" class="customer-input" [(ngModel)]="customer.phonenumber" [disabled]="edit"/>
-        <a [href]="'tel:+91' + customer.phonenumber" class="phone-icon">
-          <img src="../../../assets/call.png" alt="Call" title="Call customer">
-        </a>
+<app-loader-component [isLoading]="loading"></app-loader-component>
+
+<div class="customer-page" *ngIf="!loading">
+
+  <!-- Top App Bar -->
+  <header class="appbar">
+    <div class="appbar-inner">
+      <div class="appbar-left">
+        <button class="icon-btn" type="button" aria-label="Go back" (click)="goBack()">
+          <svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <h1 class="appbar-title">Customer Profile</h1>
+      </div>
+
+      <div class="appbar-right">
+        <button class="btn-topbar-edit" id="EditCustomer" (click)="editCustomer()">
+          <svg class="i" viewBox="0 0 24 24" *ngIf="edit"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          <svg class="i" viewBox="0 0 24 24" *ngIf="!edit"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>{{ edit ? 'Edit' : 'Save' }}</span>
+        </button>
       </div>
     </div>
-    <div class="info-item">
-      <label>Address:</label>
-      <input type="text" class="customer-input" [(ngModel)]="customer.address" [disabled]="edit"/>
-    </div>
-  </div>
-  
-    <button class="see-measurement-btn edit-btn" id="EditCustomer" (click)="editCustomer()">Edit Customer</button>
-    <button class="see-measurement-btn" (click)="goToMeasurment()">See Measurement</button>
-  
-    <h3 class="order-detail">Order Details</h3>
-    <div class="order-cards-container">
-      <div class="order-card" (click)="goToOrder(order.id)" *ngFor="let order of customerOrders">
-        <div class="order-card-header">
-          <h4>Order #{{order.id}}</h4>
-          <div class="order-status" [ngClass]="order.orderstatus == 1 ? 'active' : order.orderstatus == 2 ? 'complete' : 'delivered'">
-            {{ order.orderstatus == 1 ? 'Active' : order.orderstatus == 2 ? 'Complete' : 'Delivered' }}
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Customer Profile Card -->
+    <div class="card profile-card">
+      <!-- Avatar + Name -->
+      <div class="profile-header">
+        <div class="avatar-circle">
+          {{ (customer.name || '?').charAt(0).toUpperCase() }}{{ (customer.surname || '').charAt(0).toUpperCase() }}
+        </div>
+        <div class="profile-headline">
+          <span class="profile-label">Customer</span>
+          <h2 class="profile-name">{{ customer.name }} {{ customer.surname }}</h2>
+          <span class="id-chip">Customer ID: {{ customer.id }}</span>
+          <a [href]="'tel:+91' + customer.phonenumber" class="phone-link" *ngIf="customer.phonenumber">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            {{ customer.phonenumber }}
+          </a>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <!-- Editable Fields -->
+      <div class="fields-grid">
+        <div class="field-row">
+          <label class="field-label">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            First Name
+          </label>
+          <div class="field-val">
+            <input *ngIf="!edit" type="text" class="edit-input" [(ngModel)]="customer.name" placeholder="First name" />
+            <span *ngIf="edit">{{ customer.name || '—' }}</span>
           </div>
         </div>
-        
-        <div class="order-dates">
-          <p><strong>Order Date:</strong> {{order.orderdate.split("T")[0]}}</p>
-          <p><strong>Delivery Date:</strong> {{order.deliverydate.split("T")[0]}}</p>
+
+        <div class="field-row">
+          <label class="field-label">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Surname
+          </label>
+          <div class="field-val">
+            <input *ngIf="!edit" type="text" class="edit-input" [(ngModel)]="customer.surname" placeholder="Surname" />
+            <span *ngIf="edit">{{ customer.surname || '—' }}</span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Phone
+          </label>
+          <div class="field-val phone-field-val">
+            <input *ngIf="!edit" type="text" class="edit-input" [(ngModel)]="customer.phonenumber" placeholder="Phone number" />
+            <span *ngIf="edit">{{ customer.phonenumber || '—' }}</span>
+            <a [href]="'tel:+91' + customer.phonenumber" class="call-btn" *ngIf="edit && customer.phonenumber" title="Call customer">
+              <svg class="i mini" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <label class="field-label">
+            <svg class="i mini" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            Address
+          </label>
+          <div class="field-val">
+            <input *ngIf="!edit" type="text" class="edit-input" [(ngModel)]="customer.address" placeholder="Address" />
+            <span *ngIf="edit">{{ customer.address || '—' }}</span>
+          </div>
         </div>
       </div>
     </div>
-    
-  </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="btn btn-measurement" (click)="goToMeasurment()">
+        <svg class="i" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20"/><path d="M5 5l1.5 1.5M19 5l-1.5 1.5M5 19l1.5-1.5M19 19l-1.5-1.5"/></svg>
+        <span>Measurements</span>
+      </button>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="orders-section">
+      <div class="section-header">
+        <h2 class="section-title">Order History</h2>
+        <span class="orders-count-badge">{{ customerOrders.length }} {{ customerOrders.length === 1 ? 'order' : 'orders' }}</span>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-orders" *ngIf="customerOrders.length === 0">
+        <svg class="i empty-icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <p>No orders found for this customer.</p>
+      </div>
+
+      <!-- Order Cards -->
+      <div class="order-list">
+        <div class="order-card" *ngFor="let order of customerOrders" (click)="goToOrder(order.id)">
+          <div class="order-card-left">
+            <div class="order-id">#{{ order.id }}</div>
+            <div class="order-meta">
+              <div class="meta-item">
+                <svg class="i mini" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>{{ order.orderdate.split('T')[0] }}</span>
+              </div>
+              <div class="meta-item">
+                <svg class="i mini" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>{{ order.deliverydate.split('T')[0] }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="order-card-right">
+            <span class="status-pill" [ngClass]="order.orderstatus == 1 ? 's-active' : order.orderstatus == 2 ? 's-completed' : 's-delivered'">
+              {{ order.orderstatus == 1 ? 'Active' : order.orderstatus == 2 ? 'Completed' : 'Delivered' }}
+            </span>
+            <svg class="i chevron-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>

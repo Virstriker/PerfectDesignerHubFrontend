@@ -1,18 +1,18 @@
 <div class="add-order-app">
   <!-- Top Bar -->
   <header class="topbar">
-    <button class="icon-btn" type="button" aria-label="Go back" (click)="goBack()" title="Back to orders">
+    <button *ngIf="showBack" class="icon-btn" type="button" aria-label="Go back" (click)="goBack()" title="Back">
       <svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <h1>Add order</h1>
+    <h1>{{ title }}</h1>
   </header>
 
   <!-- Main Content (2-column on desktop, 1-column on mobile) -->
-  <main class="form-view">
+  <main class="form-view" [class.single]="!hasDetailsColumn">
     <!-- Column 1: Order Details -->
-    <div class="col col-details">
-      <!-- Customer Field -->
-      <div class="field" id="customerField">
+    <div class="col col-details" *ngIf="hasDetailsColumn">
+      <!-- Customer picker (admin add order) -->
+      <div class="field" id="customerField" *ngIf="showCustomerSelect">
         <label id="customerLabel">Customer</label>
         <button
           type="button"
@@ -59,14 +59,20 @@
         </div>
       </div>
 
+      <!-- Fixed customer (approval page) -->
+      <div class="field" *ngIf="!showCustomerSelect && fixedCustomerName">
+        <label for="fixedCustomer">Customer</label>
+        <input class="control" id="fixedCustomer" type="text" [value]="fixedCustomerName" disabled />
+      </div>
+
       <!-- Branch Field -->
-      <div class="field">
+      <div class="field" *ngIf="showBranch">
         <label for="branch">Branch name</label>
         <input class="control" id="branch" type="text" [(ngModel)]="order.order.branchname" disabled />
       </div>
 
       <!-- Delivery Date Field -->
-      <div class="field">
+      <div class="field" *ngIf="showDeliveryDate">
         <label for="deliveryDate">Delivery date</label>
         <input
           class="control"
@@ -97,7 +103,7 @@
               </div>
               <div class="meta">Style: {{ item.style }}<span *ngIf="item.sleeve"> · {{ item.sleeve }}</span></div>
             </div>
-            <div class="price">${{ item.price }}</div>
+            <div class="price" *ngIf="showPrice">${{ item.price }}</div>
             <div class="item-actions">
               <button type="button" class="icon-btn edit-icon" (click)="editItem('top', i)" title="Edit item">
                 <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -117,7 +123,7 @@
               </div>
               <div class="meta">Style: {{ item.style }}<span *ngIf="item.rubber"> · {{ item.rubber }}</span></div>
             </div>
-            <div class="price">${{ item.price }}</div>
+            <div class="price" *ngIf="showPrice">${{ item.price }}</div>
             <div class="item-actions">
               <button type="button" class="icon-btn edit-icon" (click)="editItem('bottom', i)" title="Edit item">
                 <svg class="i" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -141,7 +147,7 @@
         </button>
 
         <!-- Total Price Row -->
-        <div class="total" *ngIf="totalItemCount > 0">
+        <div class="total" *ngIf="showPrice && totalItemCount > 0">
           <span>Total</span>
           <span class="total-amount">${{ order.order.totalprice }}</span>
         </div>
@@ -151,20 +157,24 @@
 
   <!-- Sticky Bottom Action Bar -->
   <div class="actionbar">
-    <button type="button" class="btn primary block" (click)="onSubmit()" [disabled]="submitting">
-      <span *ngIf="!submitting">Submit order</span>
-      <span *ngIf="submitting">Submitting order...</span>
+    <button *ngIf="showReject" type="button" class="btn danger" (click)="onReject()" [disabled]="busy">
+      {{ rejectLabel }}
+    </button>
+    <button type="button" class="btn primary" (click)="onSubmit()" [disabled]="busy">
+      <span *ngIf="!busy">{{ submitLabel }}</span>
+      <span *ngIf="busy">{{ busyLabel }}</span>
     </button>
   </div>
 
-  <!-- Backdrop for mobile/desktop customer dropdown -->
+  <!-- Backdrop for customer dropdown -->
   <div class="backdrop" *ngIf="isDropdownOpen" (click)="isDropdownOpen = false"></div>
 
-  <!-- Add Item Dialog Popup (Kept as is per user instruction) -->
-  <app-add-item-dialog 
+  <!-- Add Item Dialog Popup -->
+  <app-add-item-dialog
       *ngIf="showItemDialog"
       [itemType]="editingItemType"
       [itemData]="editingItemData"
+      [showPrice]="showPrice"
       (closeDialog)="closeItemDialog()"
       (saveItem)="onItemSaved($event)">
   </app-add-item-dialog>

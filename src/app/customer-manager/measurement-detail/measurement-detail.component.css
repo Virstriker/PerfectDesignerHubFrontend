@@ -70,7 +70,7 @@ h2{
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure the popup is above other content */
+  z-index: 1200; /* Ensure the popup is above other content and bottom-nav */
 }
 
 .popup-content {
