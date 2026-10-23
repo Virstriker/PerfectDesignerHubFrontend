@@ -3,5 +3,5 @@
  * photoUpload: when false, all "Upload photo" buttons (admin + customer side) are shown disabled.
  */
 export const FEATURES = {
-  photoUpload: false
+  photoUpload: true
 };

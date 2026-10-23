@@ -25,8 +25,11 @@ export class AddItemDialogComponent implements OnChanges {
   @Input() itemData: TopItem | BottomItem | null = null;
   /** Hide the amount/price field (e.g. on the public customer page). */
   @Input() showPrice = true;
-  /** Controlled globally from constants/feature-flags.ts */
-  readonly photoUploadEnabled = FEATURES.photoUpload;
+  /** Controlled globally or by parent component */
+  @Input() allowPhotoUpload = true;
+  get photoUploadEnabled(): boolean {
+    return this.allowPhotoUpload && FEATURES.photoUpload;
+  }
   @Output() closeDialog = new EventEmitter<void>();
   @Output() saveItem = new EventEmitter<{ type: string; item: TopItem | BottomItem }>();
 
@@ -105,6 +108,15 @@ export class AddItemDialogComponent implements OnChanges {
   isUploadingDesign = false;
   uploadClothError = '';
   uploadDesignError = '';
+
+  // Local instant preview URLs (before upload finishes)
+  clothLocalPreview = '';
+  designLocalPreview = '';
+
+  // Lightbox Preview Modal
+  previewModalOpen = false;
+  previewModalUrl = '';
+  previewModalTitle = '';
 
   private autoAdvanceTimer: any = null;
 
@@ -301,22 +313,30 @@ export class AddItemDialogComponent implements OnChanges {
     }
   }
 
-  // Image Uploads
+  // Image Uploads (Google Drive)
   onClothImageUpload(event: any) {
     const file = event.target.files?.[0];
     if (file) {
+      // Instant local preview
+      this.clothLocalPreview = URL.createObjectURL(file);
       this.isUploadingCloth = true;
       this.uploadClothError = '';
       this.orderService.getImageUrl(file).subscribe({
         next: (response: any) => {
           this.isUploadingCloth = false;
-          if (response?.data?.display_url) {
-            this.topForm.clothimage = response.data.display_url;
+          const uploadedUrl = response?.responseObject?.url
+            || response?.data?.display_url
+            || response?.data?.url
+            || response?.responseObject?.thumbnailUrl;
+          if (uploadedUrl) {
+            this.topForm.clothimage = uploadedUrl;
+            this.clothLocalPreview = '';
           }
         },
         error: (error) => {
           this.isUploadingCloth = false;
-          this.uploadClothError = 'Failed to upload image. Please try again.';
+          this.clothLocalPreview = '';
+          this.uploadClothError = error?.error?.message || 'Failed to upload image to Google Drive. Please try again.';
           console.error('Error uploading cloth image:', error);
         }
       });
@@ -325,27 +345,36 @@ export class AddItemDialogComponent implements OnChanges {
 
   removeClothImage() {
     this.topForm.clothimage = '';
+    this.clothLocalPreview = '';
   }
 
   onDesignImageUpload(event: any) {
     const file = event.target.files?.[0];
     if (file) {
+      // Instant local preview
+      this.designLocalPreview = URL.createObjectURL(file);
       this.isUploadingDesign = true;
       this.uploadDesignError = '';
       this.orderService.getImageUrl(file).subscribe({
         next: (response: any) => {
           this.isUploadingDesign = false;
-          if (response?.data?.display_url) {
+          const uploadedUrl = response?.responseObject?.url
+            || response?.data?.display_url
+            || response?.data?.url
+            || response?.responseObject?.thumbnailUrl;
+          if (uploadedUrl) {
             if (this.selectedType === 'top') {
-              this.topForm.designimage = response.data.display_url;
+              this.topForm.designimage = uploadedUrl;
             } else {
-              this.bottomForm.designimage = response.data.display_url;
+              this.bottomForm.designimage = uploadedUrl;
             }
+            this.designLocalPreview = '';
           }
         },
         error: (error) => {
           this.isUploadingDesign = false;
-          this.uploadDesignError = 'Failed to upload image. Please try again.';
+          this.designLocalPreview = '';
+          this.uploadClothError = error?.error?.message || 'Failed to upload image to Google Drive. Please try again.';
           console.error('Error uploading design image:', error);
         }
       });
@@ -358,10 +387,28 @@ export class AddItemDialogComponent implements OnChanges {
     } else {
       this.bottomForm.designimage = '';
     }
+    this.designLocalPreview = '';
+  }
+
+  openPreviewModal(url?: string | null, title: string = 'Image Preview') {
+    if (!url) return;
+    this.previewModalUrl = url;
+    this.previewModalTitle = title;
+    this.previewModalOpen = true;
+  }
+
+  closePreviewModal() {
+    this.previewModalOpen = false;
+    this.previewModalUrl = '';
+    this.previewModalTitle = '';
   }
 
   onSave() {
     this.clearAutoAdvance();
+    if (this.isUploadingCloth || this.isUploadingDesign) {
+      alert('Please wait for photo upload to finish.');
+      return;
+    }
     if (this.selectedType === 'top') {
       this.saveItem.emit({ type: 'top', item: { ...this.topForm } });
     } else if (this.selectedType === 'bottom') {

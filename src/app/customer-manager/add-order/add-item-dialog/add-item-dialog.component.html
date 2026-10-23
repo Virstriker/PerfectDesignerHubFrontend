@@ -457,7 +457,7 @@
                 <button
                   type="button"
                   class="remove-photo-btn"
-                  *ngIf="topForm.clothimage"
+                  *ngIf="topForm.clothimage || clothLocalPreview"
                   (click)="removeClothImage()"
                   title="Remove image"
                 >
@@ -465,11 +465,12 @@
                 </button>
               </div>
 
-              <div class="photo-preview-box" *ngIf="topForm.clothimage">
-                <img [src]="topForm.clothimage" alt="Cloth Reference" class="preview-img" />
+              <div class="photo-preview-box clickable-preview" *ngIf="topForm.clothimage || clothLocalPreview" (click)="openPreviewModal(clothLocalPreview || topForm.clothimage || '', 'Cloth Reference Photo')" title="Click to view full preview">
+                <img [src]="clothLocalPreview || topForm.clothimage" alt="Cloth Reference" class="preview-img" />
+                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
-              <div class="upload-dropzone" *ngIf="!topForm.clothimage">
+              <div class="upload-dropzone" *ngIf="!topForm.clothimage && !clothLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onClothImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingCloth">
@@ -492,7 +493,7 @@
                 <button
                   type="button"
                   class="remove-photo-btn"
-                  *ngIf="topForm.designimage"
+                  *ngIf="topForm.designimage || designLocalPreview"
                   (click)="removeDesignImage()"
                   title="Remove image"
                 >
@@ -500,11 +501,12 @@
                 </button>
               </div>
 
-              <div class="photo-preview-box" *ngIf="topForm.designimage">
-                <img [src]="topForm.designimage" alt="Design Reference" class="preview-img" />
+              <div class="photo-preview-box clickable-preview" *ngIf="topForm.designimage || designLocalPreview" (click)="openPreviewModal(designLocalPreview || topForm.designimage || '', 'Design Reference Photo')" title="Click to view full preview">
+                <img [src]="designLocalPreview || topForm.designimage" alt="Design Reference" class="preview-img" />
+                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
-              <div class="upload-dropzone" *ngIf="!topForm.designimage">
+              <div class="upload-dropzone" *ngIf="!topForm.designimage && !designLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingDesign">
@@ -605,11 +607,11 @@
 
           <!-- Preview Photos in Review -->
           <div class="review-photos" *ngIf="topForm.clothimage || topForm.designimage">
-            <div class="review-photo" *ngIf="topForm.clothimage" (click)="goToStep(10)">
+            <div class="review-photo" *ngIf="topForm.clothimage" (click)="openPreviewModal(topForm.clothimage, 'Cloth Reference Photo')" title="Click to view photo">
               <span class="review-photo-title">Cloth Photo</span>
               <img [src]="topForm.clothimage" alt="Cloth" />
             </div>
-            <div class="review-photo" *ngIf="topForm.designimage" (click)="goToStep(10)">
+            <div class="review-photo" *ngIf="topForm.designimage" (click)="openPreviewModal(topForm.designimage, 'Design Reference Photo')" title="Click to view photo">
               <span class="review-photo-title">Design Photo</span>
               <img [src]="topForm.designimage" alt="Design" />
             </div>
@@ -806,7 +808,7 @@
                 <button
                   type="button"
                   class="remove-photo-btn"
-                  *ngIf="bottomForm.designimage"
+                  *ngIf="bottomForm.designimage || designLocalPreview"
                   (click)="removeDesignImage()"
                   title="Remove image"
                 >
@@ -814,11 +816,12 @@
                 </button>
               </div>
 
-              <div class="photo-preview-box" *ngIf="bottomForm.designimage">
-                <img [src]="bottomForm.designimage" alt="Design Reference" class="preview-img" />
+              <div class="photo-preview-box clickable-preview" *ngIf="bottomForm.designimage || designLocalPreview" (click)="openPreviewModal(designLocalPreview || bottomForm.designimage || '', 'Design Reference Photo')" title="Click to view full preview">
+                <img [src]="designLocalPreview || bottomForm.designimage" alt="Design Reference" class="preview-img" />
+                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
-              <div class="upload-dropzone" *ngIf="!bottomForm.designimage">
+              <div class="upload-dropzone" *ngIf="!bottomForm.designimage && !designLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
                   <div class="upload-content" *ngIf="!isUploadingDesign">
@@ -883,7 +886,7 @@
 
           <!-- Preview Photos in Review -->
           <div class="review-photos" *ngIf="bottomForm.designimage">
-            <div class="review-photo" (click)="goToStep(5)">
+            <div class="review-photo" (click)="openPreviewModal(bottomForm.designimage, 'Design Reference Photo')" title="Click to view photo">
               <span class="review-photo-title">Design Photo</span>
               <img [src]="bottomForm.designimage" alt="Design" />
             </div>
@@ -942,6 +945,25 @@
           <i class="fa-solid fa-circle-check"></i>
           <span>Save Item</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Full Image Preview Modal -->
+  <div class="lightbox-overlay" *ngIf="previewModalOpen" (click)="closePreviewModal()">
+    <div class="lightbox-card" (click)="$event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title"><i class="fa-solid fa-image"></i> {{ previewModalTitle }}</span>
+        <button type="button" class="lightbox-close-btn" (click)="closePreviewModal()" title="Close">&times;</button>
+      </div>
+      <div class="lightbox-body">
+        <img [src]="previewModalUrl" [alt]="previewModalTitle" class="lightbox-img" />
+      </div>
+      <div class="lightbox-footer">
+        <a *ngIf="previewModalUrl && previewModalUrl.startsWith('http')" [href]="previewModalUrl" target="_blank" rel="noopener noreferrer" class="lightbox-link-btn">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Original
+        </a>
+        <button type="button" class="lightbox-close-action" (click)="closePreviewModal()">Close</button>
       </div>
     </div>
   </div>

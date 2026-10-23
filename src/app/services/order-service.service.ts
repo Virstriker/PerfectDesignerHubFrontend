@@ -14,7 +14,7 @@ export class OrderServiceService {
   constructor(private http: HttpClient, private constant: constant) { }
 
   baseOrderUrl: string = this.constant.pdfUrl + "orders";
-  url = 'https://api.imgbb.com/1/upload?key=b6d6c1051566438a8d968fa96b850f87';
+  uploadImageUrl: string = this.constant.pdfUrl + "upload-image";
   responseImage!:any;
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -45,7 +45,7 @@ export class OrderServiceService {
   getImageUrl(file:any): Observable<any>{
     const formData: FormData = new FormData();
     formData.append('image', file);
-    return this.http.post(this.url, formData);
+    return this.http.post(this.uploadImageUrl, formData);
   }
 
   searchOrder(id:any){

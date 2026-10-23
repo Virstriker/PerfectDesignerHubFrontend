@@ -33,6 +33,7 @@ export class OrderFormComponent implements OnInit, OnChanges {
   @Input() showBranch = true;
   @Input() showDeliveryDate = true;
   @Input() showPrice = true;
+  @Input() allowPhotoUpload = true;
   @Input() showReject = false;
   @Input() submitLabel = 'Submit order';
   @Input() busyLabel = 'Submitting order...';
