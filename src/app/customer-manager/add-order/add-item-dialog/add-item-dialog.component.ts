@@ -317,6 +317,7 @@ export class AddItemDialogComponent implements OnChanges {
   onClothImageUpload(event: any) {
     const file = event.target.files?.[0];
     if (file) {
+      const oldImage = this.topForm.clothimage;
       // Instant local preview
       this.clothLocalPreview = URL.createObjectURL(file);
       this.isUploadingCloth = true;
@@ -329,6 +330,12 @@ export class AddItemDialogComponent implements OnChanges {
             || response?.data?.url
             || response?.responseObject?.thumbnailUrl;
           if (uploadedUrl) {
+            if (oldImage && oldImage !== uploadedUrl) {
+              this.orderService.deleteImage(oldImage).subscribe({
+                next: () => console.log('Previous cloth image cleaned from Drive'),
+                error: (e) => console.warn('Could not delete old cloth image:', e)
+              });
+            }
             this.topForm.clothimage = uploadedUrl;
             this.clothLocalPreview = '';
           }
@@ -344,13 +351,23 @@ export class AddItemDialogComponent implements OnChanges {
   }
 
   removeClothImage() {
+    const existingUrl = this.topForm.clothimage;
+    if (existingUrl) {
+      this.orderService.deleteImage(existingUrl).subscribe({
+        next: () => console.log('Cloth image deleted from Google Drive'),
+        error: (err) => console.warn('Could not delete cloth image from Google Drive:', err)
+      });
+    }
     this.topForm.clothimage = '';
     this.clothLocalPreview = '';
+    this.isUploadingCloth = false;
+    this.uploadClothError = '';
   }
 
   onDesignImageUpload(event: any) {
     const file = event.target.files?.[0];
     if (file) {
+      const oldImage = this.selectedType === 'top' ? this.topForm.designimage : this.bottomForm.designimage;
       // Instant local preview
       this.designLocalPreview = URL.createObjectURL(file);
       this.isUploadingDesign = true;
@@ -363,6 +380,12 @@ export class AddItemDialogComponent implements OnChanges {
             || response?.data?.url
             || response?.responseObject?.thumbnailUrl;
           if (uploadedUrl) {
+            if (oldImage && oldImage !== uploadedUrl) {
+              this.orderService.deleteImage(oldImage).subscribe({
+                next: () => console.log('Previous design image cleaned from Drive'),
+                error: (e) => console.warn('Could not delete old design image:', e)
+              });
+            }
             if (this.selectedType === 'top') {
               this.topForm.designimage = uploadedUrl;
             } else {
@@ -374,7 +397,7 @@ export class AddItemDialogComponent implements OnChanges {
         error: (error) => {
           this.isUploadingDesign = false;
           this.designLocalPreview = '';
-          this.uploadClothError = error?.error?.message || 'Failed to upload image to Google Drive. Please try again.';
+          this.uploadDesignError = error?.error?.message || 'Failed to upload image to Google Drive. Please try again.';
           console.error('Error uploading design image:', error);
         }
       });
@@ -382,12 +405,21 @@ export class AddItemDialogComponent implements OnChanges {
   }
 
   removeDesignImage() {
+    const existingUrl = this.selectedType === 'top' ? this.topForm.designimage : this.bottomForm.designimage;
+    if (existingUrl) {
+      this.orderService.deleteImage(existingUrl).subscribe({
+        next: () => console.log('Design image deleted from Google Drive'),
+        error: (err) => console.warn('Could not delete design image from Google Drive:', err)
+      });
+    }
     if (this.selectedType === 'top') {
       this.topForm.designimage = '';
     } else {
       this.bottomForm.designimage = '';
     }
     this.designLocalPreview = '';
+    this.isUploadingDesign = false;
+    this.uploadDesignError = '';
   }
 
   openPreviewModal(url?: string | null, title: string = 'Image Preview') {

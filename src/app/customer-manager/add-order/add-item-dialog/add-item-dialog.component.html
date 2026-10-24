@@ -459,27 +459,36 @@
                   class="remove-photo-btn"
                   *ngIf="topForm.clothimage || clothLocalPreview"
                   (click)="removeClothImage()"
+                  [disabled]="isUploadingCloth"
                   title="Remove image"
                 >
                   <i class="fa-solid fa-trash"></i> Remove
                 </button>
               </div>
 
-              <div class="photo-preview-box clickable-preview" *ngIf="topForm.clothimage || clothLocalPreview" (click)="openPreviewModal(clothLocalPreview || topForm.clothimage || '', 'Cloth Reference Photo')" title="Click to view full preview">
-                <img [src]="clothLocalPreview || topForm.clothimage" alt="Cloth Reference" class="preview-img" />
-                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
+              <div class="photo-preview-box clickable-preview" [class.is-uploading]="isUploadingCloth" *ngIf="topForm.clothimage || clothLocalPreview" (click)="!isUploadingCloth && openPreviewModal(clothLocalPreview || topForm.clothimage || '', 'Cloth Reference Photo')" [title]="isUploadingCloth ? 'Uploading to Google Drive...' : 'Click to view full preview'">
+                <img [src]="clothLocalPreview || topForm.clothimage" alt="Cloth Reference" class="preview-img" [class.img-uploading]="isUploadingCloth" />
+
+                <!-- Uploading Status Overlay -->
+                <div class="preview-upload-overlay" *ngIf="isUploadingCloth">
+                  <div class="preview-upload-status">
+                    <i class="fa-solid fa-circle-notch fa-spin upload-spinner-icon"></i>
+                    <span class="upload-text">Uploading to Drive...</span>
+                    <span class="upload-subtext">Please wait</span>
+                  </div>
+                </div>
+
+                <!-- Preview Badges -->
+                <span class="preview-saved-badge" *ngIf="!isUploadingCloth && topForm.clothimage" title="Saved to Google Drive"><i class="fa-solid fa-cloud-check"></i> Drive</span>
+                <span class="preview-hint-badge" *ngIf="!isUploadingCloth"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
               <div class="upload-dropzone" *ngIf="!topForm.clothimage && !clothLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onClothImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
-                  <div class="upload-content" *ngIf="!isUploadingCloth">
+                  <div class="upload-content">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Cloth Photo</span>
-                  </div>
-                  <div class="upload-content uploading" *ngIf="isUploadingCloth">
-                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
-                    <span>Uploading...</span>
                   </div>
                 </label>
               </div>
@@ -495,27 +504,36 @@
                   class="remove-photo-btn"
                   *ngIf="topForm.designimage || designLocalPreview"
                   (click)="removeDesignImage()"
+                  [disabled]="isUploadingDesign"
                   title="Remove image"
                 >
                   <i class="fa-solid fa-trash"></i> Remove
                 </button>
               </div>
 
-              <div class="photo-preview-box clickable-preview" *ngIf="topForm.designimage || designLocalPreview" (click)="openPreviewModal(designLocalPreview || topForm.designimage || '', 'Design Reference Photo')" title="Click to view full preview">
-                <img [src]="designLocalPreview || topForm.designimage" alt="Design Reference" class="preview-img" />
-                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
+              <div class="photo-preview-box clickable-preview" [class.is-uploading]="isUploadingDesign" *ngIf="topForm.designimage || designLocalPreview" (click)="!isUploadingDesign && openPreviewModal(designLocalPreview || topForm.designimage || '', 'Design Reference Photo')" [title]="isUploadingDesign ? 'Uploading to Google Drive...' : 'Click to view full preview'">
+                <img [src]="designLocalPreview || topForm.designimage" alt="Design Reference" class="preview-img" [class.img-uploading]="isUploadingDesign" />
+
+                <!-- Uploading Status Overlay -->
+                <div class="preview-upload-overlay" *ngIf="isUploadingDesign">
+                  <div class="preview-upload-status">
+                    <i class="fa-solid fa-circle-notch fa-spin upload-spinner-icon"></i>
+                    <span class="upload-text">Uploading to Drive...</span>
+                    <span class="upload-subtext">Please wait</span>
+                  </div>
+                </div>
+
+                <!-- Preview Badges -->
+                <span class="preview-saved-badge" *ngIf="!isUploadingDesign && topForm.designimage" title="Saved to Google Drive"><i class="fa-solid fa-cloud-check"></i> Drive</span>
+                <span class="preview-hint-badge" *ngIf="!isUploadingDesign"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
               <div class="upload-dropzone" *ngIf="!topForm.designimage && !designLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
-                  <div class="upload-content" *ngIf="!isUploadingDesign">
+                  <div class="upload-content">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Design Photo</span>
-                  </div>
-                  <div class="upload-content uploading" *ngIf="isUploadingDesign">
-                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
-                    <span>Uploading...</span>
                   </div>
                 </label>
               </div>
@@ -810,27 +828,36 @@
                   class="remove-photo-btn"
                   *ngIf="bottomForm.designimage || designLocalPreview"
                   (click)="removeDesignImage()"
+                  [disabled]="isUploadingDesign"
                   title="Remove image"
                 >
                   <i class="fa-solid fa-trash"></i> Remove
                 </button>
               </div>
 
-              <div class="photo-preview-box clickable-preview" *ngIf="bottomForm.designimage || designLocalPreview" (click)="openPreviewModal(designLocalPreview || bottomForm.designimage || '', 'Design Reference Photo')" title="Click to view full preview">
-                <img [src]="designLocalPreview || bottomForm.designimage" alt="Design Reference" class="preview-img" />
-                <span class="preview-hint-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
+              <div class="photo-preview-box clickable-preview" [class.is-uploading]="isUploadingDesign" *ngIf="bottomForm.designimage || designLocalPreview" (click)="!isUploadingDesign && openPreviewModal(designLocalPreview || bottomForm.designimage || '', 'Design Reference Photo')" [title]="isUploadingDesign ? 'Uploading to Google Drive...' : 'Click to view full preview'">
+                <img [src]="designLocalPreview || bottomForm.designimage" alt="Design Reference" class="preview-img" [class.img-uploading]="isUploadingDesign" />
+
+                <!-- Uploading Status Overlay -->
+                <div class="preview-upload-overlay" *ngIf="isUploadingDesign">
+                  <div class="preview-upload-status">
+                    <i class="fa-solid fa-circle-notch fa-spin upload-spinner-icon"></i>
+                    <span class="upload-text">Uploading to Drive...</span>
+                    <span class="upload-subtext">Please wait</span>
+                  </div>
+                </div>
+
+                <!-- Preview Badges -->
+                <span class="preview-saved-badge" *ngIf="!isUploadingDesign && bottomForm.designimage" title="Saved to Google Drive"><i class="fa-solid fa-cloud-check"></i> Drive</span>
+                <span class="preview-hint-badge" *ngIf="!isUploadingDesign"><i class="fa-solid fa-magnifying-glass-plus"></i> View Preview</span>
               </div>
 
               <div class="upload-dropzone" *ngIf="!bottomForm.designimage && !designLocalPreview">
                 <label class="upload-label" [class.upload-disabled]="!photoUploadEnabled">
                   <input type="file" (change)="onDesignImageUpload($event)" accept="image/*" class="file-hidden" [disabled]="!photoUploadEnabled" />
-                  <div class="upload-content" *ngIf="!isUploadingDesign">
+                  <div class="upload-content">
                     <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
                     <span>Upload Design Photo</span>
-                  </div>
-                  <div class="upload-content uploading" *ngIf="isUploadingDesign">
-                    <i class="fa-solid fa-spinner fa-spin upload-icon"></i>
-                    <span>Uploading...</span>
                   </div>
                 </label>
               </div>

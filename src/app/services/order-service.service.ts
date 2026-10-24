@@ -42,6 +42,25 @@ export class OrderServiceService {
     const url = this.baseOrderUrl + "/CompleteOrder/"+Id;
     return this.http.get<ResponseDto>(url, { headers: this.getAuthHeaders() });
   }
+  deleteImage(imageIdentifier: string): Observable<any> {
+    if (!imageIdentifier) {
+      return new Observable(obs => { obs.next(null); obs.complete(); });
+    }
+    let fileId = imageIdentifier;
+    if (imageIdentifier.includes('/drive-image/')) {
+      const parts = imageIdentifier.split('/drive-image/');
+      fileId = parts[parts.length - 1].split('?')[0];
+    } else if (imageIdentifier.includes('id=')) {
+      const match = imageIdentifier.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match) fileId = match[1];
+    }
+    if (fileId.startsWith('blob:') || fileId.startsWith('data:')) {
+      return new Observable(obs => { obs.next(null); obs.complete(); });
+    }
+    const url = `${this.constant.pdfUrl}drive-image/${fileId}`;
+    return this.http.delete(url, { headers: this.getAuthHeaders() });
+  }
+
   getImageUrl(file:any): Observable<any>{
     const formData: FormData = new FormData();
     formData.append('image', file);
