@@ -134,6 +134,9 @@ export class OrderFormComponent implements OnInit, OnChanges {
 
   closeItemDialog() {
     this.showItemDialog = false;
+    this.editingItemType = null;
+    this.editingItemData = null;
+    this.editingItemIndex = null;
   }
 
   editItem(type: 'top' | 'bottom', index: number) {

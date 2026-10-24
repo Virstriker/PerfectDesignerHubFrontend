@@ -160,8 +160,9 @@ export class OrderDetailsComponent implements OnInit {
 
   onItemSaved(event: any) {
     const index = this.editingItemData?._index;
+    const itemType = event.type || this.editingItemType;
 
-    if (this.editingItemType === 'top') {
+    if (itemType === 'top') {
       if (index !== undefined) {
         const itemToUpdate = { ...event.item };
         delete itemToUpdate._index;
