@@ -239,29 +239,38 @@
                   <span class="spec-chip" *ngIf="item.style">
                     <small>Style:</small> <strong>{{ item.style }}</strong>
                   </span>
-                  <span class="spec-chip" *ngIf="item.sleeve">
-                    <small>Sleeve:</small> <strong>{{ item.sleeve }}</strong>
-                  </span>
                   <span class="spec-chip" *ngIf="item.frontneckdesign">
                     <small>Front Neck:</small> <strong>{{ item.frontneckdesign }}</strong>
                   </span>
                   <span class="spec-chip" *ngIf="item.backneckdesign">
                     <small>Back Neck:</small> <strong>{{ item.backneckdesign }}</strong>
                   </span>
+                  <span class="spec-chip" *ngIf="item.sleeve">
+                    <small>Sleeve:</small> <strong>{{ item.sleeve }}</strong>
+                  </span>
                   <span class="spec-chip" *ngIf="item.openingside">
-                    <small>Opening:</small> <strong>{{ item.openingside }}</strong>
+                    <small>Open:</small> <strong>{{ item.openingside }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.item?.toLowerCase() === 'blouse' && item.dori !== undefined && item.dori !== null">
+                    <small>Dori:</small> <strong>{{ item.dori ? 'Yes' : 'No' }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.item?.toLowerCase() === 'blouse' && item.pad !== undefined && item.pad !== null">
+                    <small>Pad:</small> <strong>{{ item.pad ? 'Yes' : 'No' }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.item?.toLowerCase() !== 'blouse' && item.astar !== undefined && item.astar !== null">
+                    <small>Astar:</small> <strong>{{ item.astar ? 'Yes' : 'No' }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.item?.toLowerCase() !== 'blouse' && item.sidecut !== undefined && item.sidecut !== null">
+                    <small>SideCut:</small> <strong>{{ item.sidecut ? 'Yes' : 'No' }}</strong>
+                  </span>
+                  <span class="spec-chip" *ngIf="item.piping">
+                    <small>Piping:</small> <strong>{{ item.piping }}</strong>
                   </span>
                   <span class="spec-chip" *ngIf="item.inneck">
                     <small>In Neck:</small> <strong>{{ item.inneck }}</strong>
                   </span>
                   <span class="spec-chip" *ngIf="item.backofneck">
                     <small>Neck Depth:</small> <strong>{{ item.backofneck }}</strong>
-                  </span>
-                  <span class="spec-chip" *ngIf="item.astar !== undefined">
-                    <small>Lining:</small> <strong>{{ item.astar ? 'Yes' : 'No' }}</strong>
-                  </span>
-                  <span class="spec-chip" *ngIf="item.dori !== undefined">
-                    <small>Dori:</small> <strong>{{ item.dori ? 'Yes' : 'No' }}</strong>
                   </span>
                 </div>
 

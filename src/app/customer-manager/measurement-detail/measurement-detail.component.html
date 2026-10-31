@@ -1,229 +1,350 @@
-  <app-loader-component [isLoading]="loading"></app-loader-component>
-<!-- measurements-form.component.html -->
- <h2>Customer : {{customerName}}</h2>
-<div class="container">
-    <div>
-      <!-- Customer ID (hidden field) -->
-      <input  type="hidden">
+<app-loader-component [isLoading]="loading"></app-loader-component>
 
-      <!-- Front Neck Deep -->
-      <div class="form-group">
-        <label for="frontneckdeep">1)Front Neck Deep:</label>
-        <input id="frontneckdeep" [(ngModel)]="measurements.frontneckdeep" type="text" placeholder="Enter Front Neck Deep" >
-      </div>
-  
-      <!-- Back Neck Deep -->
-      <div class="form-group">
-        <label for="backneckdeep">1)Back Neck Deep:</label>
-        <input id="backneckdeep" [(ngModel)]="measurements.backneckdeep" type="text" placeholder="Enter Back Neck Deep" >
-      </div>
- 
-      <!-- Apex Point Length -->
-      <div class="form-group">
-        <label for="apexpointlength">1)Apex Point Length:</label>
-        <input id="apexpointlength" [(ngModel)]="measurements.apexpointlength" type="text" placeholder="Enter Apex Point Length" >
-      </div>
-   
-      <!-- Blouse Length -->
-      <div class="form-group">
-        <label for="blouselength">1)Blouse Length:</label>
-        <input id="blouselength" [(ngModel)]="measurements.blouselength" type="text" placeholder="Enter Blouse Length" >
-      </div>
-  
-      <!-- Side Cut Length -->
-      <div class="form-group">
-        <label for="sidecutlength">1)Side Cut Length:</label>
-        <input id="sidecutlength" [(ngModel)]="measurements.sidecutlength" type="text" placeholder="Enter Side Cut Length" >
-      </div>
-  
-      <!-- Dress Length -->
-      <div class="form-group">
-        <label for="dresslength">1)Dress Length:</label>
-        <input id="dresslength" [(ngModel)]="measurements.dresslength" type="text" placeholder="Enter Dress Length" >
-      </div>
-   
-      <!-- Neck Round -->
-      <div class="form-group">
-        <label for="neckround">2)Neck Round:</label>
-        <input id="neckround" [(ngModel)]="measurements.neckround" type="text" placeholder="Enter Neck Round" >
-      </div>
-  
-      <!-- Shoulder -->
-      <div class="form-group">
-        <label for="sholder">2)Shoulder:</label>
-        <input id="sholder"  type="text" [(ngModel)]="measurements.sholder" placeholder="Enter Shoulder" class="form-control">
-      </div>
-  
-      <!-- Shoulder Slope -->
-      <div class="form-group">
-        <label for="sholderslope">2)Shoulder Slope:</label>
-        <input id="sholderslope" [(ngModel)]="measurements.sholderslope" type="text" placeholder="Enter Shoulder Slope" >
-      </div>
- 
-      <!-- Across Front -->
-      <div class="form-group">
-        <label for="acrossfront">2)Across Front:</label>
-        <input id="acrossfront" [(ngModel)]="measurements.acrossfront" type="text" placeholder="Enter Across Front" >
-      </div>
-  
-      <!-- Across Back -->
-      <div class="form-group">
-        <label for="acrossback">2)Across Back:</label>
-        <input id="acrossback" [(ngModel)]="measurements.acrossback" type="text" placeholder="Enter Across Back" >
-      </div>
-  
-      <!-- Chest -->
-      <div class="form-group">
-        <label for="chest">3)Chest:</label>
-        <input id="chest" [(ngModel)]="measurements.chest" type="text" placeholder="Enter Chest" >
-      </div>
-  
-      <!-- Bust -->
-      <div class="form-group">
-        <label for="bust">3)Bust:</label>
-        <input id="bust" [(ngModel)]="measurements.bust" type="text" placeholder="Enter Bust" >
-      </div>
-  
-      <!-- Waist -->
-      <div class="form-group">
-        <label for="weist">3)Waist:</label>
-        <input id="weist" [(ngModel)]="measurements.weist" type="text" placeholder="Enter Waist" >
-      </div>
-  
-      <!-- Hip -->
-      <div class="form-group">
-        <label for="heap">3)Hip:</label>
-        <input id="heap" [(ngModel)]="measurements.heap" type="text" placeholder="Enter Hip" class="form-control">
-      </div>
-  
-      <!-- Armhole Left -->
-      <div class="form-group">
-        <label for="armholdleft">4)Armhole Left:</label>
-        <input id="armholdleft" [(ngModel)]="measurements.armholdleft" type="text" placeholder="Enter Armhole Left" >
-      </div>
-  
-      <!-- Armhole Right -->
-      <div class="form-group">
-        <label for="armholdright">4)Armhole Right:</label>
-        <input id="armholdright" [(ngModel)]="measurements.armholdright" type="text" placeholder="Enter Armhole Right" >
-      </div>
-  
-      <!-- Bicep Left -->
-      <div class="form-group">
-        <label for="bicepleft">4)Bicep Left:</label>
-        <input id="bicepleft" [(ngModel)]="measurements.bicepleft" type="text" placeholder="Enter Bicep Left" >
-      </div>
-  
-      <!-- Bicep Right -->
-      <div class="form-group">
-        <label for="bicepright">4)Bicep Right:</label>
-        <input id="bicepright" [(ngModel)]="measurements.bicepright" type="text" placeholder="Enter Bicep Right" >
-      </div>
-    
-      <!-- Sleeve Length -->
-      <div class="form-group">
-        <label for="sleevelength">5)Sleeve Length:</label>
-        <input id="sleevelength" [(ngModel)]="measurements.sleevelength" type="text" placeholder="Enter Sleeve Length" >
+<div class="measurement-page" *ngIf="!loading">
+  <!-- Sticky Top App Bar -->
+  <header class="measurement-topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <button type="button" class="back-btn" (click)="goBack()" title="Back">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="title-block">
+          <span class="customer-chip" *ngIf="customerName">
+            <i class="fa-solid fa-user"></i> {{ customerName }}
+          </span>
+          <h1 class="page-title">
+            {{ selectedCategory !== null ? (getCategoryTitle(selectedCategory) + ' Measurements') : 'Customer Measurements' }}
+          </h1>
+        </div>
       </div>
 
-      <!-- Mori -->
-      <div class="form-group">
-        <label for="mori">6)Mori:</label>
-        <input id="mori" [(ngModel)]="measurements.mori" type="text" placeholder="Enter Mori" >
-      </div>
-
-      <!-- Pant Waist -->
-      <div class="form-group">
-        <label for="pantweist">7)Pant Waist:</label>
-        <input id="pantweist" [(ngModel)]="measurements.pantweist" type="text" placeholder="Enter Pant Waist" >
-      </div>
-  
-      <!-- Pant Hip -->
-      <div class="form-group">
-        <label for="pantheap">7)Pant Hip:</label>
-        <input id="pantheap" [(ngModel)]="measurements.pantheap" type="text" placeholder="Enter Pant Hip" >
-      </div>
-  
-      <!-- Pant Crotch -->
-      <div class="form-group">
-        <label for="pantcroch">7)Pant Crotch:</label>
-        <input id="pantcroch" [(ngModel)]="measurements.pantcroch" type="text" placeholder="Enter Pant Crotch" >
-      </div>
-  
-      <!-- Pant Jang -->
-      <div class="form-group">
-        <label for="pantjang">7)Pant Jang:</label>
-        <input id="pantjang" [(ngModel)]="measurements.pantjang" type="text" placeholder="Enter Pant Jang" >
-      </div>
-  
-      <!-- Pant Knee -->
-      <div class="form-group">
-        <label for="pantknee">8)Pant Knee:</label>
-        <input id="pantknee" [(ngModel)]="measurements.pantknee" type="text" placeholder="Enter Pant Knee" >
-      </div>
-  
-      <!-- Pant Ankle -->
-      <div class="form-group">
-        <label for="pantankel">8)Pant Ankle:</label>
-        <input id="pantankel" [(ngModel)]="measurements.pantankel" type="text" placeholder="Enter Pant Ankle" >
-      </div>
-  
-      <!-- Pant Mori -->
-      <div class="form-group">
-        <label for="pantmori">8)Pant Mori:</label>
-        <input id="pantmori" [(ngModel)]="measurements.pantmori" type="text" placeholder="Enter Pant Mori" >
-      </div>
-  
-      <!-- Pant Length -->
-      <div class="form-group">
-        <label for="pantlength">8)Pant Length:</label>
-        <input id="pantlength" [(ngModel)]="measurements.pantlength" type="text" placeholder="Enter Pant Length" >
-      </div>
-  
-      <!-- Chaniya Wrist -->
-      <div class="form-group">
-        <label for="chaniyawrist">8)Chaniya Wrist:</label>
-        <input id="chaniyawrist" [(ngModel)]="measurements.chaniyawrist" type="text" placeholder="Enter Chaniya Wrist" >
-      </div>
-  
-      <!-- Chaniya Length -->
-      <div class="form-group">
-        <label for="chaniyaheap">8)Chaniya Length:</label>
-        <input id="chaniyalength" [(ngModel)]="measurements.chaniyalength" type="text" placeholder="Enter Chaniya Length" >
-      </div>
-  
-      <!-- Chaniya Hip -->
-      <div class="form-group">
-        <label for="chaniyaheap">Chaniya Hip:</label>
-        <input id="chaniyaheap" [(ngModel)]="measurements.chaniyaheap" type="text" placeholder="Enter Chaniya Hip" >
-      </div>
- 
-      <!-- One Piece Length -->
-      <div class="form-group">
-        <label for="onepiecelength">One Piece Length:</label>
-        <input id="onepiecelength" [(ngModel)]="measurements.onepiecelength" type="text" placeholder="Enter One Piece Length" >
-      </div>
-      
-      <div class="btn-group">
-        <button (click)="submitForm()" type="submit" class="btn">Submit</button>
-        <button (click)="openPopUp()" class="btn">GeneratePdf</button>
-        <button (click)="printThermal()">
-          {{ isPrinting ? 'Preparing...' : 'Print Receipt' }}
+      <!-- Quick Category Switcher Pills when inside a category -->
+      <div class="category-tabs" *ngIf="selectedCategory !== null">
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="selectedCategory === 'blouse'"
+          (click)="selectCategory('blouse')"
+        >
+          <i class="fa-solid fa-shirt"></i> Blouse
+        </button>
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="selectedCategory === 'dress'"
+          (click)="selectCategory('dress')"
+        >
+          <i class="fa-solid fa-person-dress"></i> Dress
+        </button>
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="selectedCategory === 'pant'"
+          (click)="selectCategory('pant')"
+        >
+          <i class="fa-solid fa-person"></i> Pant
+        </button>
+        <button
+          type="button"
+          class="cat-tab"
+          [class.active]="selectedCategory === 'chaniye'"
+          (click)="selectCategory('chaniye')"
+        >
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Chaniye
         </button>
       </div>
     </div>
-  </div>
-  <div *ngIf="showItemNumberPopup" class="popup">
-    <div class="popup-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <span class="close" (click)="showItemNumberPopup = false">&times;</span>
-      <h2>Item Number Confirmation</h2>
-      <div class="form-group">
-        <label for="itemNumber">Item Number:</label>
-        <input id="itemNumber" [(ngModel)]="itemNumber" type="text" placeholder="Enter Item Number">
+  </header>
+
+  <!-- Step Progress Banner (When inside a Category) -->
+  <div class="step-progress-banner-wrapper" *ngIf="selectedCategory !== null">
+    <div class="step-progress-banner">
+      <div class="step-progress-row">
+        <div class="step-progress-left">
+          <span class="step-counter-pill">
+            {{ isReviewStep ? 'Review & Confirm' : ('Step ' + currentStep + ' of ' + totalSteps) }}
+          </span>
+          <span class="step-current-title">
+            {{ isReviewStep ? ('Review ' + getCategoryTitle(selectedCategory)) : currentStepMeta?.label }}
+          </span>
+        </div>
+        <div class="step-progress-right">
+          <button type="button" class="quick-prev-btn" (click)="prevStep()" title="Go back to previous step">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>{{ currentStep === 1 ? 'Categories' : 'Previous' }}</span>
+          </button>
+          <span class="step-percent-badge">{{ progressPercent }}%</span>
+        </div>
       </div>
-      <div class="btn-group">
-        <button (click)="confirmItemNumber()">Confirm</button>
-        <button (click)="showItemNumberPopup = false">Cancel</button>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" [style.width.%]="progressPercent"></div>
       </div>
     </div>
   </div>
+
+  <main class="measurement-main">
+
+    <!-- ================= VIEW 1: 4 Category Options ================= -->
+    <section class="category-selection-view" *ngIf="selectedCategory === null">
+      <div class="category-cards-grid">
+        <!-- 1. Blouse -->
+        <button type="button" class="category-option-card" (click)="selectCategory('blouse')">
+          <div class="card-icon blouse-icon">
+            <i class="fa-solid fa-shirt"></i>
+          </div>
+          <div class="card-body">
+            <div class="card-head-row">
+              <h3>Blouse</h3>
+              <span class="filled-badge" [class.has-data]="getFilledCount('blouse') > 0">
+                {{ getFilledCount('blouse') }} / 18 filled
+              </span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right card-arrow"></i>
+        </button>
+
+        <!-- 2. Dress -->
+        <button type="button" class="category-option-card" (click)="selectCategory('dress')">
+          <div class="card-icon dress-icon">
+            <i class="fa-solid fa-person-dress"></i>
+          </div>
+          <div class="card-body">
+            <div class="card-head-row">
+              <h3>Dress</h3>
+              <span class="filled-badge" [class.has-data]="getFilledCount('dress') > 0">
+                {{ getFilledCount('dress') }} / 20 filled
+              </span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right card-arrow"></i>
+        </button>
+
+        <!-- 3. Pant -->
+        <button type="button" class="category-option-card" (click)="selectCategory('pant')">
+          <div class="card-icon pant-icon">
+            <i class="fa-solid fa-person"></i>
+          </div>
+          <div class="card-body">
+            <div class="card-head-row">
+              <h3>Pant</h3>
+              <span class="filled-badge" [class.has-data]="getFilledCount('pant') > 0">
+                {{ getFilledCount('pant') }} / 8 filled
+              </span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right card-arrow"></i>
+        </button>
+
+        <!-- 4. Chaniye -->
+        <button type="button" class="category-option-card" (click)="selectCategory('chaniye')">
+          <div class="card-icon chaniye-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="card-body">
+            <div class="card-head-row">
+              <h3>Chaniye</h3>
+              <span class="filled-badge" [class.has-data]="getFilledCount('chaniye') > 0">
+                {{ getFilledCount('chaniye') }} / 3 filled
+              </span>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right card-arrow"></i>
+        </button>
+      </div>
+
+      <!-- Global Actions on Category Screen -->
+      <div class="action-bar-card">
+        <button type="button" class="btn btn-secondary" (click)="openPopUp()">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Generate PDF</span>
+        </button>
+        <button type="button" class="btn btn-primary" (click)="submitForm()" [disabled]="saving">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>{{ saving ? 'Saving...' : 'Save All Measurements' }}</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: Inside Selected Category (Single-Step Wizard) ================= -->
+    <section class="category-wizard-view" *ngIf="selectedCategory !== null">
+
+      <!-- ================= SINGLE MEASUREMENT QUESTION VIEW ================= -->
+      <div class="wizard-card" *ngIf="!isReviewStep && currentStepMeta">
+        <!-- Wizard Card Header -->
+        <div class="wizard-card-header">
+          <div class="header-icon-badge" [ngClass]="getCategoryBadgeClass()">
+            <i class="fa-solid" [ngClass]="getCategoryIcon()"></i>
+          </div>
+          <div class="wizard-card-title-group">
+            <div class="wizard-step-tag">
+              <span class="step-num-pill">Measurement {{ currentStep }} of {{ totalMeasurementSteps }}</span>
+              <span class="category-name-tag">{{ getCategoryTitle(selectedCategory) }}</span>
+            </div>
+            <h2 class="measurement-prompt">{{ currentStepMeta.label }}</h2>
+            <p class="measurement-hint" *ngIf="currentStepMeta.hint">{{ currentStepMeta.hint }}</p>
+          </div>
+        </div>
+
+        <!-- Wizard Card Body (Single Measurement Input) -->
+        <div class="wizard-card-body">
+          <div class="measurement-input-wrapper">
+            <div class="input-icon-left">
+              <i class="fa-solid fa-ruler-combined"></i>
+            </div>
+            <input
+              #stepInput
+              type="text"
+              class="measurement-main-input"
+              [(ngModel)]="currentMeasurementValue"
+              [placeholder]="currentStepMeta.placeholder || 'e.g. 14.5'"
+              (keydown.enter)="nextStep()"
+              autocomplete="off"
+            />
+            <div class="input-unit-right" *ngIf="currentMeasurementValue">
+              <span>in</span>
+            </div>
+          </div>
+
+          <div class="input-helper-row">
+            <span class="keyboard-tip">
+              <i class="fa-solid fa-arrow-turn-down"></i> Press <strong>Enter ↵</strong> for next measurement
+            </span>
+            <span class="status-recorded-pill" *ngIf="currentMeasurementValue">
+              <i class="fa-solid fa-circle-check"></i> Recorded
+            </span>
+          </div>
+        </div>
+
+        <!-- Wizard Card Footer Controls -->
+        <div class="wizard-card-footer">
+          <button
+            type="button"
+            class="btn btn-outline"
+            (click)="prevStep()"
+            [title]="currentStep === 1 ? 'Back to Categories' : 'Previous measurement'"
+          >
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>{{ currentStep === 1 ? 'Categories' : 'Previous' }}</span>
+          </button>
+
+          <div class="footer-center-group">
+            <button
+              type="button"
+              class="btn btn-ghost"
+              (click)="jumpToReview()"
+              title="Jump directly to Review & Confirm"
+            >
+              <i class="fa-solid fa-list-check"></i>
+              <span>Review ({{ getFilledCount(selectedCategory!) }}/{{ totalMeasurementSteps }})</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-save-quick"
+              (click)="submitForm()"
+              [disabled]="saving"
+              title="Save measurements now"
+            >
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>{{ saving ? 'Saving...' : 'Save' }}</span>
+            </button>
+          </div>
+
+          <button type="button" class="btn btn-primary" (click)="nextStep()">
+            <span>{{ currentStep === totalMeasurementSteps ? 'Review & Confirm' : 'Next' }}</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= REVIEW & CONFIRM VIEW ================= -->
+      <div class="review-card" *ngIf="isReviewStep">
+        <div class="review-card-header">
+          <div class="review-header-left">
+            <div class="header-icon-badge" [ngClass]="getCategoryBadgeClass()">
+              <i class="fa-solid" [ngClass]="getCategoryIcon()"></i>
+            </div>
+            <div>
+              <h2>Review {{ getCategoryTitle(selectedCategory) }} Measurements</h2>
+              <p>Check all entered values below. Click any card to edit that measurement.</p>
+            </div>
+          </div>
+          <div class="review-header-badge">
+            <span class="filled-count-pill" [class.complete]="getFilledCount(selectedCategory!) === totalMeasurementSteps">
+              {{ getFilledCount(selectedCategory!) }} of {{ totalMeasurementSteps }} Filled
+            </span>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          <div
+            *ngFor="let step of currentSteps"
+            class="review-item"
+            [class.has-value]="getStepValue(step.key)"
+            (click)="goToStep(step.index)"
+            title="Click to edit {{ step.label }}"
+          >
+            <div class="review-item-number">{{ step.index }}</div>
+            <div class="review-item-content">
+              <span class="review-item-label">{{ step.label }}</span>
+              <span class="review-item-value" [class.empty]="!getStepValue(step.key)">
+                {{ getStepValue(step.key) ? (getStepValue(step.key) + ' in') : 'Not Set' }}
+              </span>
+            </div>
+            <button type="button" class="review-edit-btn" title="Edit {{ step.label }}">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="review-card-footer">
+          <div class="review-footer-left">
+            <button type="button" class="btn btn-outline" (click)="goToStep(totalMeasurementSteps)">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Back to Step {{ totalMeasurementSteps }}</span>
+            </button>
+            <button type="button" class="btn btn-ghost" (click)="selectCategory(null)">
+              <i class="fa-solid fa-layer-group"></i>
+              <span>All Categories</span>
+            </button>
+          </div>
+
+          <div class="review-footer-right">
+            <button type="button" class="btn btn-secondary" (click)="openPopUp()">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Generate PDF</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-save-large" (click)="submitForm()" [disabled]="saving">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>{{ saving ? 'Saving Changes...' : 'Save All Measurements' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Item Number Dialog for PDF Generation -->
+  <div class="popup" *ngIf="showItemNumberPopup">
+    <div class="popup-content">
+      <span class="close" (click)="showItemNumberPopup = false">&times;</span>
+      <h2>Enter Item Number for PDF</h2>
+      <div class="form-group">
+        <label for="itemNumber">Item Number</label>
+        <input
+          id="itemNumber"
+          type="number"
+          class="measurement-main-input"
+          [(ngModel)]="itemNumber"
+          placeholder="e.g. 1"
+          (keydown.enter)="confirmItemNumber()"
+        />
+      </div>
+      <div class="popup-btn-group">
+        <button type="button" class="btn btn-outline" (click)="showItemNumberPopup = false">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmItemNumber()">Generate</button>
+      </div>
+    </div>
+  </div>
+</div>

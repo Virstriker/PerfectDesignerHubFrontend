@@ -77,8 +77,8 @@
       <!-- ================= TOP ITEM STEPS ================= -->
       <ng-container *ngIf="selectedType === 'top'">
 
-        <!-- Step 1: Garment Item -->
-        <div *ngIf="currentStep === 1" class="step-view">
+        <!-- Garment Item -->
+        <div *ngIf="currentStepKey === 'top_item'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Select Top Garment Type</h3>
             <p class="step-subtext">Choose the kind of top garment to tailor</p>
@@ -107,14 +107,15 @@
               id="customTopItem"
               type="text"
               [(ngModel)]="topForm.item"
+              (ngModelChange)="onTopItemInputChange()"
               placeholder="e.g. Designer Kurta"
               class="form-control"
             />
           </div>
         </div>
 
-        <!-- Step 2: Style & Cut -->
-        <div *ngIf="currentStep === 2" class="step-view">
+        <!-- Style & Cut (Only for Blouse) -->
+        <div *ngIf="currentStepKey === 'top_style'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Select Style / Pattern</h3>
             <p class="step-subtext">Choose the blouse cut or style pattern</p>
@@ -149,8 +150,8 @@
           </div>
         </div>
 
-        <!-- Step 3: Front Neck Design -->
-        <div *ngIf="currentStep === 3" class="step-view">
+        <!-- Front Neck Design -->
+        <div *ngIf="currentStepKey === 'top_front_neck'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Front Neck Design</h3>
             <p class="step-subtext">Select neckline design for the front</p>
@@ -162,7 +163,7 @@
 
           <div class="options-grid">
             <button
-              *ngFor="let opt of frontNeckDesignOptions"
+              *ngFor="let opt of neckDesignOptions"
               type="button"
               class="option-pill"
               [class.active]="topForm.frontneckdesign === opt"
@@ -171,6 +172,20 @@
               <span>{{ opt }}</span>
               <i class="fa-solid fa-check option-check" *ngIf="topForm.frontneckdesign === opt"></i>
             </button>
+          </div>
+
+          <div class="number-dropdown-box">
+            <label for="frontNeckNumber"><i class="fa-solid fa-hashtag"></i> Select Design Number (1 to 200):</label>
+            <select
+              id="frontNeckNumber"
+              class="form-control"
+              [class.active-select]="isNeckNumber(topForm.frontneckdesign)"
+              [ngModel]="isNeckNumber(topForm.frontneckdesign) ? topForm.frontneckdesign : ''"
+              (ngModelChange)="selectFrontNeck($event)"
+            >
+              <option value="">-- Select Number (1 - 200) --</option>
+              <option *ngFor="let n of neckNumbers" [value]="n.toString()">{{ n }}</option>
+            </select>
           </div>
 
           <div class="custom-input-box">
@@ -185,8 +200,8 @@
           </div>
         </div>
 
-        <!-- Step 4: Back Neck Design -->
-        <div *ngIf="currentStep === 4" class="step-view">
+        <!-- Back Neck Design -->
+        <div *ngIf="currentStepKey === 'top_back_neck'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Back Neck Design</h3>
             <p class="step-subtext">Select neckline design for the back</p>
@@ -198,7 +213,7 @@
 
           <div class="options-grid">
             <button
-              *ngFor="let opt of backNeckDesignOptions"
+              *ngFor="let opt of neckDesignOptions"
               type="button"
               class="option-pill"
               [class.active]="topForm.backneckdesign === opt"
@@ -207,6 +222,20 @@
               <span>{{ opt }}</span>
               <i class="fa-solid fa-check option-check" *ngIf="topForm.backneckdesign === opt"></i>
             </button>
+          </div>
+
+          <div class="number-dropdown-box">
+            <label for="backNeckNumber"><i class="fa-solid fa-hashtag"></i> Select Design Number (1 to 200):</label>
+            <select
+              id="backNeckNumber"
+              class="form-control"
+              [class.active-select]="isNeckNumber(topForm.backneckdesign)"
+              [ngModel]="isNeckNumber(topForm.backneckdesign) ? topForm.backneckdesign : ''"
+              (ngModelChange)="selectBackNeck($event)"
+            >
+              <option value="">-- Select Number (1 - 200) --</option>
+              <option *ngFor="let n of neckNumbers" [value]="n.toString()">{{ n }}</option>
+            </select>
           </div>
 
           <div class="custom-input-box">
@@ -221,116 +250,8 @@
           </div>
         </div>
 
-        <!-- Step 5: Opening Side -->
-        <div *ngIf="currentStep === 5" class="step-view">
-          <div class="step-header">
-            <h3 class="step-question">Opening Placement</h3>
-            <p class="step-subtext">Where should hooks, zipper, or closure be placed?</p>
-          </div>
-
-          <div class="selection-badge" *ngIf="topForm.openingside">
-            <span>Selected:</span> <strong>{{ topForm.openingside }}</strong>
-          </div>
-
-          <div class="options-grid">
-            <button
-              *ngFor="let opt of openingsideOptions"
-              type="button"
-              class="option-pill"
-              [class.active]="topForm.openingside === opt"
-              (click)="selectOpeningSide(opt)"
-            >
-              <span>{{ opt }}</span>
-              <i class="fa-solid fa-check option-check" *ngIf="topForm.openingside === opt"></i>
-            </button>
-          </div>
-
-          <div class="custom-input-box">
-            <label for="customOpening"><i class="fa-solid fa-pen"></i> Or enter custom opening:</label>
-            <input
-              id="customOpening"
-              type="text"
-              [(ngModel)]="topForm.openingside"
-              placeholder="e.g. Side invisible zip"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <!-- Step 6: In-Neck Finishing -->
-        <div *ngIf="currentStep === 6" class="step-view">
-          <div class="step-header">
-            <h3 class="step-question">In-Neck Finishing</h3>
-            <p class="step-subtext">Select inner neck finishing technique</p>
-          </div>
-
-          <div class="selection-badge" *ngIf="topForm.inneck">
-            <span>Selected:</span> <strong>{{ topForm.inneck }}</strong>
-          </div>
-
-          <div class="options-grid">
-            <button
-              *ngFor="let opt of inneckOptions"
-              type="button"
-              class="option-pill"
-              [class.active]="topForm.inneck === opt"
-              (click)="selectInNeck(opt)"
-            >
-              <span>{{ opt }}</span>
-              <i class="fa-solid fa-check option-check" *ngIf="topForm.inneck === opt"></i>
-            </button>
-          </div>
-
-          <div class="custom-input-box">
-            <label for="customInNeck"><i class="fa-solid fa-pen"></i> Or enter custom finishing:</label>
-            <input
-              id="customInNeck"
-              type="text"
-              [(ngModel)]="topForm.inneck"
-              placeholder="e.g. Contrast piping"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <!-- Step 7: Back Neck Depth -->
-        <div *ngIf="currentStep === 7" class="step-view">
-          <div class="step-header">
-            <h3 class="step-question">Back Neck Depth</h3>
-            <p class="step-subtext">Choose neck depth preference</p>
-          </div>
-
-          <div class="selection-badge" *ngIf="topForm.backofneck">
-            <span>Selected:</span> <strong>{{ topForm.backofneck }}</strong>
-          </div>
-
-          <div class="options-grid">
-            <button
-              *ngFor="let opt of backofneckOptions"
-              type="button"
-              class="option-pill"
-              [class.active]="topForm.backofneck === opt"
-              (click)="selectBackOfNeck(opt)"
-            >
-              <span>{{ opt }}</span>
-              <i class="fa-solid fa-check option-check" *ngIf="topForm.backofneck === opt"></i>
-            </button>
-          </div>
-
-          <div class="custom-input-box">
-            <label for="customBackOfNeck"><i class="fa-solid fa-pen"></i> Or enter custom depth:</label>
-            <input
-              id="customBackOfNeck"
-              type="text"
-              [(ngModel)]="topForm.backofneck"
-              placeholder="e.g. Medium Deep (9 inches)"
-              class="form-control"
-            />
-          </div>
-        </div>
-
-        <!-- Step 8: Sleeve -->
-        <div *ngIf="currentStep === 8" class="step-view">
+        <!-- Sleeve -->
+        <div *ngIf="currentStepKey === 'top_sleeve'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Sleeve Type & Length</h3>
             <p class="step-subtext">Choose sleeve style</p>
@@ -365,57 +286,189 @@
           </div>
         </div>
 
-        <!-- Step 9: Extra Options & Notes -->
-        <div *ngIf="currentStep === 9" class="step-view">
+        <!-- Optional Fields & Extra Detail (in one page) -->
+        <div *ngIf="currentStepKey === 'top_options'" class="step-view">
           <div class="step-header">
-            <h3 class="step-question">Options & Custom Notes</h3>
-            <p class="step-subtext">Configure lining, dori and special tailoring instructions</p>
+            <h3 class="step-question">Optional Fields & Extra Detail</h3>
+            <p class="step-subtext">
+              {{ isBlouse ? 'Configure Open, Dori, Pad, Piping and Extra Detail' : 'Configure Astar, SideCut, Piping and Extra Detail' }}
+            </p>
           </div>
 
-          <div class="checkbox-cards-grid">
-            <label class="toggle-card" [class.checked]="topForm.astar">
-              <input type="checkbox" [(ngModel)]="topForm.astar" />
-              <div class="toggle-card-content">
-                <i class="fa-solid fa-layer-group toggle-icon"></i>
-                <div class="toggle-text">
-                  <span class="toggle-title">Astar (Lining)</span>
-                  <span class="toggle-subtitle">{{ topForm.astar ? 'Included (+lining)' : 'Without lining' }}</span>
-                </div>
+          <!-- BLOUSE OPTIONS: Open (Front, Back), Dori (Yes, No), Pad (Yes, No), Piping (Golden, Self) -->
+          <div class="optional-fields-stack" *ngIf="isBlouse">
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-door-open"></i> Open</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.openingside === 'Front'"
+                  (click)="topForm.openingside = topForm.openingside === 'Front' ? '' : 'Front'"
+                >
+                  Front
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.openingside === 'Back'"
+                  (click)="topForm.openingside = topForm.openingside === 'Back' ? '' : 'Back'"
+                >
+                  Back
+                </button>
               </div>
-              <div class="toggle-indicator">
-                <i class="fa-solid" [ngClass]="topForm.astar ? 'fa-check' : ''"></i>
-              </div>
-            </label>
+            </div>
 
-            <label class="toggle-card" [class.checked]="topForm.dori">
-              <input type="checkbox" [(ngModel)]="topForm.dori" />
-              <div class="toggle-card-content">
-                <i class="fa-solid fa-ribbon toggle-icon"></i>
-                <div class="toggle-text">
-                  <span class="toggle-title">Dori (Back Strings)</span>
-                  <span class="toggle-subtitle">{{ topForm.dori ? 'Included (+dori & latkan)' : 'No dori' }}</span>
-                </div>
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-ribbon"></i> Dori</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.dori === true"
+                  (click)="topForm.dori = true"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.dori === false"
+                  (click)="topForm.dori = false"
+                >
+                  No
+                </button>
               </div>
-              <div class="toggle-indicator">
-                <i class="fa-solid" [ngClass]="topForm.dori ? 'fa-check' : ''"></i>
+            </div>
+
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-circle-dot"></i> Pad</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.pad === true"
+                  (click)="topForm.pad = true"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.pad === false"
+                  (click)="topForm.pad = false"
+                >
+                  No
+                </button>
               </div>
-            </label>
+            </div>
+
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Piping</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.piping === 'Golden'"
+                  (click)="topForm.piping = topForm.piping === 'Golden' ? '' : 'Golden'"
+                >
+                  Golden
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.piping === 'Self'"
+                  (click)="topForm.piping = topForm.piping === 'Self' ? '' : 'Self'"
+                >
+                  Self
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- OTHER TOP OPTIONS: Astar (Yes, No), SideCut (Yes, No), Piping (Yes, No) -->
+          <div class="optional-fields-stack" *ngIf="!isBlouse">
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-layer-group"></i> Astar</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.astar === true"
+                  (click)="topForm.astar = true"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.astar === false"
+                  (click)="topForm.astar = false"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-scissors"></i> SideCut</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.sidecut === true"
+                  (click)="topForm.sidecut = true"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.sidecut === false"
+                  (click)="topForm.sidecut = false"
+                >
+                  No
+                </button>
+              </div>
+            </div>
+
+            <div class="optional-field-row">
+              <span class="optional-field-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Piping</span>
+              <div class="inline-choice-group">
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.piping === 'Yes'"
+                  (click)="topForm.piping = 'Yes'"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="choice-pill"
+                  [class.active]="topForm.piping === 'No' || !topForm.piping"
+                  (click)="topForm.piping = 'No'"
+                >
+                  No
+                </button>
+              </div>
+            </div>
           </div>
 
           <div class="detail-textarea-box">
-            <label for="topDetail"><i class="fa-solid fa-clipboard-list"></i> Special Instructions / Tailoring Notes:</label>
+            <label for="topDetail"><i class="fa-solid fa-clipboard-list"></i> Extra Detail:</label>
             <textarea
               id="topDetail"
               rows="3"
               [(ngModel)]="topForm.detail"
-              placeholder="e.g. Needs extra margin at sides, attach potli buttons on back..."
+              placeholder="Enter extra details or special tailoring instructions..."
               class="form-control"
             ></textarea>
           </div>
         </div>
 
-        <!-- Step 10: Price & Photos -->
-        <div *ngIf="currentStep === 10" class="step-view">
+        <!-- Price & Photos -->
+        <div *ngIf="currentStepKey === 'top_price_photos'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">{{ showPrice ? 'Price & Reference Photos' : 'Reference Photos' }}</h3>
             <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload cloth/design photos' : 'Photo upload is currently unavailable' }}</p>
@@ -542,81 +595,97 @@
           </div>
         </div>
 
-        <!-- Step 11: Review & Confirm -->
-        <div *ngIf="currentStep === 11" class="step-view review-view">
+        <!-- Review & Confirm -->
+        <div *ngIf="currentStepKey === 'top_review'" class="step-view review-view">
           <div class="step-header">
             <h3 class="step-question">Review & Confirm Top Item</h3>
             <p class="step-subtext">Check the item specifications. Click any attribute to change it before saving.</p>
           </div>
 
           <div class="review-grid">
-            <div class="review-item" (click)="goToStep(1)">
+            <div class="review-item" (click)="goToStepByKey('top_item')">
               <span class="review-label">Garment Item:</span>
               <span class="review-val">{{ topForm.item || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(2)">
+            <div class="review-item" *ngIf="isBlouse" (click)="goToStepByKey('top_style')">
               <span class="review-label">Style / Cut:</span>
               <span class="review-val">{{ topForm.style || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(3)">
+            <div class="review-item" (click)="goToStepByKey('top_front_neck')">
               <span class="review-label">Front Neck:</span>
               <span class="review-val">{{ topForm.frontneckdesign || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(4)">
+            <div class="review-item" (click)="goToStepByKey('top_back_neck')">
               <span class="review-label">Back Neck:</span>
               <span class="review-val">{{ topForm.backneckdesign || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(5)">
-              <span class="review-label">Opening Side:</span>
-              <span class="review-val">{{ topForm.openingside || 'Not set' }}</span>
-              <i class="fa-solid fa-pen review-edit"></i>
-            </div>
-
-            <div class="review-item" (click)="goToStep(6)">
-              <span class="review-label">In Neck:</span>
-              <span class="review-val">{{ topForm.inneck || 'Not set' }}</span>
-              <i class="fa-solid fa-pen review-edit"></i>
-            </div>
-
-            <div class="review-item" (click)="goToStep(7)">
-              <span class="review-label">Back Neck Depth:</span>
-              <span class="review-val">{{ topForm.backofneck || 'Not set' }}</span>
-              <i class="fa-solid fa-pen review-edit"></i>
-            </div>
-
-            <div class="review-item" (click)="goToStep(8)">
+            <div class="review-item" (click)="goToStepByKey('top_sleeve')">
               <span class="review-label">Sleeve:</span>
               <span class="review-val">{{ topForm.sleeve || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(9)">
-              <span class="review-label">Lining (Astar):</span>
-              <span class="review-val">{{ topForm.astar ? 'Yes' : 'No' }}</span>
-              <i class="fa-solid fa-pen review-edit"></i>
-            </div>
+            <ng-container *ngIf="isBlouse">
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Open:</span>
+                <span class="review-val">{{ topForm.openingside || 'Not set' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
 
-            <div class="review-item" (click)="goToStep(9)">
-              <span class="review-label">Dori:</span>
-              <span class="review-val">{{ topForm.dori ? 'Yes' : 'No' }}</span>
-              <i class="fa-solid fa-pen review-edit"></i>
-            </div>
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Dori:</span>
+                <span class="review-val">{{ topForm.dori ? 'Yes' : 'No' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
 
-            <div class="review-item full-width" (click)="goToStep(9)" *ngIf="topForm.detail">
-              <span class="review-label">Notes:</span>
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Pad:</span>
+                <span class="review-val">{{ topForm.pad ? 'Yes' : 'No' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
+
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Piping:</span>
+                <span class="review-val">{{ topForm.piping || 'Not set' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!isBlouse">
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Astar:</span>
+                <span class="review-val">{{ topForm.astar ? 'Yes' : 'No' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
+
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">SideCut:</span>
+                <span class="review-val">{{ topForm.sidecut ? 'Yes' : 'No' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
+
+              <div class="review-item" (click)="goToStepByKey('top_options')">
+                <span class="review-label">Piping:</span>
+                <span class="review-val">{{ topForm.piping || 'No' }}</span>
+                <i class="fa-solid fa-pen review-edit"></i>
+              </div>
+            </ng-container>
+
+            <div class="review-item full-width" (click)="goToStepByKey('top_options')" *ngIf="topForm.detail">
+              <span class="review-label">Extra Detail:</span>
               <span class="review-val">{{ topForm.detail }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStep(10)">
+            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStepByKey('top_price_photos')">
               <span class="review-label">Total Item Price:</span>
               <span class="review-val price-val">₹{{ topForm.price || 0 }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
@@ -641,8 +710,8 @@
       <!-- ================= BOTTOM ITEM STEPS ================= -->
       <ng-container *ngIf="selectedType === 'bottom'">
 
-        <!-- Step 1: Garment Item -->
-        <div *ngIf="currentStep === 1" class="step-view">
+        <!-- Garment Item -->
+        <div *ngIf="currentStepKey === 'bottom_item'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Select Bottom Garment Type</h3>
             <p class="step-subtext">Choose the kind of bottom garment to tailor</p>
@@ -671,14 +740,15 @@
               id="customBottomItem"
               type="text"
               [(ngModel)]="bottomForm.item"
+              (ngModelChange)="onBottomItemChanged()"
               placeholder="e.g. Tulip Pants"
               class="form-control"
             />
           </div>
         </div>
 
-        <!-- Step 2: Style & Cut -->
-        <div *ngIf="currentStep === 2" class="step-view">
+        <!-- Style & Cut (Only for Chaniya Choli) -->
+        <div *ngIf="currentStepKey === 'bottom_style'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Select Style / Cut</h3>
             <p class="step-subtext">Choose flare, pleats, or style pattern</p>
@@ -713,8 +783,8 @@
           </div>
         </div>
 
-        <!-- Step 3: Waist & Rubber -->
-        <div *ngIf="currentStep === 3" class="step-view">
+        <!-- Waist & Rubber (Only when NOT Chaniya Choli) -->
+        <div *ngIf="currentStepKey === 'bottom_rubber'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Waistband / Rubber Style</h3>
             <p class="step-subtext">Select waistband elastic or belt preference</p>
@@ -749,8 +819,8 @@
           </div>
         </div>
 
-        <!-- Step 4: Options & Notes -->
-        <div *ngIf="currentStep === 4" class="step-view">
+        <!-- Options & Notes -->
+        <div *ngIf="currentStepKey === 'bottom_options'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">Options & Custom Notes</h3>
             <p class="step-subtext">Configure pockets and tailoring instructions</p>
@@ -784,8 +854,8 @@
           </div>
         </div>
 
-        <!-- Step 5: Price & Design Photo -->
-        <div *ngIf="currentStep === 5" class="step-view">
+        <!-- Price & Design Photo -->
+        <div *ngIf="currentStepKey === 'bottom_price_photo'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">{{ showPrice ? 'Price & Reference Photo' : 'Reference Photo' }}</h3>
             <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload design reference photo' : 'Photo upload is currently unavailable' }}</p>
@@ -866,45 +936,45 @@
           </div>
         </div>
 
-        <!-- Step 6: Review & Confirm -->
-        <div *ngIf="currentStep === 6" class="step-view review-view">
+        <!-- Review & Confirm -->
+        <div *ngIf="currentStepKey === 'bottom_review'" class="step-view review-view">
           <div class="step-header">
             <h3 class="step-question">Review & Confirm Bottom Item</h3>
             <p class="step-subtext">Check the item specifications. Click any attribute to change it before saving.</p>
           </div>
 
           <div class="review-grid">
-            <div class="review-item" (click)="goToStep(1)">
+            <div class="review-item" (click)="goToStepByKey('bottom_item')">
               <span class="review-label">Garment Item:</span>
               <span class="review-val">{{ bottomForm.item || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(2)">
+            <div class="review-item" *ngIf="isChaniyaCholi" (click)="goToStepByKey('bottom_style')">
               <span class="review-label">Style / Cut:</span>
               <span class="review-val">{{ bottomForm.style || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(3)">
+            <div class="review-item" *ngIf="!isChaniyaCholi" (click)="goToStepByKey('bottom_rubber')">
               <span class="review-label">Waist / Rubber:</span>
               <span class="review-val">{{ bottomForm.rubber || 'Not set' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item" (click)="goToStep(4)">
+            <div class="review-item" (click)="goToStepByKey('bottom_options')">
               <span class="review-label">Pocket:</span>
               <span class="review-val">{{ bottomForm.pocket ? 'Yes' : 'No' }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item full-width" (click)="goToStep(4)" *ngIf="bottomForm.detail">
+            <div class="review-item full-width" (click)="goToStepByKey('bottom_options')" *ngIf="bottomForm.detail">
               <span class="review-label">Notes:</span>
               <span class="review-val">{{ bottomForm.detail }}</span>
               <i class="fa-solid fa-pen review-edit"></i>
             </div>
 
-            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStep(5)">
+            <div class="review-item full-width price-highlight" *ngIf="showPrice" (click)="goToStepByKey('bottom_price_photo')">
               <span class="review-label">Total Item Price:</span>
               <span class="review-val price-val">₹{{ bottomForm.price || 0 }}</span>
               <i class="fa-solid fa-pen review-edit"></i>

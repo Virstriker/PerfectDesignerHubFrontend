@@ -101,7 +101,11 @@
                 <span class="tag top-tag">Top</span>
                 <span class="name">{{ item.item }}</span>
               </div>
-              <div class="meta">Style: {{ item.style }}<span *ngIf="item.sleeve"> · {{ item.sleeve }}</span></div>
+              <div class="meta">
+                <span *ngIf="item.style">Style: {{ item.style }}</span>
+                <span *ngIf="!item.style && item.frontneckdesign">F.Neck: {{ item.frontneckdesign }}</span>
+                <span *ngIf="item.sleeve">{{ (item.style || item.frontneckdesign) ? ' · ' : '' }}Sleeve: {{ item.sleeve }}</span>
+              </div>
             </div>
             <div class="price" *ngIf="showPrice">${{ item.price }}</div>
             <div class="item-actions">
@@ -121,7 +125,11 @@
                 <span class="tag bottom-tag">Bottom</span>
                 <span class="name">{{ item.item }}</span>
               </div>
-              <div class="meta">Style: {{ item.style }}<span *ngIf="item.rubber"> · {{ item.rubber }}</span></div>
+              <div class="meta">
+                <span *ngIf="item.style">Style: {{ item.style }}</span>
+                <span *ngIf="item.rubber">{{ item.style ? ' · ' : '' }}Waist: {{ item.rubber }}</span>
+                <span *ngIf="!item.style && !item.rubber">Pocket: {{ item.pocket ? 'Yes' : 'No' }}</span>
+              </div>
             </div>
             <div class="price" *ngIf="showPrice">${{ item.price }}</div>
             <div class="item-actions">

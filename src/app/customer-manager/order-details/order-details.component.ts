@@ -261,12 +261,19 @@ export class OrderDetailsComponent implements OnInit {
     if (printWindow) {
       const itemFields: { label: string; value: any }[] = [];
       if (isTopItem(item)) {
+        const isBlouse = String(item.item || '').trim().toLowerCase() === 'blouse';
         Object.entries(item).forEach(([key, value]) => {
-          if (value !== null && value !== 0 && value !== '' && key !== 'clothimage' && key !== 'designimage' && key !== 'price') {
-            if (key === 'frontneckdesign') {
+          if (value !== null && value !== undefined && value !== 0 && value !== '' && key !== 'clothimage' && key !== 'designimage' && key !== 'price' && key !== 'id' && key !== 'ordertableid') {
+            if (isBlouse && (key === 'astar' || key === 'sidecut')) return;
+            if (!isBlouse && (key === 'dori' || key === 'pad' || key === 'openingside' || key === 'style')) return;
+            if (typeof value === 'boolean') {
+              itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value: value ? 'Yes' : 'No' });
+            } else if (key === 'frontneckdesign') {
               itemFields.push({ label: 'FNeck', value });
             } else if (key === 'backneckdesign') {
               itemFields.push({ label: 'BNeck', value });
+            } else if (key === 'openingside') {
+              itemFields.push({ label: 'Open', value });
             } else {
               itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value });
             }
@@ -274,8 +281,12 @@ export class OrderDetailsComponent implements OnInit {
         });
       } else if (isBottomItem(item)) {
         Object.entries(item).forEach(([key, value]) => {
-          if (value !== null && value !== 0 && value !== '' && key !== 'designimage' && key !== 'price') {
-            itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value });
+          if (value !== null && value !== undefined && value !== 0 && value !== '' && key !== 'designimage' && key !== 'price' && key !== 'id' && key !== 'ordertableid') {
+            if (typeof value === 'boolean') {
+              itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value: value ? 'Yes' : 'No' });
+            } else {
+              itemFields.push({ label: key.charAt(0).toUpperCase() + key.slice(1), value });
+            }
           }
         });
       }
@@ -389,9 +400,9 @@ export class OrderDetailsComponent implements OnInit {
 }
 
 function isTopItem(item: TopItem | BottomItem): item is TopItem {
-  return (item as TopItem).item !== undefined;
+  return 'frontneckdesign' in item || 'backneckdesign' in item || 'sleeve' in item;
 }
 
 function isBottomItem(item: TopItem | BottomItem): item is BottomItem {
-  return (item as BottomItem).item !== undefined;
+  return !isTopItem(item);
 }

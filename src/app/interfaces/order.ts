@@ -19,9 +19,12 @@ export interface TopItem {
     backneckdesign: string;
     astar: boolean;
     openingside: string;
-    inneck: string;
-    backofneck: string;
+    inneck?: string;
+    backofneck?: string;
     dori: boolean;
+    pad?: boolean;
+    sidecut?: boolean;
+    piping?: string;
     sleeve: string;
     detail: string;
     clothimage?: string;

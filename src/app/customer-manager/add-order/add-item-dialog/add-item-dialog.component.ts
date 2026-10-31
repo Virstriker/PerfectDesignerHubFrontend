@@ -7,6 +7,7 @@ import { FEATURES } from '../../../constants/feature-flags';
 
 export interface StepMeta {
   index: number;
+  key: string;
   title: string;
   subtitle: string;
   shortLabel: string;
@@ -40,42 +41,14 @@ export class AddItemDialogComponent implements OnChanges {
   // Options for Top
   topOptions: string[] = ['Blouse', 'Kurti', 'OnePiece', 'ShortTop', 'Frok', 'Dress', 'Kfatan', 'SimpleSalvar', 'Shrug', 'Blazer', 'peplem', 'CropTop'];
   styleOptions: string[] = ['PrincessCut', 'PrincessCut(Pad)', 'Katori', '4Gents', 'SabiyaSachi'];
-  frontNeckDesignOptions: string[] = ['Boat', 'Stand', 'Round', 'A.Work', 'A.Whatsapp', 'A.Measurment', 'Image'];
-  backNeckDesignOptions: string[] = ['Boat', 'Stand', 'Round', 'A.Work', 'A.Whatsapp', 'A.Measurment', 'Image'];
-  openingsideOptions: string[] = ['Front', 'Back', 'Side', 'Chain'];
-  inneckOptions: string[] = ['Piping', 'UrepPatti', 'Canvas', 'Hemming', 'Supplimentry'];
-  backofneckOptions: string[] = ['Deep', 'Pack'];
-  sleeveOptions: string[] = ['SleeveLess', 'Cape', 'Elbow', '3/4th', 'Full'];
+  neckDesignOptions: string[] = ['A.Work', 'A.Whatsapp', 'MP'];
+  neckNumbers: number[] = Array.from({ length: 200 }, (_, i) => i + 1);
+  sleeveOptions: string[] = ['Cape', 'Elbow', '3/4th', 'Full'];
 
   // Options for Bottom
   bottomItemOptions: string[] = ['ChanyaCholi', 'Pant', 'Plazo', 'Dhoti', 'Salvar', 'Sarara'];
   styleOptionsBottom: string[] = ['UmbrellaGher', 'Kali', 'Plits', 'Step'];
   rubberOptions: string[] = ['BeltRubber', 'FullRubber', 'Nadi'];
-
-  // Step definitions for Top
-  readonly topSteps: StepMeta[] = [
-    { index: 1, title: 'Garment Item', subtitle: 'Select what type of top garment to create', shortLabel: 'Item', icon: 'fa-shirt' },
-    { index: 2, title: 'Style & Cut', subtitle: 'Choose the pattern or blouse cut style', shortLabel: 'Style', icon: 'fa-scissors' },
-    { index: 3, title: 'Front Neck Design', subtitle: 'Choose neckline style for the front', shortLabel: 'Front Neck', icon: 'fa-shapes' },
-    { index: 4, title: 'Back Neck Design', subtitle: 'Choose neckline style for the back', shortLabel: 'Back Neck', icon: 'fa-shapes' },
-    { index: 5, title: 'Opening Side', subtitle: 'Select where the hooks or zipper will be placed', shortLabel: 'Opening', icon: 'fa-door-open' },
-    { index: 6, title: 'In-Neck Finishing', subtitle: 'Select internal neck finishing technique', shortLabel: 'In Neck', icon: 'fa-ribbon' },
-    { index: 7, title: 'Back Neck Depth', subtitle: 'Select depth preference for back neckline', shortLabel: 'Neck Depth', icon: 'fa-arrows-up-down' },
-    { index: 8, title: 'Sleeve Style', subtitle: 'Select sleeve length or cut pattern', shortLabel: 'Sleeve', icon: 'fa-hand-dots' },
-    { index: 9, title: 'Options & Notes', subtitle: 'Configure Astar, Dori & custom instructions', shortLabel: 'Options', icon: 'fa-sliders' },
-    { index: 10, title: 'Price & Photos', subtitle: 'Set the price and upload reference photos', shortLabel: 'Price & Photos', icon: 'fa-indian-rupee-sign' },
-    { index: 11, title: 'Review & Confirm', subtitle: 'Review all selected specifications before saving', shortLabel: 'Review', icon: 'fa-circle-check' }
-  ];
-
-  // Step definitions for Bottom
-  readonly bottomSteps: StepMeta[] = [
-    { index: 1, title: 'Garment Item', subtitle: 'Select what type of bottom garment to create', shortLabel: 'Item', icon: 'fa-person' },
-    { index: 2, title: 'Style & Cut', subtitle: 'Choose flare or pleat pattern', shortLabel: 'Style', icon: 'fa-scissors' },
-    { index: 3, title: 'Waist & Rubber', subtitle: 'Select waistband elastic or belt preference', shortLabel: 'Waist', icon: 'fa-ring' },
-    { index: 4, title: 'Options & Notes', subtitle: 'Configure pocket & custom instructions', shortLabel: 'Options', icon: 'fa-sliders' },
-    { index: 5, title: 'Price & Photo', subtitle: 'Set the price and upload design reference photo', shortLabel: 'Price & Photo', icon: 'fa-indian-rupee-sign' },
-    { index: 6, title: 'Review & Confirm', subtitle: 'Review all selected specifications before saving', shortLabel: 'Review', icon: 'fa-circle-check' }
-  ];
 
   topForm: TopItem = {
     item: '',
@@ -87,6 +60,9 @@ export class AddItemDialogComponent implements OnChanges {
     inneck: '',
     backofneck: '',
     dori: false,
+    pad: false,
+    sidecut: false,
+    piping: '',
     sleeve: '',
     detail: '',
     clothimage: '',
@@ -131,23 +107,93 @@ export class AddItemDialogComponent implements OnChanges {
       if (this.itemType === 'top') {
         const topItem = this.itemData as TopItem;
         this.topForm = {
-          ...topItem,
+          item: topItem.item || '',
+          style: topItem.style || '',
+          frontneckdesign: topItem.frontneckdesign || '',
+          backneckdesign: topItem.backneckdesign || '',
+          astar: !!topItem.astar,
+          openingside: topItem.openingside || '',
+          inneck: topItem.inneck || '',
+          backofneck: topItem.backofneck || '',
+          dori: !!topItem.dori,
+          pad: !!topItem.pad,
+          sidecut: !!topItem.sidecut,
+          piping: topItem.piping || '',
+          sleeve: topItem.sleeve || '',
+          detail: topItem.detail || '',
           designimage: topItem.designimage || '',
-          clothimage: topItem.clothimage || ''
+          clothimage: topItem.clothimage || '',
+          price: topItem.price || 0
         };
       } else if (this.itemType === 'bottom') {
         const bottomItem = this.itemData as BottomItem;
         this.bottomForm = {
-          ...bottomItem,
-          designimage: bottomItem.designimage || ''
+          item: bottomItem.item || '',
+          style: bottomItem.style || '',
+          rubber: bottomItem.rubber || '',
+          pocket: !!bottomItem.pocket,
+          detail: bottomItem.detail || '',
+          designimage: bottomItem.designimage || '',
+          price: bottomItem.price || 0
         };
       }
     }
   }
 
+  get isBlouse(): boolean {
+    return (this.topForm.item || '').trim().toLowerCase() === 'blouse';
+  }
+
+  get isChaniyaCholi(): boolean {
+    const val = (this.bottomForm.item || '').trim().toLowerCase();
+    return val === 'chanyacholi' || val === 'chaniya choli' || val === 'chaniyacholi' || val === 'chanya choli';
+  }
+
   get currentSteps(): StepMeta[] {
-    if (this.selectedType === 'top') return this.topSteps;
-    if (this.selectedType === 'bottom') return this.bottomSteps;
+    if (this.selectedType === 'top') {
+      const steps: StepMeta[] = [
+        { index: 1, key: 'top_item', title: 'Garment Item', subtitle: 'Select what type of top garment to create', shortLabel: 'Item', icon: 'fa-shirt' }
+      ];
+      if (this.isBlouse) {
+        steps.push({ index: 0, key: 'top_style', title: 'Style & Cut', subtitle: 'Choose the pattern or blouse cut style', shortLabel: 'Style', icon: 'fa-scissors' });
+      }
+      steps.push(
+        { index: 0, key: 'top_front_neck', title: 'Front Neck Design', subtitle: 'Choose neckline style for the front', shortLabel: 'Front Neck', icon: 'fa-shapes' },
+        { index: 0, key: 'top_back_neck', title: 'Back Neck Design', subtitle: 'Choose neckline style for the back', shortLabel: 'Back Neck', icon: 'fa-shapes' },
+        { index: 0, key: 'top_sleeve', title: 'Sleeve Style', subtitle: 'Select sleeve length or cut pattern', shortLabel: 'Sleeve', icon: 'fa-hand-dots' },
+        {
+          index: 0,
+          key: 'top_options',
+          title: 'Options & Extra Detail',
+          subtitle: this.isBlouse
+            ? 'Configure Open, Dori, Pad, Piping & Extra Detail'
+            : 'Configure Astar, SideCut, Piping & Extra Detail',
+          shortLabel: 'Options',
+          icon: 'fa-sliders'
+        },
+        { index: 0, key: 'top_price_photos', title: 'Price & Photos', subtitle: 'Set the price and upload reference photos', shortLabel: 'Price & Photos', icon: 'fa-indian-rupee-sign' },
+        { index: 0, key: 'top_review', title: 'Review & Confirm', subtitle: 'Review all selected specifications before saving', shortLabel: 'Review', icon: 'fa-circle-check' }
+      );
+      return steps.map((s, idx) => ({ ...s, index: idx + 1 }));
+    }
+
+    if (this.selectedType === 'bottom') {
+      const steps: StepMeta[] = [
+        { index: 1, key: 'bottom_item', title: 'Garment Item', subtitle: 'Select what type of bottom garment to create', shortLabel: 'Item', icon: 'fa-person' }
+      ];
+      if (this.isChaniyaCholi) {
+        steps.push({ index: 0, key: 'bottom_style', title: 'Style & Cut', subtitle: 'Choose flare or pleat pattern', shortLabel: 'Style', icon: 'fa-scissors' });
+      } else {
+        steps.push({ index: 0, key: 'bottom_rubber', title: 'Waist & Rubber', subtitle: 'Select waistband elastic or belt preference', shortLabel: 'Waist', icon: 'fa-ring' });
+      }
+      steps.push(
+        { index: 0, key: 'bottom_options', title: 'Options & Notes', subtitle: 'Configure pocket & custom instructions', shortLabel: 'Options', icon: 'fa-sliders' },
+        { index: 0, key: 'bottom_price_photo', title: 'Price & Photo', subtitle: 'Set the price and upload design reference photo', shortLabel: 'Price & Photo', icon: 'fa-indian-rupee-sign' },
+        { index: 0, key: 'bottom_review', title: 'Review & Confirm', subtitle: 'Review all selected specifications before saving', shortLabel: 'Review', icon: 'fa-circle-check' }
+      );
+      return steps.map((s, idx) => ({ ...s, index: idx + 1 }));
+    }
+
     return [];
   }
 
@@ -155,10 +201,16 @@ export class AddItemDialogComponent implements OnChanges {
     return this.currentSteps.length;
   }
 
+  get currentStepKey(): string {
+    if (this.currentStep === 0) return 'category';
+    return this.currentStepMeta?.key || '';
+  }
+
   get currentStepMeta(): StepMeta | null {
     if (this.currentStep === 0) {
       return {
         index: 0,
+        key: 'category',
         title: 'Select Garment Category',
         subtitle: 'Choose whether you want to add a Top or Bottom garment',
         shortLabel: 'Category',
@@ -220,6 +272,14 @@ export class AddItemDialogComponent implements OnChanges {
     }
   }
 
+  goToStepByKey(key: string) {
+    this.clearAutoAdvance();
+    const target = this.currentSteps.find(s => s.key === key);
+    if (target) {
+      this.currentStep = target.index;
+    }
+  }
+
   jumpToReview() {
     this.clearAutoAdvance();
     this.currentStep = this.totalSteps;
@@ -239,10 +299,41 @@ export class AddItemDialogComponent implements OnChanges {
     }
   }
 
+  isNeckNumber(val: string | undefined): boolean {
+    if (!val) return false;
+    const num = Number(val);
+    return Number.isInteger(num) && num >= 1 && num <= 200;
+  }
+
   // Top selection handlers
   selectTopItem(option: string) {
+    const prevWasBlouse = this.isBlouse;
     this.topForm.item = option;
+    this.onTopItemChanged(prevWasBlouse);
     this.autoAdvance();
+  }
+
+  onTopItemInputChange() {
+    this.onTopItemChanged();
+  }
+
+  private onTopItemChanged(prevWasBlouse?: boolean) {
+    const nowBlouse = this.isBlouse;
+    if (!nowBlouse) {
+      this.topForm.style = '';
+      this.topForm.openingside = '';
+      this.topForm.dori = false;
+      this.topForm.pad = false;
+      if (this.topForm.piping === 'Golden' || this.topForm.piping === 'Self') {
+        this.topForm.piping = '';
+      }
+    } else {
+      this.topForm.astar = false;
+      this.topForm.sidecut = false;
+      if (this.topForm.piping === 'Yes' || this.topForm.piping === 'No') {
+        this.topForm.piping = '';
+      }
+    }
   }
 
   selectTopStyle(option: string) {
@@ -251,27 +342,14 @@ export class AddItemDialogComponent implements OnChanges {
   }
 
   selectFrontNeck(option: string) {
-    this.topForm.frontneckdesign = option;
+    if (!option) return;
+    this.topForm.frontneckdesign = String(option);
     this.autoAdvance();
   }
 
   selectBackNeck(option: string) {
-    this.topForm.backneckdesign = option;
-    this.autoAdvance();
-  }
-
-  selectOpeningSide(option: string) {
-    this.topForm.openingside = option;
-    this.autoAdvance();
-  }
-
-  selectInNeck(option: string) {
-    this.topForm.inneck = option;
-    this.autoAdvance();
-  }
-
-  selectBackOfNeck(option: string) {
-    this.topForm.backofneck = option;
+    if (!option) return;
+    this.topForm.backneckdesign = String(option);
     this.autoAdvance();
   }
 
@@ -283,7 +361,16 @@ export class AddItemDialogComponent implements OnChanges {
   // Bottom selection handlers
   selectBottomItem(option: string) {
     this.bottomForm.item = option;
+    this.onBottomItemChanged();
     this.autoAdvance();
+  }
+
+  onBottomItemChanged() {
+    if (this.isChaniyaCholi) {
+      this.bottomForm.rubber = '';
+    } else {
+      this.bottomForm.style = '';
+    }
   }
 
   selectBottomStyle(option: string) {
@@ -442,9 +529,25 @@ export class AddItemDialogComponent implements OnChanges {
       return;
     }
     if (this.selectedType === 'top') {
-      this.saveItem.emit({ type: 'top', item: { ...this.topForm } });
+      const cleanedTop: TopItem = { ...this.topForm };
+      if (!this.isBlouse) {
+        cleanedTop.style = '';
+        cleanedTop.openingside = '';
+        cleanedTop.dori = false;
+        cleanedTop.pad = false;
+      } else {
+        cleanedTop.astar = false;
+        cleanedTop.sidecut = false;
+      }
+      this.saveItem.emit({ type: 'top', item: cleanedTop });
     } else if (this.selectedType === 'bottom') {
-      this.saveItem.emit({ type: 'bottom', item: { ...this.bottomForm } });
+      const cleanedBottom: BottomItem = { ...this.bottomForm };
+      if (this.isChaniyaCholi) {
+        cleanedBottom.rubber = '';
+      } else {
+        cleanedBottom.style = '';
+      }
+      this.saveItem.emit({ type: 'bottom', item: cleanedBottom });
     }
     this.close();
   }
