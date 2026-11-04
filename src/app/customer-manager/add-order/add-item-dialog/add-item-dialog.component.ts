@@ -219,7 +219,15 @@ export class AddItemDialogComponent implements OnChanges {
     }
     const meta = this.currentSteps.find(s => s.index === this.currentStep) || null;
     if (meta && !this.showPrice && meta.title.startsWith('Price')) {
-      return { ...meta, title: 'Reference Photos', subtitle: 'Photo upload is currently unavailable', shortLabel: 'Photos', icon: 'fa-camera' };
+      return {
+        ...meta,
+        title: 'Reference Photos',
+        subtitle: this.photoUploadEnabled
+          ? 'Upload cloth and design reference photos'
+          : 'Photo upload is currently disabled',
+        shortLabel: 'Photos',
+        icon: 'fa-camera'
+      };
     }
     return meta;
   }

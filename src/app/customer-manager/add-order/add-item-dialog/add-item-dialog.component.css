@@ -237,6 +237,64 @@
   margin-bottom: 18px;
 }
 
+.step-header-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.step-header-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-design-image-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff !important;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.28);
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.btn-design-image-link:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.38);
+  color: #ffffff !important;
+}
+
+.btn-design-image-link:active {
+  transform: translateY(0);
+}
+
+.btn-design-image-link i {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 600px) {
+  .step-header-with-action {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .btn-design-image-link {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 16px;
+  }
+}
+
 .step-question {
   margin: 0 0 6px 0;
   font-size: 1.35rem;

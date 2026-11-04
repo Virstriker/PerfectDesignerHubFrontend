@@ -152,9 +152,21 @@
 
         <!-- Front Neck Design -->
         <div *ngIf="currentStepKey === 'top_front_neck'" class="step-view">
-          <div class="step-header">
-            <h3 class="step-question">Front Neck Design</h3>
-            <p class="step-subtext">Select neckline design for the front</p>
+          <div class="step-header step-header-with-action">
+            <div class="step-header-text">
+              <h3 class="step-question">Front Neck Design</h3>
+              <p class="step-subtext">Select neckline design for the front</p>
+            </div>
+            <a
+              href="https://drive.google.com/drive/folders/1mN0y4eVKPCXwPj1ubiOcLQP-hUWtjqAc?usp=drive_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-design-image-link"
+              title="Open Design Images in Google Drive"
+            >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Design Image</span>
+            </a>
           </div>
 
           <div class="selection-badge" *ngIf="topForm.frontneckdesign">
@@ -202,9 +214,21 @@
 
         <!-- Back Neck Design -->
         <div *ngIf="currentStepKey === 'top_back_neck'" class="step-view">
-          <div class="step-header">
-            <h3 class="step-question">Back Neck Design</h3>
-            <p class="step-subtext">Select neckline design for the back</p>
+          <div class="step-header step-header-with-action">
+            <div class="step-header-text">
+              <h3 class="step-question">Back Neck Design</h3>
+              <p class="step-subtext">Select neckline design for the back</p>
+            </div>
+            <a
+              href="https://drive.google.com/drive/folders/1CsVRW-GTxgCX4Tf9XnmsI_5CUgQHGMjX?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-design-image-link"
+              title="Open Design Images in Google Drive"
+            >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Design Image</span>
+            </a>
           </div>
 
           <div class="selection-badge" *ngIf="topForm.backneckdesign">
@@ -471,7 +495,9 @@
         <div *ngIf="currentStepKey === 'top_price_photos'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">{{ showPrice ? 'Price & Reference Photos' : 'Reference Photos' }}</h3>
-            <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload cloth/design photos' : 'Photo upload is currently unavailable' }}</p>
+            <p class="step-subtext">
+              {{ showPrice ? 'Enter stitching price and upload cloth/design photos' : (photoUploadEnabled ? 'Upload cloth and design reference photos' : 'Photo upload is currently disabled') }}
+            </p>
           </div>
 
           <!-- Price Input Box -->
@@ -858,7 +884,9 @@
         <div *ngIf="currentStepKey === 'bottom_price_photo'" class="step-view">
           <div class="step-header">
             <h3 class="step-question">{{ showPrice ? 'Price & Reference Photo' : 'Reference Photo' }}</h3>
-            <p class="step-subtext">{{ showPrice ? 'Enter stitching price and upload design reference photo' : 'Photo upload is currently unavailable' }}</p>
+            <p class="step-subtext">
+              {{ showPrice ? 'Enter stitching price and upload design reference photo' : (photoUploadEnabled ? 'Upload design reference photo' : 'Photo upload is currently disabled') }}
+            </p>
           </div>
 
           <!-- Price Input Box -->
